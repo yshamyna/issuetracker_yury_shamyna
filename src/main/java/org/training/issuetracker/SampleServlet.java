@@ -44,6 +44,7 @@ public class SampleServlet implements Servlet {
 		out.println("<title>Sample Servlet interface implementation</title>");
 		out.println("</head>");
 		out.println("<body><b>Hello world!</b></body>");
+		out.println("<h1>test</h1>");
 		out.println("</html>");
 		out.close();
 	}
