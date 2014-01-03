@@ -13,7 +13,16 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>SampleServlet</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/SampleServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+  	<servlet-name>Dashboard</servlet-name>
+  	<servlet-class>org.training.issuetracker.servlets.Dashboard</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>Dashboard</servlet-name>
+  	<url-pattern>/dashboard</url-pattern>
   </servlet-mapping>
 
 </web-app>

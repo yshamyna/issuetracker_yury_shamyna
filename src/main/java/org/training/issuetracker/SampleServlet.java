@@ -2,6 +2,8 @@ package org.training.issuetracker;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -18,6 +20,11 @@ public class SampleServlet implements Servlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		servletConfig = config;
+		try {
+			System.out.println(config.getServletContext().getResource("issuetracker.xml"));
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

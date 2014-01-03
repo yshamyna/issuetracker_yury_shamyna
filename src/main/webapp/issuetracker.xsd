@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://www.example.org/issuetracker" 
+	xmlns:tns="http://www.example.org/issuetracker">
+	
+	<element name="issuetracker" type="tns:issuetracker" />
+	
+    <complexType name="issuetracker">
+ 		<sequence>
+  			<element name="roles" type="tns:roles" minOccurs="1" maxOccurs="1" /> 
+  			<element name="issue_statuses" type="tns:statuses" minOccurs="1" maxOccurs="1" />
+  			<element name="issue_resolutions" type="tns:resolutions" minOccurs="1" maxOccurs="1" />
+  			<element name="issue_priorities" type="tns:priorities" minOccurs="1" maxOccurs="1" />
+  			<element name="issue_types" type="tns:types" minOccurs="1" maxOccurs="1" />
+  			<element name="users" type="tns:users" minOccurs="1" maxOccurs="1" />
+  			<element name="managers" type="tns:managers" minOccurs="1" maxOccurs="1" />
+  			<element name="projects" type="tns:projects" minOccurs="1" maxOccurs="1" />
+  			<element name="issues" type="tns:issues" minOccurs="1" maxOccurs="1" />
+  		</sequence>
+  	</complexType>
+  
+  	<complexType name="roles">
+  	   	<sequence>
+  	   		<element name="role" type="tns:role" minOccurs="1" maxOccurs="unbounded" />
+  	   	</sequence>
+  	</complexType>
+  
+  	<complexType name="role">
+      	<attribute name="id" type="integer" use="required" /> 	
+  	  	<attribute name="value" type="string" use="required" />
+  	</complexType>
+  
+  	<complexType name="statuses">
+  	   	<sequence>
+  	   		<element name="status" type="tns:status" minOccurs="1" maxOccurs="unbounded" />
+  	   	</sequence>
+  	</complexType>
+  
+  	<complexType name="status">
+      	<attribute name="id" type="integer" use="required" /> 	
+  	  	<attribute name="value" type="string" use="required" />
+  	</complexType>
+  
+  	<complexType name="resolutions">
+  	   	<sequence>
+  	   		<element name="resolution" type="tns:resolution" minOccurs="1" maxOccurs="unbounded" />
+  	   	</sequence>
+  	</complexType>
+  
+  	<complexType name="resolution">
+      	<attribute name="id" type="integer" use="required" /> 	
+  	  	<attribute name="value" type="string" use="required" />
+  	</complexType>
+  
+    <complexType name="priorities">
+  	   	<sequence>
+  	   		<element name="priority" type="tns:priority" minOccurs="1" maxOccurs="unbounded" />
+  	   	</sequence>
+  	</complexType>
+  
+  	<complexType name="priority">
+      	<attribute name="id" type="integer" use="required" /> 	
+  	  	<attribute name="value" type="string" use="required" />
+  	</complexType>
+  
+  	<complexType name="types">
+  	   	<sequence>
+  	   		<element name="type" type="tns:type" minOccurs="1" maxOccurs="unbounded" />
+  	   	</sequence>
+  	</complexType>
+  
+  	<complexType name="type">
+     	<attribute name="id" type="integer" use="required" /> 	
+  	  	<attribute name="value" type="string" use="required" />
+  	</complexType>
+  
+  	<complexType name="users">
+  		<sequence>
+  			<element name="user" type="tns:user" minOccurs="0" maxOccurs="unbounded"/>
+  		</sequence>
+  	</complexType>
+  
+  	<complexType name="user">
+  		<sequence>
+  			<element name="first_name" type="string" />
+  			<element name="last_name" type="string" />
+  			<element name="email_address" type="string" />
+  			<element name="role" type="integer"/>
+  			<element name="password" type="string" />
+  		</sequence>
+  		<attribute name="id" type="integer" use="required" /> 
+  	</complexType>
+  	
+  	<complexType name="managers">
+  		<sequence>
+  			<element name="manager" type="tns:manager" minOccurs="0" maxOccurs="unbounded"/>
+  		</sequence>
+  	</complexType>
+  	
+  	<complexType name="manager">
+  		<sequence>
+  			<element name="first_name" type="string" />
+  			<element name="last_name" type="string" />
+  		</sequence>
+  		<attribute name="id" type="integer" use="required" /> 
+  	</complexType>
+  	
+  	<complexType name="projects">
+  		<sequence>
+  			<element name="project" type="tns:project" minOccurs="0" maxOccurs="unbounded"/>
+  		</sequence>
+  	</complexType>
+  	
+  	<complexType name="project">
+  		<sequence>
+  			<element name="builds" type="tns:builds" />
+  			<element name="name" type="string" />
+  			<element name="description" type="string" />
+  			<element name="build" type="integer" />
+  			<element name="manager" type="integer" />
+  		</sequence>
+  		<attribute name="id" type="integer" use="required" /> 
+  	</complexType>
+  	
+  	<complexType name="builds">
+  		<sequence>
+  			<element name="build" type="tns:build" minOccurs="0" maxOccurs="unbounded"/>
+  		</sequence>
+  	</complexType>
+  	
+  	<complexType name="build">
+  		<attribute name="id" type="integer" use="required" /> 
+  		<attribute name="version" type="string" use="required" />
+  	</complexType>
+  	
+  	<complexType name="issues">
+  		<sequence>
+  			<element name="issue" type="tns:issue" minOccurs="0" maxOccurs="unbounded"/>
+  		</sequence>
+  	</complexType>
+  	
+  	<complexType name="issue">
+  		<sequence>
+  			<element name="summary" type="string" />
+  			<element name="description" type="string" />
+  			<element name="status" type="integer" />
+  			<element name="type" type="integer" />
+  			<element name="priority" type="integer" />
+  			<element name="project" type="integer" />
+  			<element name="build_found" type="integer" />
+  			<element name="assignee" type="integer" />
+  		</sequence>
+  		<attribute name="id" type="integer" use="required" /> 
+  	</complexType>
+  
+</schema>
