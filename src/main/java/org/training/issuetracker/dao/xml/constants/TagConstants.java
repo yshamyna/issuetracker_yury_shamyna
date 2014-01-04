@@ -17,4 +17,17 @@ public class TagConstants {
 	public final static String PASSWORD = "password";
 	public final static String TYPE = "type";
 	public final static String ISSUE_TYPES = "issue_types";
+	public final static String MANAGER = "manager";
+	public final static String MANAGERS = "managers";
+	public final static String PROJECTS = "projects";
+	public final static String PROJECT = "project";
+	public final static String BUILD = "build";
+	public final static String BUILDS = "builds";
+	public final static String NAME = "name";
+	public final static String DESCRIPTION = "description";
+	public final static String ISSUES = "issues";
+	public final static String ISSUE = "issue";
+	public final static String SUMMARY = "summary";
+	public final static String BUILD_FOUND = "build_found";
+	public final static String ASSIGNEE = "assignee";
 }

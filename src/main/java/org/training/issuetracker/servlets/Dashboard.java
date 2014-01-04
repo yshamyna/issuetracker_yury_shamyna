@@ -11,25 +11,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.training.issuetracker.beans.IssuePriority;
-import org.training.issuetracker.beans.IssueResolution;
-import org.training.issuetracker.beans.IssueStatus;
-import org.training.issuetracker.beans.IssueType;
+import org.training.issuetracker.beans.Issue;
 import org.training.issuetracker.beans.User;
-import org.training.issuetracker.beans.UserRole;
-import org.training.issuetracker.dao.interfaces.IPriorityDAO;
-import org.training.issuetracker.dao.interfaces.IResolutionDAO;
-import org.training.issuetracker.dao.interfaces.IRoleDAO;
-import org.training.issuetracker.dao.interfaces.IStatusDAO;
-import org.training.issuetracker.dao.interfaces.ITypeDAO;
-import org.training.issuetracker.dao.interfaces.IUserDAO;
+import org.training.issuetracker.dao.interfaces.IIssueDAO;
 import org.training.issuetracker.dao.xml.parsers.Parser;
-import org.training.issuetracker.dao.xml.service.PriorityDAO;
-import org.training.issuetracker.dao.xml.service.ResolutionDAO;
-import org.training.issuetracker.dao.xml.service.RoleDAO;
-import org.training.issuetracker.dao.xml.service.StatusDAO;
-import org.training.issuetracker.dao.xml.service.TypeDAO;
-import org.training.issuetracker.dao.xml.service.UserDAO;
+import org.training.issuetracker.dao.xml.service.IssueDAO;
 
 public class Dashboard implements Servlet {
 	
@@ -80,45 +66,39 @@ public class Dashboard implements Servlet {
 		htmlWriter.append("</tr>");
 		htmlWriter.append("<tr>");
 		htmlWriter.append("<td>");
-		htmlWriter.append("List issue");
-		//---------------------------
-		// getListIssue
-		IStatusDAO statusDAO = new StatusDAO();
-		IRoleDAO roleDAO = new RoleDAO();
-		IResolutionDAO resolutionDAO = new ResolutionDAO();
-		IPriorityDAO priorityDAO = new PriorityDAO();
-		IUserDAO userDAO = new UserDAO();
-		ITypeDAO typeDAO = new TypeDAO();
+		htmlWriter.append("<table border=\"1\">");
+		htmlWriter.append("<th>Issue</th>");
+		htmlWriter.append("<th>Status</th>");
+		htmlWriter.append("<th>Type</th>");
+		htmlWriter.append("<th>Priority</th>");
+		htmlWriter.append("<th>Project</th>");
+		htmlWriter.append("<th>Build</th>");
+		htmlWriter.append("<th>Assignee</th>");
+		//---------------------------	
+		IIssueDAO issueDAO = new IssueDAO();
 		try {
-			List<IssueStatus> s = statusDAO.getAll();
-			for (IssueStatus ss : s) {
-				System.out.println(ss.getId() + " " + ss.getValue());
-			}
-			List<UserRole> roles = roleDAO.getAll();
-			for (UserRole role : roles) {
-				System.out.println(role.getId() + " " + role.getValue());
-			}
-			List<IssueResolution> resolutions = resolutionDAO.getAll();
-			for (IssueResolution resolution : resolutions) {
-				System.out.println(resolution.getId() + " " + resolution.getValue());
-			}
-			System.out.println(resolutionDAO.getById(1).getValue());
-			List<IssuePriority> priorities = priorityDAO.getAll();
-			for (IssuePriority p : priorities) {
-				System.out.println(p.getId() + " " + p.getValue());
-			}
-			List<User> users = userDAO.getAll();
-			for (User user : users) {
-				System.out.println(user);
-			}
-			List<IssueType> types = typeDAO.getAll();
-			for (IssueType type : types) {
-				System.out.println(type.getId() + " " + type.getValue());
+			List<Issue> issues = issueDAO.getAll();
+			for (Issue issue : issues) {
+				htmlWriter.append("<tr>");
+				htmlWriter.append("<td>" + issue.getSummary() + "</td>");
+				htmlWriter.append("<td>" + issue.getStatus().getValue() + "</td>");
+				htmlWriter.append("<td>" + issue.getType().getValue() + "</td>");
+				htmlWriter.append("<td>" + issue.getPriority().getValue() + "</td>");
+				htmlWriter.append("<td>" + issue.getProject().getName() + "</td>");
+				htmlWriter.append("<td>" + issue.getBuildFound().getVersion() + "</td><td>");
+				User assignee = issue.getAssignee();
+				if (assignee == null) {
+					htmlWriter.append("---");
+				} else {
+					htmlWriter.append(assignee.getFirstName() + " " + assignee.getLastName());
+				}
+				htmlWriter.append("</td></tr>");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 		//---------------------------
+		htmlWriter.append("</table>");
 		htmlWriter.append("</td>");
 		htmlWriter.append("</tr>");
 		htmlWriter.append("</table>");
