@@ -41,7 +41,17 @@ public class DashboardFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		try {
-			if (request.getParameter("action") != null) {
+			if (request.getParameter("previousPage") != null) {
+				int currentPage = Integer.parseInt(request.getParameter("currentPage"));
+				currentPage--;
+				request.setAttribute("currentPage", currentPage);
+				return;
+			} else if (request.getParameter("nextPage") != null) {
+				int currentPage = Integer.parseInt(request.getParameter("currentPage"));
+				currentPage++;
+				request.setAttribute("currentPage", currentPage);
+				return;
+			} else if (request.getParameter("action") != null) {
 				if ("logout".equals(request.getParameter("action"))) {
 					HttpServletRequest req = (HttpServletRequest) request; 
 					req.getSession().removeAttribute("user");
@@ -96,6 +106,7 @@ public class DashboardFilter implements Filter {
 					request.setAttribute("errorMessage", "You are not authorized.");
 				}
 			}
+			request.setAttribute("currentPage", 1);
 		} finally {
 			chain.doFilter(request, response);
 		}

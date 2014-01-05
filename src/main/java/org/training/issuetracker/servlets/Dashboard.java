@@ -129,8 +129,25 @@ public class Dashboard implements Servlet {
 		htmlWriter.append("<th>Assignee</th>");
 		//---------------------------	
 		IIssueDAO issueDAO = new IssueDAO();
+		int length = 0;
+		int currentPage = 0;
 		try {
-			List<Issue> issues = issueDAO.getAll();
+			List<Issue> allIssues = issueDAO.getAll();
+			length = allIssues.size();
+			currentPage = (int) request.getAttribute("currentPage");
+			if (currentPage < 1) {
+				currentPage = 1;
+			} else if (currentPage > length/10 + 1) {
+				currentPage = length/10 + 1;
+			}
+			int endPosition = (currentPage * 10) % allIssues.size();
+			if (currentPage * 10 > allIssues.size()) {
+				endPosition = currentPage * 10 - endPosition;
+			} else {
+				endPosition = currentPage * 10;
+			}
+			List<Issue> issues = allIssues.subList((currentPage - 1) * 10, 
+					endPosition);
 			for (Issue issue : issues) {
 				htmlWriter.append("<tr>");
 				if (user == null) {
@@ -154,6 +171,15 @@ public class Dashboard implements Servlet {
 		} 
 		//---------------------------
 		htmlWriter.append("</table>");
+		htmlWriter.append("<div>Page: "
+				+ currentPage 
+				+ "/" + (length / 10 + 1) + "</div>");
+		htmlWriter.append("<form method=\"post\" action=\"dashboard?currentPage=" + currentPage + "\">");
+		htmlWriter.append("<input type=\"submit\" name=\"previousPage\" value=\"Previous\"/>");
+		htmlWriter.append("</form>");
+		htmlWriter.append("<form method=\"post\" action=\"dashboard?currentPage=" + currentPage + "\">");
+		htmlWriter.append("<input type=\"submit\" name=\"nextPage\" value=\"Next\"/>");
+		htmlWriter.append("</form>");
 		htmlWriter.append("</td>");
 		htmlWriter.append("</tr>");
 		htmlWriter.append("</table>");
