@@ -242,7 +242,7 @@
 			<assignee>5</assignee>
 		</issue>
 		<issue id="6">
-			<summary>Error=-2147205086</summary>
+			<summary>Error = -2147205086</summary>
 			<description>
 				The browser goes through redirect loops and gives 
 				the error: Error=-2147205086 in the address bar, 

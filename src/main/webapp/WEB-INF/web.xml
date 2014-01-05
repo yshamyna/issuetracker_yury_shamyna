@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-  version="2.5">
-
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   <display-name>Issue Tracker</display-name>
   <description>JEE training project implementation by Yury Shamyna</description>
-
   <servlet>
     <servlet-name>SampleServlet</servlet-name>
     <servlet-class>org.training.issuetracker.SampleServlet</servlet-class>
@@ -15,14 +10,31 @@
     <servlet-name>SampleServlet</servlet-name>
     <url-pattern>/SampleServlet</url-pattern>
   </servlet-mapping>
-  
   <servlet>
-  	<servlet-name>Dashboard</servlet-name>
-  	<servlet-class>org.training.issuetracker.servlets.Dashboard</servlet-class>
+    <servlet-name>Dashboard</servlet-name>
+    <servlet-class>org.training.issuetracker.servlets.Dashboard</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>Dashboard</servlet-name>
-  	<url-pattern>/dashboard</url-pattern>
+    <servlet-name>Dashboard</servlet-name>
+    <url-pattern>/dashboard</url-pattern>
   </servlet-mapping>
-
+  <servlet>
+    <description></description>
+    <display-name>Login</display-name>
+    <servlet-name>Login</servlet-name>
+    <servlet-class>org.training.issuetracker.servlets.Login</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Login</servlet-name>
+    <url-pattern>/login</url-pattern>
+  </servlet-mapping>
+  <filter>
+    <display-name>DashboardFilter</display-name>
+    <filter-name>DashboardFilter</filter-name>
+    <filter-class>org.training.issuetracker.servlets.DashboardFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>DashboardFilter</filter-name>
+    <url-pattern>/dashboard</url-pattern>
+  </filter-mapping>
 </web-app>
