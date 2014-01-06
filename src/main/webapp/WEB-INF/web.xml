@@ -37,4 +37,14 @@
     <filter-name>DashboardFilter</filter-name>
     <url-pattern>/dashboard</url-pattern>
   </filter-mapping>
+  <servlet>
+    <description></description>
+    <display-name>IssueServlet</display-name>
+    <servlet-name>IssueServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.servlets.IssueServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>IssueServlet</servlet-name>
+    <url-pattern>/issue</url-pattern>
+  </servlet-mapping>
 </web-app>

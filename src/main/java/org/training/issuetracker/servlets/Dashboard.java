@@ -122,11 +122,12 @@ public class Dashboard implements Servlet {
 		htmlWriter.append("<tr>");
 		htmlWriter.append("<td>");
 		htmlWriter.append("<table border=\"1\" style=\"width:100%\">");
-		htmlWriter.append("<th>Issue</th>");
-		htmlWriter.append("<th>Status</th>");
-		htmlWriter.append("<th>Type</th>");
-		htmlWriter.append("<th>Priority</th>");
-		htmlWriter.append("<th>Assignee</th>");
+		htmlWriter.append("<th>id</th>");
+		htmlWriter.append("<th>priority</th>");
+		htmlWriter.append("<th>assignee</th>");
+		htmlWriter.append("<th>type</th>");
+		htmlWriter.append("<th>status</th>");
+		htmlWriter.append("<th>summary</th>");
 		//---------------------------	
 		IIssueDAO issueDAO = new IssueDAO();
 		int length = 0;
@@ -150,21 +151,18 @@ public class Dashboard implements Servlet {
 					endPosition);
 			for (Issue issue : issues) {
 				htmlWriter.append("<tr>");
-				if (user == null) {
-					htmlWriter.append("<td>" + issue.getSummary() + "</td>");	
-				} else {
-					htmlWriter.append("<td><a href=\"#\" onclick=\"return(false)\">" + issue.getSummary() + "</a></td>");
-				}
-				htmlWriter.append("<td>" + issue.getStatus().getValue() + "</td>");
-				htmlWriter.append("<td>" + issue.getType().getValue() + "</td>");
+				htmlWriter.append("<td><a href=\"issue?id=" + issue.getId() +"\">" + issue.getId() + "</a></td>");
 				htmlWriter.append("<td>" + issue.getPriority().getValue() + "</td><td>");
 				User assignee = issue.getAssignee();
 				if (assignee == null) {
 					htmlWriter.append("---");
 				} else {
-					htmlWriter.append(assignee.getFirstName() + " " + assignee.getLastName());
+					htmlWriter.append(assignee.getFirstName() + " " + assignee.getLastName() + "</td>");
 				}
-				htmlWriter.append("</td></tr>");
+				htmlWriter.append("<td>" + issue.getType().getValue() + "</td>");
+				htmlWriter.append("<td>" + issue.getStatus().getValue() + "</td>");
+				htmlWriter.append("<td>" + issue.getSummary() + "</td>");
+				htmlWriter.append("</tr>");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
