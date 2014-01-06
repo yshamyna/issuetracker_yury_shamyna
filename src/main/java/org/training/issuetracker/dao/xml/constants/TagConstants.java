@@ -30,4 +30,8 @@ public class TagConstants {
 	public final static String SUMMARY = "summary";
 	public final static String BUILD_FOUND = "build_found";
 	public final static String ASSIGNEE = "assignee";
+	public final static String CREATE_DATE = "create_date";
+	public final static String MODIFY_DATE = "modify_date";
+	public final static String CREATE_BY = "created_by";
+	public final static String MODIFY_BY = "modify_by";
 }

@@ -1,7 +1,14 @@
 package org.training.issuetracker.beans;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Issue {
 	private long id;
+	private Date createDate;
+	private User createdBy;
+	private Date modifyDate;
+	private User modifyBy;
 	private String summary;
 	private String description;
 	private IssueStatus status;
@@ -13,6 +20,38 @@ public class Issue {
 	
 	public Issue() {
 		super();
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public User getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Date getModifyDate() {
+		return modifyDate;
+	}
+
+	public void setModifyDate(Date modifyDate) {
+		this.modifyDate = modifyDate;
+	}
+
+	public User getModifyBy() {
+		return modifyBy;
+	}
+
+	public void setModifyBy(User modifyBy) {
+		this.modifyBy = modifyBy;
 	}
 
 	public long getId() {
@@ -85,5 +124,15 @@ public class Issue {
 
 	public void setAssignee(User assignee) {
 		this.assignee = assignee;
+	}
+	
+	public String getFormatModifyDate() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, YYYY h:mm a");
+	    return dateFormat.format(modifyDate);
+	}
+	
+	public String getFormatCreatedDate() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, YYYY h:mm a");
+	    return dateFormat.format(createDate);
 	}
 }

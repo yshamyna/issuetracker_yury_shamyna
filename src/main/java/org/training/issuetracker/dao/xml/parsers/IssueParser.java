@@ -1,5 +1,6 @@
 package org.training.issuetracker.dao.xml.parsers;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +71,22 @@ public class IssueParser extends DefaultHandler {
 					int userId = Integer.parseInt(new String(ch, start, length));
 					IUserDAO uDAO = new UserDAO();
 					issue.setAssignee(uDAO.getById(userId));
+				} else if (TagConstants.CREATE_BY.equals(currentTag)) {
+					int userId = Integer.parseInt(new String(ch, start, length));
+					IUserDAO uDAO = new UserDAO();
+					issue.setCreatedBy((uDAO.getById(userId)));
+				} else if (TagConstants.MODIFY_BY.equals(currentTag)) {
+					int userId = Integer.parseInt(new String(ch, start, length));
+					IUserDAO uDAO = new UserDAO();
+					issue.setModifyBy((uDAO.getById(userId)));
+				} else if (TagConstants.CREATE_DATE.equals(currentTag)) {
+					String date = new String(ch, start, length);
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-m-d h:mm a");
+					issue.setCreateDate(format.parse(date));
+				} else if (TagConstants.MODIFY_DATE.equals(currentTag)) {
+					String date = new String(ch, start, length);
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-m-d h:mm a");
+					issue.setModifyDate(format.parse(date));
 				}
 			} catch (Exception e) {
 				throw new SAXException(e);

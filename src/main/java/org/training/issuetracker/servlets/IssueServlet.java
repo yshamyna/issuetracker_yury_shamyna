@@ -116,6 +116,10 @@ public class IssueServlet extends HttpServlet {
 					out.append("</tr>");
 					out.println("<tr><td>");
 					out.println("<ul>");
+					out.println("<li style=\"list-style:none;\">Create date: " + issue.getFormatCreatedDate() + "</li>");
+					out.println("<li style=\"list-style:none;\">Created by: " + issue.getCreatedBy().getFirstName() + " " + issue.getCreatedBy().getLastName() + "</li>");
+					out.println("<li style=\"list-style:none;\">Modify date: " + issue.getFormatModifyDate() + "</li>");
+					out.println("<li style=\"list-style:none;\">Created by: " + issue.getModifyBy().getFirstName() + " " + issue.getModifyBy().getLastName() + "</li>");
 					out.println("<li style=\"list-style:none;\">Id: " + issue.getId() + "</li>");
 					out.println("<li style=\"list-style:none;\">Summary: " + issue.getSummary() + "</li>");
 					out.println("<li style=\"list-style:none;\">Description: " + issue.getDescription() + "</li>");
@@ -180,6 +184,10 @@ public class IssueServlet extends HttpServlet {
 					out.append("<td>");
 					// issue -------
 					out.println("<ul>");
+					out.println("<li style=\"list-style:none;\">Create date: " + issue.getFormatCreatedDate() + "</li>");
+					out.println("<li style=\"list-style:none;\">Created by: " + issue.getCreatedBy().getFirstName() + " " + issue.getCreatedBy().getLastName() + "</li>");
+					out.println("<li style=\"list-style:none;\">Modify date: " + issue.getFormatModifyDate() + "</li>");
+					out.println("<li style=\"list-style:none;\">Modify by: " + issue.getModifyBy().getFirstName() + " " + issue.getModifyBy().getLastName() + "</li>");
 					out.println("<li style=\"list-style:none;\">Id: " + issue.getId() + "</li>");
 					out.println("<li style=\"list-style:none;\">Summary: " + issue.getSummary() + "</li>");
 					out.println("<li style=\"list-style:none;\">Description: " + issue.getDescription() + "</li>");

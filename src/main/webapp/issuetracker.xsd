@@ -141,6 +141,10 @@
   	
   	<complexType name="issue">
   		<sequence>
+  			<element name="create_date" type="tns:Data" />
+  			<element name="created_by" type="integer" />
+  			<element name="modify_date" type="tns:Data" />
+  			<element name="modify_by" type="integer" />
   			<element name="summary" type="string" />
   			<element name="description" type="string" />
   			<element name="status" type="integer" />
@@ -152,5 +156,11 @@
   		</sequence>
   		<attribute name="id" type="integer" use="required" /> 
   	</complexType>
+  	
+  	<simpleType name="Data"> 
+		<restriction base="string"> 
+			<pattern value="[0-9]{4}-[0-9]{1,2}-[0-9]{1,2} [0-9]{1,2}:[0-9]{2} (am|pm)"/> 
+		</restriction> 
+	</simpleType> 
   
 </schema>
