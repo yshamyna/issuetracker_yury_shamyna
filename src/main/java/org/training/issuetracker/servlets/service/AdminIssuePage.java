@@ -1,23 +1,14 @@
 package org.training.issuetracker.servlets.service;
 
-import java.util.List;
-
 import org.training.issuetracker.beans.Issue;
 import org.training.issuetracker.beans.User;
 
-public class AdminPage extends Page {
+public class AdminIssuePage  extends Page {
 	private User user;
 	
-	public AdminPage(Issue issue) {
+	public AdminIssuePage(User user, Issue issue) {
 		setIssue(issue);
-	}
-	
-	public AdminPage(User user, List<Issue> issues, int currentPage, int allPages) {
-		super();
 		this.user = user;
-		setIssues(issues);
-		setCurrentPage(currentPage);
-		setAllPages(allPages);
 	}
 	
 	protected String getLink() {
@@ -54,4 +45,32 @@ public class AdminPage extends Page {
 		form.append("<li><a href=\"dashboard?action=logout\">Logout</a></li></ul>");
 		return form;
 	}
+	
+	protected StringBuilder getBaseContent() {
+		Issue issue = getIssue();
+		StringBuilder content = new StringBuilder();
+		content.append("<ul>");
+		content.append("<li style=\"list-style:none;\">Create date: " 
+					+ issue.getFormatCreatedDate() + "</li>");
+		content.append("<li style=\"list-style:none;\">Created by: " 
+					+ issue.getCreatedBy().getFirstName() + " " 
+					+ issue.getCreatedBy().getLastName() + "</li>");
+		content.append("<li style=\"list-style:none;\">Modify date: " 
+					+ issue.getFormatModifyDate() + "</li>");
+		content.append("<li style=\"list-style:none;\">Created by: " 
+					+ issue.getModifyBy().getFirstName() + " " 
+				+ issue.getModifyBy().getLastName() + "</li>");
+		try {
+			content.append(getStatusHTML());
+			content.append(getTypesHTML());
+			content.append(getPriorityHTML());
+			content.append(getProjectsAndBuildsHTML());
+			content.append(getUsersHTML());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		content.append("</ul>");
+		return content;
+	}
+
 }

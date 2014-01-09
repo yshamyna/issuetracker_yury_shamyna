@@ -8,6 +8,11 @@ import org.training.issuetracker.beans.User;
 public class UserPage extends Page {
 	private User user;
 	
+	public UserPage(Issue issue) {
+		super();
+		setIssue(issue);
+	}
+	
 	public UserPage(User user, List<Issue> issues, int currentPage, int allPages) {
 		super();
 		this.user = user;
@@ -20,7 +25,7 @@ public class UserPage extends Page {
 		return "<link rel=\"stylesheet\" type=\"text/css\" href=\"menu.css\">";
 	}
 	
-	protected StringBuilder getForm() {
+	protected StringBuilder getMenu() {
 		StringBuilder form = new StringBuilder();
 		form.append("<div class=\"color-menu\"><div>User: " 
 				+ user.getFirstName() + " " + user.getLastName() 

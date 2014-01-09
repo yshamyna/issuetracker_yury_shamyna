@@ -11,6 +11,11 @@ public class GuestPage extends Page {
 		msg = message;
 	}
 	
+	public GuestPage(Issue issue) {
+		super();
+		setIssue(issue);
+	}
+	
 	public GuestPage(List<Issue> issues, int currentPage, int allPages) {
 		super();
 		setIssues(issues);
@@ -18,7 +23,7 @@ public class GuestPage extends Page {
 		setAllPages(allPages);
 	}
 	
-	protected StringBuilder getForm() {
+	protected StringBuilder getMenu() {
 		StringBuilder form = new StringBuilder();
 		form.append("<form method=\"post\" action=\"dashboard\">");
 		form.append("Email address: <input type=\"text\" name=\"emailAddress\"/>&nbsp;");
