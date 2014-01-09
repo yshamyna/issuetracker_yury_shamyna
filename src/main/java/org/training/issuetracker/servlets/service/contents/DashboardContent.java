@@ -27,6 +27,9 @@ public class DashboardContent implements IContent {
 	}
 	
 	private StringBuilder getTable(List<Issue> issues) {
+		if (issues == null) {
+			return new StringBuilder("<i>Error reading issue.</i>");
+		}
 		if (issues.size() == 0) {
 			return new StringBuilder("Issues not found.");
 		}
@@ -61,11 +64,11 @@ public class DashboardContent implements IContent {
 		navigator.append("<div>Page: "
 				+ currentPage 
 				+ "/" + allPages + "</div>");
-		navigator.append("<form method=\"post\" action=\"dashboard?currentPage=" 
+		navigator.append("<form method=\"post\" action=\"dashboard?action=previous_page&currentPage=" 
 							+ currentPage + "\">");
 		navigator.append("<input type=\"submit\" name=\"previousPage\" value=\"Previous\"/>");
 		navigator.append("</form>");
-		navigator.append("<form method=\"post\" action=\"dashboard?currentPage=" 
+		navigator.append("<form method=\"post\" action=\"dashboard?action=next_page&currentPage=" 
 							+ currentPage + "\">");
 		navigator.append("<input type=\"submit\" name=\"nextPage\" value=\"Next\"/>");
 		navigator.append("</form>");

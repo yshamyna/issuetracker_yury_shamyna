@@ -19,7 +19,7 @@ public class AdminMenu implements IMenu {
 				+ "</div></div>");
 		menu.append("<ul class=\"color-menu\">");
 		menu.append("<li><a href=\"\">Edit</a></li>");
-		menu.append("<li><a href=\"\">Search issue</a></li>")	;
+		menu.append("<li><a href=\"\">Search issue</a></li>");
 		menu.append("<li><a href=\"\">Submit issue</a></li>");
 		menu.append("<li><a href=\"\">Review</a>");
 		menu.append("<ul>");	
