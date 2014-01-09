@@ -16,10 +16,18 @@ import org.training.issuetracker.beans.User;
 import org.training.issuetracker.dao.interfaces.IIssueDAO;
 import org.training.issuetracker.dao.xml.parsers.Parser;
 import org.training.issuetracker.dao.xml.service.IssueDAO;
-import org.training.issuetracker.servlets.service.AdminIssuePage;
-import org.training.issuetracker.servlets.service.GuestIssuePage;
-import org.training.issuetracker.servlets.service.Page;
-import org.training.issuetracker.servlets.service.UserIssuePage;
+import org.training.issuetracker.servlets.service.HTMLPage;
+import org.training.issuetracker.servlets.service.contents.GuestReviewIssue;
+import org.training.issuetracker.servlets.service.contents.UserReviewIssue;
+import org.training.issuetracker.servlets.service.intefaces.IContent;
+import org.training.issuetracker.servlets.service.intefaces.ILink;
+import org.training.issuetracker.servlets.service.intefaces.IMenu;
+import org.training.issuetracker.servlets.service.links.AdminLink;
+import org.training.issuetracker.servlets.service.links.GuestLink;
+import org.training.issuetracker.servlets.service.links.UserLink;
+import org.training.issuetracker.servlets.service.menus.AdminMenu;
+import org.training.issuetracker.servlets.service.menus.GuestMenu;
+import org.training.issuetracker.servlets.service.menus.UserMenu;
 
 /**
  * Servlet implementation class IssueServlet
@@ -77,20 +85,30 @@ public class IssueServlet extends HttpServlet {
 			IIssueDAO iDAO = new IssueDAO();
 			int issueId = Integer.parseInt(request.getParameter("id"));
 			Issue issue = iDAO.getById(issueId);
-			Page page = null;
+			ILink link = null;
+			IMenu menu = null;
+			IContent content = null;
 			switch (role) {
 				case GUEST:
-					page = new GuestIssuePage(issue);
+					link = new GuestLink();
+					String message = (String) request.getAttribute("errorMessage");
+					String servletName = servletConfig.getServletName().toLowerCase();
+					menu = new GuestMenu(message, servletName);
+					content = new GuestReviewIssue(issue);
 					break;
 				case USER:
-					page = new UserIssuePage(user, issue);
+					link = new UserLink();
+					menu = new UserMenu(user);
+					content = new UserReviewIssue(issue);
 					break;
 				case ADMINISTRATOR:
-					page = new AdminIssuePage(user, issue);
+					link = new AdminLink();
+					menu = new AdminMenu(user);
+					content = new UserReviewIssue(issue);
 					break;
 			}
 			PrintWriter out = response.getWriter();
-			out.println(page.getPage());
+			out.println(HTMLPage.getHTML(link, menu, content));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

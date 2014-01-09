@@ -1,4 +1,4 @@
-package org.training.issuetracker.servlets.service;
+package org.training.issuetracker.servlets.service.contents;
 
 import java.util.List;
 
@@ -19,111 +19,44 @@ import org.training.issuetracker.dao.xml.service.ProjectDAO;
 import org.training.issuetracker.dao.xml.service.StatusDAO;
 import org.training.issuetracker.dao.xml.service.TypeDAO;
 import org.training.issuetracker.dao.xml.service.UserDAO;
+import org.training.issuetracker.servlets.service.intefaces.IContent;
 
-public abstract class Page {
-	private StringBuilder page;
-	private List<Issue> issues = null;
-	private Issue issue = null;
-	private int currentPage;
-	private int allPages;
+public class UserReviewIssue implements IContent {
 	
-	protected Issue getIssue() {
-		return issue;
-	}
+	private Issue issue;
 	
-	protected void setIssue(Issue issue) {
+	public UserReviewIssue(Issue issue) {
 		this.issue = issue;
 	}
-	
-	protected void setCurrentPage(int currentPage) {
-		this.currentPage = currentPage;
-	}
-	
-	protected void setAllPages(int allPages) {
-		this.allPages = allPages;
-	}
 
-	protected void setIssues(List<Issue> issues) {
-		this.issues = issues;
-	}
-	
-	public StringBuilder getPage() {
-		page = new StringBuilder();
-		page.append("<!DOCTYPE html>");
-		page.append("<html style=\"font-family:arial;\">");
-		page.append("<title>Issue tracker</title>");
-		page.append(getLink());
-		page.append("<body>");
-		page.append("<table border=\"1\" style=\"width:100%\">");
-		page.append("<tr><td>");
-		page.append(getMenu());
-		page.append("</td></tr><tr><td>");
-		page.append(getBaseContent());
-		page.append("</td><tr></body></html>");
-		return page;
-	}
-	
-	protected String getLink() {
-		return "";
-	}
-	
-	protected StringBuilder getMenu() {
-		return new StringBuilder("");
-	}
-	
-	private StringBuilder getTable(List<Issue> issues) {
-		if (issues.size() == 0) {
-			return new StringBuilder("Issues not found.");
+	@Override
+	public StringBuilder getValue() {
+		StringBuilder content = new StringBuilder();
+		try {
+			content.append("<ul>");
+			content.append("<li style=\"list-style:none;\">Create date: " 
+						+ issue.getFormatCreatedDate() + "</li>");
+			content.append("<li style=\"list-style:none;\">Created by: " 
+						+ issue.getCreatedBy().getFirstName() + " " 
+						+ issue.getCreatedBy().getLastName() + "</li>");
+			content.append("<li style=\"list-style:none;\">Modify date: " 
+						+ issue.getFormatModifyDate() + "</li>");
+			content.append("<li style=\"list-style:none;\">Created by: " 
+						+ issue.getModifyBy().getFirstName() + " " 
+					+ issue.getModifyBy().getLastName() + "</li>");
+			content.append(getStatusHTML());
+			content.append(getTypesHTML());
+			content.append(getPriorityHTML());
+			content.append(getProjectsAndBuildsHTML());
+			content.append(getUsersHTML());
+			content.append("</ul>");
+		} catch (Exception e) {
+			content = new StringBuilder("Error.");
 		}
-		StringBuilder table = new StringBuilder();
-		table.append("<table border=\"1\" style=\"width:100%\">");
-		table.append("<caption>Issues</caption>");
-		table.append("<th>id</th><th>priority</th><th>assignee</th><th>type</th><th>status</th><th>summary</th>");
-		User assignee = null;
-		for (Issue issue : issues) {
-			table.append("<tr>");
-			table.append("<td><a href=\"issue?id=" + issue.getId() +"\">" + issue.getId() + "</a></td>");
-			table.append("<td>" + issue.getPriority().getValue() + "</td>");
-			assignee = issue.getAssignee();
-			if (assignee == null) {
-				table.append("<td>none</td>");
-			} else {
-				table.append("<td>" + assignee.getFirstName() 
-						+ " " + assignee.getLastName() 
-						+ "</td>");
-			}
-			table.append("<td>" + issue.getType().getValue() + "</td>");
-			table.append("<td>" + issue.getStatus().getValue() + "</td>");
-			table.append("<td>" + issue.getSummary() + "</td>");
-			table.append("</tr>");
-		}
-		table.append("</table>");
-		return table;
-	}
-	
-	private StringBuilder getPageNavigationForm() {
-		StringBuilder navigator = new StringBuilder();
-		navigator.append("<div>Page: "
-				+ currentPage 
-				+ "/" + allPages + "</div>");
-		navigator.append("<form method=\"post\" action=\"dashboard?currentPage=" 
-							+ currentPage + "\">");
-		navigator.append("<input type=\"submit\" name=\"previousPage\" value=\"Previous\"/>");
-		navigator.append("</form>");
-		navigator.append("<form method=\"post\" action=\"dashboard?currentPage=" 
-							+ currentPage + "\">");
-		navigator.append("<input type=\"submit\" name=\"nextPage\" value=\"Next\"/>");
-		navigator.append("</form>");
-		return navigator;
-	}
-	
-	protected StringBuilder getBaseContent() {
-		StringBuilder content = new StringBuilder(getTable(issues));
-		content.append(getPageNavigationForm());
 		return content;
 	}
 	
-	protected StringBuilder getStatusHTML() throws Exception {
+	private StringBuilder getStatusHTML() throws Exception {
 		StringBuilder statusesHTML = new StringBuilder();
 		IStatusDAO statusDAO = new StatusDAO();
 		List<IssueStatus> statuses = statusDAO.getAll();
@@ -142,8 +75,7 @@ public abstract class Page {
 		return statusesHTML;
 	}
 	
-	
-	protected StringBuilder getTypesHTML() throws Exception {
+	private StringBuilder getTypesHTML() throws Exception {
 		StringBuilder typesHTML = new StringBuilder();
 		ITypeDAO typeDAO = new TypeDAO();
 		List<IssueType> types = typeDAO.getAll();
@@ -162,7 +94,7 @@ public abstract class Page {
 		return typesHTML;
 	}
 	
-	protected StringBuilder getPriorityHTML() throws Exception {
+	private StringBuilder getPriorityHTML() throws Exception {
 		StringBuilder prioritiesHTML = new StringBuilder();
 		IPriorityDAO priorityDAO = new PriorityDAO();
 		List<IssuePriority> priorities = priorityDAO.getAll();
@@ -181,7 +113,7 @@ public abstract class Page {
 		return prioritiesHTML;
 	}
 	
-	protected StringBuilder getProjectsAndBuildsHTML() throws Exception {
+	private StringBuilder getProjectsAndBuildsHTML() throws Exception {
 		StringBuilder projectsAndBuildsHTML = new StringBuilder();
 		IProjectDAO projectDAO = new ProjectDAO();
 		List<Project> projects = projectDAO.getAll();
@@ -215,7 +147,7 @@ public abstract class Page {
 		return projectsAndBuildsHTML;
 	}
 	
-	protected StringBuilder getUsersHTML() throws Exception {
+	private StringBuilder getUsersHTML() throws Exception {
 		StringBuilder usersHTML = new StringBuilder();
 		IUserDAO userDAO = new UserDAO();
 		List<User> users = userDAO.getAll();
@@ -237,4 +169,5 @@ public abstract class Page {
 		usersHTML.append("</select></li>");
 		return usersHTML;
 	}
+
 }

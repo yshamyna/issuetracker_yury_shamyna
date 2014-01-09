@@ -15,10 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import org.training.issuetracker.beans.Issue;
 import org.training.issuetracker.beans.User;
 import org.training.issuetracker.dao.xml.parsers.Parser;
-import org.training.issuetracker.servlets.service.AdminPage;
-import org.training.issuetracker.servlets.service.GuestPage;
-import org.training.issuetracker.servlets.service.Page;
-import org.training.issuetracker.servlets.service.UserPage;
+import org.training.issuetracker.servlets.service.HTMLPage;
+import org.training.issuetracker.servlets.service.contents.DashboardContent;
+import org.training.issuetracker.servlets.service.intefaces.IContent;
+import org.training.issuetracker.servlets.service.intefaces.ILink;
+import org.training.issuetracker.servlets.service.intefaces.IMenu;
+import org.training.issuetracker.servlets.service.links.AdminLink;
+import org.training.issuetracker.servlets.service.links.GuestLink;
+import org.training.issuetracker.servlets.service.links.UserLink;
+import org.training.issuetracker.servlets.service.menus.AdminMenu;
+import org.training.issuetracker.servlets.service.menus.GuestMenu;
+import org.training.issuetracker.servlets.service.menus.UserMenu;
 
 public class Dashboard implements Servlet {
 	
@@ -66,19 +73,27 @@ public class Dashboard implements Servlet {
 		int currentPage = (int) request.getAttribute("currentPage");
 		int allPages = (int) request.getAttribute("allPages");
 		List<Issue> issues = (List<Issue>) request.getAttribute("issues");
-		Page page = null;
+		ILink link = null;
+		IMenu menu = null;
+		IContent content = null;
 		switch (role) {
 			case GUEST:
-				page = new GuestPage(issues, currentPage, allPages);
+				link = new GuestLink();
+				String message = (String) request.getAttribute("errorMessage");
+				String servletName = servletConfig.getServletName().toLowerCase();
+				menu = new GuestMenu(message, servletName);
 				break;
 			case USER:
-				page = new UserPage(user, issues, currentPage, allPages);
+				link = new UserLink();
+				menu = new UserMenu(user);
 				break;
 			case ADMINISTRATOR:
-				page = new AdminPage(user, issues, currentPage, allPages);
+				link = new AdminLink();
+				menu = new AdminMenu(user);
 				break;
 		}
+		content = new DashboardContent(issues, currentPage, allPages);
 		PrintWriter out = response.getWriter();
-		out.println(page.getPage());
+		out.println(HTMLPage.getHTML(link, menu, content));
 	}
 }

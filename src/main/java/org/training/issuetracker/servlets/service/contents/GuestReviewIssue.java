@@ -1,31 +1,19 @@
-package org.training.issuetracker.servlets.service;
+package org.training.issuetracker.servlets.service.contents;
 
 import org.training.issuetracker.beans.Issue;
 import org.training.issuetracker.beans.User;
+import org.training.issuetracker.servlets.service.intefaces.IContent;
 
-public class GuestIssuePage extends Page {
+public class GuestReviewIssue implements IContent {
+	private Issue issue;
 	
-	public GuestIssuePage(Issue issue) {
-		super();
-		setIssue(issue);
+	public GuestReviewIssue(Issue issue) {
+		this.issue = issue;
 	}
-	
-	protected StringBuilder getMenu() {
-		StringBuilder form = new StringBuilder();
-		form.append("<form method=\"post\" action=\"dashboard\">");
-		form.append("Email address: <input type=\"text\" name=\"emailAddress\"/>&nbsp;");
-		form.append("Password: <input type=\"password\" name=\"password\"/>");
-		form.append("<input type=\"submit\" name=\"loginBtn\" value=\"Login\"/>");
-		form.append("</form>");
-		form.append("<div style=\"float:left;height:26px;\"><form action=\"dashboard\">");
-		form.append("<input type=\"submit\" name=\"searchIssue\" value=\"Search\"/>");
-		form.append("</form></div>");
-		return form;
-	}
-	
-	protected StringBuilder getBaseContent() {
+
+	@Override
+	public StringBuilder getValue() {
 		StringBuilder content = new StringBuilder();
-		Issue issue = getIssue();
 		content.append("<ul>");
 		content.append("<li style=\"list-style:none;\">Create date: " + issue.getFormatCreatedDate() + "</li>");
 		content.append("<li style=\"list-style:none;\">Created by: " + issue.getCreatedBy().getFirstName() + " " + issue.getCreatedBy().getLastName() + "</li>");
@@ -49,4 +37,5 @@ public class GuestIssuePage extends Page {
 		content.append("</ul>");
 		return content;
 	}
+
 }
