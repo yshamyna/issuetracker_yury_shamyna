@@ -2,7 +2,6 @@ package org.training.issuetracker.servlets;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.Filter;
@@ -21,6 +20,18 @@ import org.training.issuetracker.dao.interfaces.IIssueDAO;
 import org.training.issuetracker.dao.interfaces.IUserDAO;
 import org.training.issuetracker.dao.xml.service.IssueDAO;
 import org.training.issuetracker.dao.xml.service.UserDAO;
+import org.training.issuetracker.servlets.service.comparators.AssigneeIssueAscComparator;
+import org.training.issuetracker.servlets.service.comparators.AssigneeIssueDescComparator;
+import org.training.issuetracker.servlets.service.comparators.IdIssueAscComparator;
+import org.training.issuetracker.servlets.service.comparators.IdIssueDescComparator;
+import org.training.issuetracker.servlets.service.comparators.PriorityIssueAscComparator;
+import org.training.issuetracker.servlets.service.comparators.PriorityIssueDescComparator;
+import org.training.issuetracker.servlets.service.comparators.StatusIssueAscComparator;
+import org.training.issuetracker.servlets.service.comparators.StatusIssueDescComparator;
+import org.training.issuetracker.servlets.service.comparators.SummaryIssueAscComparator;
+import org.training.issuetracker.servlets.service.comparators.SummaryIssueDescComparator;
+import org.training.issuetracker.servlets.service.comparators.TypeIssueAscComparator;
+import org.training.issuetracker.servlets.service.comparators.TypeIssueDescComparator;
 
 /**
  * Servlet Filter implementation class DashboardFilter
@@ -79,18 +90,6 @@ public class DashboardFilter implements Filter {
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
 	}
-	
-//	private class IdAscComparator implements Comparator<Issue> {
-//	    public int compare(Issue i1, Issue i2) {
-//	    	return i1.getId() > i2.getId() ? 1 : i1.getId() < i2.getId() ? -1 : 0;
-//	    }
-//	}
-//	
-//	private class IdDescComparator implements Comparator<Issue> {
-//	    public int compare(Issue i1, Issue i2) {
-//	    	return i1.getId() < i2.getId() ? 1 : i1.getId() > i2.getId() ? -1 : 0;
-//	    }
-//	}
 	
 	private void logout(ServletRequest request, ServletResponse response) throws Exception {
 		HttpServletRequest req = (HttpServletRequest) request; 
@@ -175,9 +174,9 @@ public class DashboardFilter implements Filter {
 			if (request.getAttribute("currentPage") != null) {
 				currentPage = (int) request.getAttribute("currentPage");
 			}
-//			if (request.getParameter("id_sort") != null) {
-//				currentPage = Integer.parseInt(request.getParameter("currentPage"));
-//			}
+			if (request.getParameter("column") != null) {
+				currentPage = Integer.parseInt(request.getParameter("currentPage"));
+			}
 			if (currentPage < 1) {
 				currentPage = 1;
 			} else if (currentPage > length/10 + 1) {
@@ -196,14 +195,63 @@ public class DashboardFilter implements Filter {
 			}
 			List<Issue> issues = allIssues.subList((currentPage - 1) * 10, 
 					endPosition);
-//			if ("asc".equals(request.getParameter("id_sort"))) {
-//				Collections.sort(issues, new IdAscComparator());
-//			} else if ("desc".equals(request.getParameter("id_sort"))) {
-//				Collections.sort(issues, new IdDescComparator());
-//			}
+			issues = sort(request, response, issues);
 			request.setAttribute("issues", issues);
 		} catch (Exception e) {
 			request.setAttribute("issues", null);
 		}
+	}
+	
+	private static enum Sort {
+		ID_ASC, ID_DESC, PRIORITY_DESC, PRIORITY_ASC, 
+		ASSIGNEE_ASC, ASSIGNEE_DESC, TYPE_ASC, TYPE_DESC,
+		STATUS_ASC, STATUS_DESC, SUMMARY_ASC, SUMMARY_DESC;
+	}
+	
+	private List<Issue> sort(ServletRequest request, 
+			ServletResponse response, List<Issue> issues) {
+		String sort = request.getParameter("column");
+		if (sort != null) {
+			Sort srt = Sort.valueOf(sort.toUpperCase());
+			switch (srt) {
+			case ID_ASC:
+				Collections.sort(issues, new IdIssueAscComparator());
+				break;
+			case ID_DESC:
+				Collections.sort(issues, new IdIssueDescComparator());
+				break;
+			case PRIORITY_ASC:
+				Collections.sort(issues, new PriorityIssueAscComparator());
+				break;
+			case PRIORITY_DESC:
+				Collections.sort(issues, new PriorityIssueDescComparator());
+			break;
+			case ASSIGNEE_ASC:
+				Collections.sort(issues, new AssigneeIssueAscComparator());
+				break;
+			case ASSIGNEE_DESC:
+				Collections.sort(issues, new AssigneeIssueDescComparator());
+				break;
+			case TYPE_ASC:
+				Collections.sort(issues, new TypeIssueAscComparator());
+				break;
+			case TYPE_DESC:
+				Collections.sort(issues, new TypeIssueDescComparator());
+				break;
+			case STATUS_ASC:
+				Collections.sort(issues, new StatusIssueAscComparator());
+				break;
+			case STATUS_DESC:
+				Collections.sort(issues, new StatusIssueDescComparator());
+				break;
+			case SUMMARY_ASC:
+				Collections.sort(issues, new SummaryIssueAscComparator());
+				break;
+			case SUMMARY_DESC:
+				Collections.sort(issues, new SummaryIssueDescComparator());
+				break;
+			}
+		}
+		return issues;
 	}
 }

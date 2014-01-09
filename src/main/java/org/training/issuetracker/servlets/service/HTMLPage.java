@@ -18,7 +18,7 @@ public class HTMLPage {
 		html.append(menu.getValue());
 		html.append("</td></tr><tr><td>");
 		html.append(content.getValue());
-		html.append("</td><tr></body></html>");
+		html.append("</td><tr></table></body></html>");
 		return html;
 	}
 }

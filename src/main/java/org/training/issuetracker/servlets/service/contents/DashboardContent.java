@@ -36,7 +36,24 @@ public class DashboardContent implements IContent {
 		StringBuilder table = new StringBuilder();
 		table.append("<table border=\"1\" style=\"width:100%\">");
 		table.append("<caption>Issues</caption>");
-		table.append("<th>id</th><th>priority</th><th>assignee</th><th>type</th><th>status</th><th>summary</th>");
+		table.append("<th>id <a href=\"dashboard?column=id_asc&currentPage=" 
+				+currentPage + "\">Asc</a>&nbsp;<a href=\"dashboard?column=id_desc&currentPage="
+				+currentPage + "\">Desc</a></th>");
+		table.append("<th>priority <a href=\"dashboard?column=priority_asc&currentPage=" 
+				+currentPage + "\">Asc</a>&nbsp;<a href=\"dashboard?column=priority_desc&currentPage="
+				+currentPage + "\">Desc</a></th>");
+		table.append("<th>priority <a href=\"dashboard?column=assignee_asc&currentPage=" 
+				+currentPage + "\">Asc</a>&nbsp;<a href=\"dashboard?column=assignee_desc&currentPage="
+				+currentPage + "\">Desc</a></th>");
+		table.append("<th>type <a href=\"dashboard?column=type_asc&currentPage=" 
+				+currentPage + "\">Asc</a>&nbsp;<a href=\"dashboard?column=type_desc&currentPage="
+				+currentPage + "\">Desc</a></th>");
+		table.append("<th>status <a href=\"dashboard?column=status_asc&currentPage=" 
+				+currentPage + "\">Asc</a>&nbsp;<a href=\"dashboard?column=status_desc&currentPage="
+				+currentPage + "\">Desc</a></th>");
+		table.append("<th>status <a href=\"dashboard?column=summary_asc&currentPage=" 
+				+currentPage + "\">Asc</a>&nbsp;<a href=\"dashboard?column=summary_desc&currentPage="
+				+currentPage + "\">Desc</a></th>");
 		User assignee = null;
 		for (Issue issue : issues) {
 			table.append("<tr>");
