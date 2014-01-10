@@ -2,7 +2,6 @@ package org.training.issuetracker.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -18,6 +17,9 @@ import org.training.issuetracker.dao.xml.parsers.Parser;
 import org.training.issuetracker.dao.xml.service.IssueDAO;
 import org.training.issuetracker.servlets.enums.Role;
 import org.training.issuetracker.servlets.service.HTMLPage;
+import org.training.issuetracker.servlets.service.constants.GeneralConstants;
+import org.training.issuetracker.servlets.service.constants.MessagesConstants;
+import org.training.issuetracker.servlets.service.constants.RequestConstants;
 import org.training.issuetracker.servlets.service.contents.GuestReviewIssue;
 import org.training.issuetracker.servlets.service.contents.UserReviewIssue;
 import org.training.issuetracker.servlets.service.intefaces.IContent;
@@ -65,9 +67,11 @@ public class EditIssue extends HttpServlet {
 	
 	private void task(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		User user = (User) session.getAttribute("user");
+		User user = (User) session.getAttribute(RequestConstants.USER_ATTRIBUTE);
+		PrintWriter out = response.getWriter();
 		try {
-			Parser.setURL(servletConfig.getServletContext().getResource("issuetracker.xml"));
+			Parser.setURL(servletConfig.getServletContext().
+					getResource(GeneralConstants.XML_RESOURCE));
 			Role role;
 			if (user == null) {
 				role = Role.GUEST;
@@ -75,7 +79,8 @@ public class EditIssue extends HttpServlet {
 				role = Role.valueOf(user.getRole().getValue().toUpperCase());
 			}
 			IIssueDAO iDAO = new IssueDAO();
-			int issueId = Integer.parseInt(request.getParameter("id"));
+			int issueId = Integer.parseInt(request.
+					getParameter(RequestConstants.ID_PARAMETER));
 			Issue issue = iDAO.getById(issueId);
 			ILink link = null;
 			IMenu menu = null;
@@ -83,7 +88,8 @@ public class EditIssue extends HttpServlet {
 			switch (role) {
 				case GUEST:
 					link = new GuestLink();
-					String message = (String) request.getAttribute("errorMessage");
+					String message = (String) request.
+							getAttribute(RequestConstants.ERROR_MSG_ATTRIBUTE);
 					menu = new GuestMenu(message);
 					content = new GuestReviewIssue(issue);
 					break;
@@ -98,10 +104,9 @@ public class EditIssue extends HttpServlet {
 					content = new UserReviewIssue(issue);
 					break;
 			}
-			PrintWriter out = response.getWriter();
 			out.println(HTMLPage.getHTML(link, menu, content));
 		} catch (Exception e) {
-			e.printStackTrace();
+			out.println(MessagesConstants.READ_ERROR_FROM_XML_FILE);
 		}
 	}
 

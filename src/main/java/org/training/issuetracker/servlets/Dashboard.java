@@ -17,6 +17,8 @@ import org.training.issuetracker.beans.User;
 import org.training.issuetracker.dao.xml.parsers.Parser;
 import org.training.issuetracker.servlets.enums.Role;
 import org.training.issuetracker.servlets.service.HTMLPage;
+import org.training.issuetracker.servlets.service.constants.GeneralConstants;
+import org.training.issuetracker.servlets.service.constants.RequestConstants;
 import org.training.issuetracker.servlets.service.contents.DashboardContent;
 import org.training.issuetracker.servlets.service.intefaces.IContent;
 import org.training.issuetracker.servlets.service.intefaces.ILink;
@@ -50,7 +52,8 @@ public class Dashboard implements Servlet {
 	public void init(ServletConfig config) throws ServletException {
 		servletConfig = config;
 		try {
-			Parser.setURL(config.getServletContext().getResource("issuetracker.xml"));
+			Parser.setURL(config.getServletContext().
+					getResource(GeneralConstants.XML_RESOURCE));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -60,23 +63,27 @@ public class Dashboard implements Servlet {
 	public void service(ServletRequest request, ServletResponse response)
 			throws ServletException, IOException {
 		HttpServletRequest req = (HttpServletRequest) request;
-		User user = (User) req.getSession().getAttribute("user");
+		User user = (User) req.getSession().getAttribute(RequestConstants.USER_ATTRIBUTE);
 		Role role;
 		if (user == null) {
 			role = Role.GUEST;
 		} else {
 			role = Role.valueOf(user.getRole().getValue().toUpperCase());
 		}
-		int	currentPage = (int) request.getAttribute("currentPage");
-		int allPages = (int) request.getAttribute("allPages");
-		List<Issue> issues = (List<Issue>) request.getAttribute("issues");
+		int	currentPage = (int) request.
+				getAttribute(RequestConstants.CURRENT_PAGE_ATTRIBUTE);
+		int allPages = (int) request.
+				getAttribute(RequestConstants.ALL_PAGES_ATTRIBUTE);
+		List<Issue> issues = (List<Issue>) request.
+				getAttribute(RequestConstants.ISSUES_ATTRIBUTE);
 		ILink link = null;
 		IMenu menu = null;
 		IContent content = null;
 		switch (role) {
 			case GUEST:
 				link = new GuestLink();
-				String message = (String) request.getAttribute("errorMessage");
+				String message = (String) request.
+						getAttribute(RequestConstants.ERROR_MSG_ATTRIBUTE);
 				menu = new GuestMenu(message);
 				break;
 			case USER:

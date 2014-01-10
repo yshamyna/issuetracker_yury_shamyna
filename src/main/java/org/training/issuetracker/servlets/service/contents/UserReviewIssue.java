@@ -19,6 +19,7 @@ import org.training.issuetracker.dao.xml.service.ProjectDAO;
 import org.training.issuetracker.dao.xml.service.StatusDAO;
 import org.training.issuetracker.dao.xml.service.TypeDAO;
 import org.training.issuetracker.dao.xml.service.UserDAO;
+import org.training.issuetracker.servlets.service.constants.MessagesConstants;
 import org.training.issuetracker.servlets.service.intefaces.IContent;
 
 public class UserReviewIssue implements IContent {
@@ -51,7 +52,7 @@ public class UserReviewIssue implements IContent {
 			content.append(getUsersHTML());
 			content.append("</ul>");
 		} catch (Exception e) {
-			content = new StringBuilder("Error.");
+			content = new StringBuilder(MessagesConstants.READ_ERROR);
 		}
 		return content;
 	}

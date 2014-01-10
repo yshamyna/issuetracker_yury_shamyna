@@ -11,15 +11,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.training.issuetracker.beans.Issue;
 import org.training.issuetracker.beans.User;
 import org.training.issuetracker.dao.interfaces.IIssueDAO;
-import org.training.issuetracker.dao.interfaces.IUserDAO;
 import org.training.issuetracker.dao.xml.service.IssueDAO;
-import org.training.issuetracker.dao.xml.service.UserDAO;
 import org.training.issuetracker.servlets.service.Authorization;
 import org.training.issuetracker.servlets.service.comparators.AssigneeIssueAscComparator;
 import org.training.issuetracker.servlets.service.comparators.AssigneeIssueDescComparator;
@@ -33,6 +29,8 @@ import org.training.issuetracker.servlets.service.comparators.SummaryIssueAscCom
 import org.training.issuetracker.servlets.service.comparators.SummaryIssueDescComparator;
 import org.training.issuetracker.servlets.service.comparators.TypeIssueAscComparator;
 import org.training.issuetracker.servlets.service.comparators.TypeIssueDescComparator;
+import org.training.issuetracker.servlets.service.constants.GeneralConstants;
+import org.training.issuetracker.servlets.service.constants.RequestConstants;
 
 /**
  * Servlet Filter implementation class DashboardFilter
@@ -60,7 +58,7 @@ public class DashboardFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		try {
-			String action = request.getParameter("action");
+			String action = request.getParameter(RequestConstants.ACTION_PARAMETER);
 			if (action != null) {
 				Action actn = Action.valueOf(action.toUpperCase());
 				switch (actn) {
@@ -93,20 +91,25 @@ public class DashboardFilter implements Filter {
 	}
 	
 	private void nextPage(ServletRequest request, ServletResponse response) {
-		int currentPage = Integer.parseInt(request.getParameter("currentPage"));
+		int currentPage = Integer.parseInt(request.
+				getParameter(RequestConstants.CURRENT_PAGE_PARAMETER));
 		currentPage++;
-		request.setAttribute("currentPage", currentPage);
+		request.setAttribute(RequestConstants.CURRENT_PAGE_ATTRIBUTE, 
+				currentPage);
 	}
 	
 	private void previousPage(ServletRequest request, ServletResponse response) {
-		int currentPage = Integer.parseInt(request.getParameter("currentPage"));
+		int currentPage = Integer.parseInt(request.
+				getParameter(RequestConstants.CURRENT_PAGE_PARAMETER));
 		currentPage--;
-		request.setAttribute("currentPage", currentPage);
+		request.setAttribute(RequestConstants.CURRENT_PAGE_ATTRIBUTE, 
+				currentPage);
 	}
 	
 	private void showIssue(ServletRequest request, ServletResponse response) {
 		HttpServletRequest req = (HttpServletRequest) request;
-		User user = (User) req.getSession().getAttribute("user");
+		User user = (User) req.getSession().
+				getAttribute(RequestConstants.USER_ATTRIBUTE);
 		IIssueDAO issueDAO = new IssueDAO();
 		try {
 			List<Issue> allIssues;
@@ -116,36 +119,50 @@ public class DashboardFilter implements Filter {
 				allIssues = issueDAO.getAllByUserId(user.getId());
 			}
 			int length = allIssues.size();
-			int currentPage = 1;
-			if (request.getAttribute("currentPage") != null) {
-				currentPage = (int) request.getAttribute("currentPage");
+			int currentPage = GeneralConstants.FIRST_PAGE;
+			if (request.getAttribute(RequestConstants.
+					CURRENT_PAGE_ATTRIBUTE) != null) {
+				currentPage = (int) request.getAttribute(RequestConstants.
+						CURRENT_PAGE_ATTRIBUTE);
 			}
-			if (request.getParameter("column") != null) {
-				currentPage = Integer.parseInt(request.getParameter("currentPage"));
+			if (request.getParameter(RequestConstants.
+					COLUMN_PARAMETER) != null) {
+				currentPage = Integer.parseInt(request.
+						getParameter(RequestConstants.CURRENT_PAGE_PARAMETER));
 			}
-			if (currentPage < 1) {
-				currentPage = 1;
-			} else if (currentPage > length/10 + 1) {
-				currentPage = length/10 + 1;
+			if (currentPage < GeneralConstants.FIRST_PAGE) {
+				currentPage = GeneralConstants.FIRST_PAGE;
+			} else if (currentPage > length / GeneralConstants.
+					LIMIT_ROW_ON_PAGE + GeneralConstants.INDEX_OFFSET) {
+				currentPage = length / GeneralConstants.
+						LIMIT_ROW_ON_PAGE + GeneralConstants.INDEX_OFFSET;
 			}
-			request.setAttribute("currentPage", currentPage);
-			request.setAttribute("allPages", length/10 + 1);
-			int endPosition = (currentPage * 10) % allIssues.size();
+			request.setAttribute(RequestConstants.CURRENT_PAGE_ATTRIBUTE, 
+					currentPage);
+			request.setAttribute(RequestConstants.ALL_PAGES_ATTRIBUTE, 
+					length / GeneralConstants.LIMIT_ROW_ON_PAGE 
+					+ GeneralConstants.INDEX_OFFSET);
+			int endPosition = (currentPage * GeneralConstants.LIMIT_ROW_ON_PAGE) 
+						% allIssues.size();
 			if (endPosition == 0) {
-				endPosition = (currentPage * 10) - allIssues.size();
+				endPosition = (currentPage * GeneralConstants.LIMIT_ROW_ON_PAGE) 
+						- allIssues.size();
 			}
-			if (currentPage * 10 > allIssues.size()) {
-				endPosition = currentPage * 10 - endPosition;
+			if (currentPage * GeneralConstants.
+					LIMIT_ROW_ON_PAGE > allIssues.size()) {
+				endPosition = currentPage * GeneralConstants.
+						LIMIT_ROW_ON_PAGE - endPosition;
 			} else {
-				endPosition = currentPage * 10;
+				endPosition = currentPage * GeneralConstants.
+						LIMIT_ROW_ON_PAGE;
 			}
-			List<Issue> issues = allIssues.subList((currentPage - 1) * 10, 
-					endPosition);
+			List<Issue> issues = allIssues.subList((currentPage - 
+					GeneralConstants.INDEX_OFFSET) 
+					* GeneralConstants.LIMIT_ROW_ON_PAGE, endPosition);
 			issues = sort(request, response, issues);
-			request.setAttribute("issues", issues);
+			request.setAttribute(RequestConstants.ISSUES_ATTRIBUTE, issues);
 		} catch (Exception e) {
-			e.printStackTrace();
-			request.setAttribute("issues", null);
+			request.setAttribute(RequestConstants.ISSUES_ATTRIBUTE, null);
 		}
 	}
 	
@@ -157,7 +174,7 @@ public class DashboardFilter implements Filter {
 	
 	private List<Issue> sort(ServletRequest request, 
 			ServletResponse response, List<Issue> issues) {
-		String sort = request.getParameter("column");
+		String sort = request.getParameter(RequestConstants.COLUMN_PARAMETER);
 		if (sort != null) {
 			Sort srt = Sort.valueOf(sort.toUpperCase());
 			switch (srt) {
