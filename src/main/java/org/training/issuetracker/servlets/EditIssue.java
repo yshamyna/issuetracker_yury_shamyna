@@ -16,6 +16,7 @@ import org.training.issuetracker.beans.User;
 import org.training.issuetracker.dao.interfaces.IIssueDAO;
 import org.training.issuetracker.dao.xml.parsers.Parser;
 import org.training.issuetracker.dao.xml.service.IssueDAO;
+import org.training.issuetracker.servlets.enums.Role;
 import org.training.issuetracker.servlets.service.HTMLPage;
 import org.training.issuetracker.servlets.service.contents.GuestReviewIssue;
 import org.training.issuetracker.servlets.service.contents.UserReviewIssue;
@@ -32,29 +33,20 @@ import org.training.issuetracker.servlets.service.menus.UserMenu;
 /**
  * Servlet implementation class IssueServlet
  */
-public class IssueServlet extends HttpServlet {
+public class EditIssue extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ServletConfig servletConfig;
-	
-	private static enum Role {
-		ADMINISTRATOR, USER, GUEST;
-	}
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public IssueServlet() {
+    public EditIssue() {
         super();
     }
     
     @Override
 	public void init(ServletConfig config) throws ServletException {
 		servletConfig = config;
-		try {
-			Parser.setURL(config.getServletContext().getResource("issuetracker.xml"));
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -92,8 +84,7 @@ public class IssueServlet extends HttpServlet {
 				case GUEST:
 					link = new GuestLink();
 					String message = (String) request.getAttribute("errorMessage");
-					String servletName = servletConfig.getServletName().toLowerCase();
-					menu = new GuestMenu(message, servletName);
+					menu = new GuestMenu(message);
 					content = new GuestReviewIssue(issue);
 					break;
 				case USER:

@@ -13,6 +13,7 @@ import org.training.issuetracker.dao.interfaces.ITypeDAO;
 import org.training.issuetracker.dao.interfaces.IUserDAO;
 import org.training.issuetracker.dao.xml.constants.AttrsConstants;
 import org.training.issuetracker.dao.xml.constants.TagConstants;
+import org.training.issuetracker.dao.xml.parsers.enums.XMLTag;
 import org.training.issuetracker.dao.xml.service.PriorityDAO;
 import org.training.issuetracker.dao.xml.service.ProjectDAO;
 import org.training.issuetracker.dao.xml.service.StatusDAO;
@@ -23,10 +24,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class IssueParser extends DefaultHandler {
+	private final static String DATE_FORMAT = "yyyy-m-d h:mm a";
 	private List<Issue> issues;
 	private Issue issue;
 	private boolean insideTagIssues = false;
-	private String currentTag;
+	private XMLTag tag;
 	
 	public List<Issue> getIssues() {
 		return issues;
@@ -37,61 +39,78 @@ public class IssueParser extends DefaultHandler {
 			throws SAXException {
 		if (insideTagIssues) {
 			try {
-				if (TagConstants.SUMMARY.equals(currentTag)) {
-					issue.setSummary(new String(ch, start, length));
-				} else if (TagConstants.DESCRIPTION.equals(currentTag)) {
-					issue.setDescription(new String(ch, start, length));
-				} else if (TagConstants.STATUS.equals(currentTag)) {
-					int statusId = Integer.parseInt(new String(ch, start, length));
-					IStatusDAO sDAO = new StatusDAO();
-					issue.setStatus(sDAO.getById(statusId));
-				} else if (TagConstants.TYPE.equals(currentTag)) {
-					int typeId = Integer.parseInt(new String(ch, start, length));
-					ITypeDAO tDAO = new TypeDAO();
-					issue.setType(tDAO.getById(typeId));
-				} else if (TagConstants.PRIORITY.equals(currentTag)) {
-					int priorityId = Integer.parseInt(new String(ch, start, length));
-					IPriorityDAO pDAO = new PriorityDAO();
-					issue.setPriority(pDAO.getById(priorityId));
-				} else if (TagConstants.PROJECT.equals(currentTag)) {
-					int projectId = Integer.parseInt(new String(ch, start, length));
-					IProjectDAO pDAO = new ProjectDAO();
-					issue.setProject(pDAO.getById(projectId));
-				} else if (TagConstants.BUILD_FOUND.equals(currentTag)) {
-					List<Build> builds = issue.getProject().getBuilds();
-					int buildId = Integer.parseInt(new String(ch, start, length));
-					Build build = null;
-					for (Build b : builds) {
-						if (buildId == b.getId()) {
-							build = b;
+				if (new String(ch, start, length).trim().length() == 0) {
+					return;
+				}
+				switch (tag) {
+					case SUMMARY:
+						issue.setSummary(new String(ch, start, length));
+						break;
+					case DESCRIPTION:
+						issue.setDescription(new String(ch, start, length));
+						break;
+					case STATUS:
+						int statusId = Integer.parseInt(new String(ch, start, length));
+						IStatusDAO sDAO = new StatusDAO();
+						issue.setStatus(sDAO.getById(statusId));
+						break;
+					case TYPE:
+						int typeId = Integer.parseInt(new String(ch, start, length));
+						ITypeDAO tDAO = new TypeDAO();
+						issue.setType(tDAO.getById(typeId));
+						break;
+					case PRIORITY:
+						int priorityId = Integer.parseInt(new String(ch, start, length));
+						IPriorityDAO pDAO = new PriorityDAO();
+						issue.setPriority(pDAO.getById(priorityId));
+						break;
+					case PROJECT:
+						int projectId = Integer.parseInt(new String(ch, start, length));
+						IProjectDAO projectDAO = new ProjectDAO();
+						issue.setProject(projectDAO.getById(projectId));
+						break;
+					case BUILD_FOUND:
+						List<Build> builds = issue.getProject().getBuilds();
+						int buildId = Integer.parseInt(new String(ch, start, length));
+						Build build = null;
+						for (Build b : builds) {
+							if (buildId == b.getId()) {
+								build = b;
+							}
 						}
-					}
-					issue.setBuildFound(build);
-				} else if (TagConstants.ASSIGNEE.equals(currentTag)) {
-					int userId = Integer.parseInt(new String(ch, start, length));
-					IUserDAO uDAO = new UserDAO();
-					issue.setAssignee(uDAO.getById(userId));
-				} else if (TagConstants.CREATE_BY.equals(currentTag)) {
-					int userId = Integer.parseInt(new String(ch, start, length));
-					IUserDAO uDAO = new UserDAO();
-					issue.setCreatedBy((uDAO.getById(userId)));
-				} else if (TagConstants.MODIFY_BY.equals(currentTag)) {
-					int userId = Integer.parseInt(new String(ch, start, length));
-					IUserDAO uDAO = new UserDAO();
-					issue.setModifyBy((uDAO.getById(userId)));
-				} else if (TagConstants.CREATE_DATE.equals(currentTag)) {
-					String date = new String(ch, start, length);
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-m-d h:mm a");
-					issue.setCreateDate(format.parse(date));
-				} else if (TagConstants.MODIFY_DATE.equals(currentTag)) {
-					String date = new String(ch, start, length);
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-m-d h:mm a");
-					issue.setModifyDate(format.parse(date));
+						issue.setBuildFound(build);
+						break;
+					case ASSIGNEE:
+						int userId = Integer.parseInt(new String(ch, start, length));
+						IUserDAO uDAO = new UserDAO();
+						issue.setAssignee(uDAO.getById(userId));
+						break;
+					case CREATED_BY:
+						userId = Integer.parseInt(new String(ch, start, length));
+						uDAO = new UserDAO();
+						issue.setCreatedBy((uDAO.getById(userId)));
+						break;
+					case MODIFY_BY:
+						userId = Integer.parseInt(new String(ch, start, length));
+						uDAO = new UserDAO();
+						issue.setModifyBy((uDAO.getById(userId)));
+						break;
+					case CREATE_DATE:
+						String date = new String(ch, start, length);
+						SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
+						issue.setCreateDate(format.parse(date));
+						break;
+					case MODIFY_DATE:
+						date = new String(ch, start, length);
+						format = new SimpleDateFormat(DATE_FORMAT);
+						issue.setModifyDate(format.parse(date));
+						break;
+					default:
+						break;
 				}
 			} catch (Exception e) {
 				throw new SAXException(e);
 			}
-			currentTag = null;
 		}
 	}
 
@@ -99,12 +118,21 @@ public class IssueParser extends DefaultHandler {
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 		if (insideTagIssues) {
-			if (TagConstants.ISSUES.equals(qName)) {
-				insideTagIssues = false;
-			} else if (TagConstants.ISSUE.equals(qName)) {
-				issues.add(issue);
+			if (TagConstants.TNS_ISSUETRACKER.equals(qName)) {
+				tag = XMLTag.ISSUETRACKER;
+			} else {
+				tag = XMLTag.valueOf(qName.toUpperCase());	
 			}
-			
+			switch (tag) {
+			case ISSUES:
+				insideTagIssues = false;
+				break;
+			case ISSUE:
+				issues.add(issue);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -116,15 +144,24 @@ public class IssueParser extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
-		if (TagConstants.ISSUES.equals(qName)) {
-			insideTagIssues = true;
+		if (TagConstants.TNS_ISSUETRACKER.equals(qName)) {
+			tag = XMLTag.ISSUETRACKER;
+		} else {
+			tag = XMLTag.valueOf(qName.toUpperCase());	
 		}
-		if (TagConstants.ISSUE.equals(qName) && insideTagIssues) {
-			int id = Integer.parseInt(attributes.getValue(AttrsConstants.ID));
-			issue = new Issue();
-			issue.setId(id);
+		switch (tag) {
+			case ISSUES:
+				insideTagIssues = true;
+				break;
+			case ISSUE:
+				if (insideTagIssues) {
+					int id = Integer.parseInt(attributes.getValue(AttrsConstants.ID));
+					issue = new Issue();
+					issue.setId(id);
+				}
+				break;
+			default: 
+				break;
 		}
-		currentTag = qName;
 	}
-
 }

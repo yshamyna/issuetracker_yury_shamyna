@@ -7,6 +7,7 @@ import org.training.issuetracker.beans.User;
 import org.training.issuetracker.dao.interfaces.IRoleDAO;
 import org.training.issuetracker.dao.xml.constants.AttrsConstants;
 import org.training.issuetracker.dao.xml.constants.TagConstants;
+import org.training.issuetracker.dao.xml.parsers.enums.XMLTag;
 import org.training.issuetracker.dao.xml.service.RoleDAO;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -15,7 +16,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class UserParser extends DefaultHandler {
 	private List<User> users;
 	private boolean insideTagUsers = false;
-	private String currentTag;
+	private XMLTag tag;
 	private User user;
 	
 	public List<User> getUsers() {
@@ -25,28 +26,49 @@ public class UserParser extends DefaultHandler {
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-		if (TagConstants.USERS.equals(qName)) {
-			insideTagUsers = false;
+		if (TagConstants.TNS_ISSUETRACKER.equals(qName)) {
+			tag = XMLTag.ISSUETRACKER;
+		} else {
+			tag = XMLTag.valueOf(qName.toUpperCase());	
 		}
-		if (TagConstants.USER.equals(qName) && insideTagUsers) {
-			users.add(user);
+		switch (tag) {
+			case USERS:
+				insideTagUsers = false;
+				break;
+			case USER:
+				if (insideTagUsers) {
+					users.add(user);
+				}
+				break;
+			default: break;
 		}
 	}
+	
 	@Override
 	public void startDocument() throws SAXException {
 		users = new ArrayList<User>();
 	}
+	
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
-		currentTag = qName;
-		if (TagConstants.USERS.equals(qName)) {
-			insideTagUsers = true;
+		if (TagConstants.TNS_ISSUETRACKER.equals(qName)) {
+			tag = XMLTag.ISSUETRACKER;
+		} else {
+			tag = XMLTag.valueOf(qName.toUpperCase());	
 		}
-		if (TagConstants.USER.equals(qName) && insideTagUsers) {
-			user = new User();
-			int id = Integer.parseInt(attributes.getValue(AttrsConstants.ID));
-			user.setId(id);
+		switch (tag) {
+			case USERS:
+				insideTagUsers = true;
+				break;
+			case USER:
+				if (insideTagUsers) {
+					user = new User();
+					int id = Integer.parseInt(attributes.getValue(AttrsConstants.ID));
+					user.setId(id);
+				}
+				break;
+			default: break;
 		}
 	}
 	
@@ -54,28 +76,34 @@ public class UserParser extends DefaultHandler {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (insideTagUsers) {
-			if (TagConstants.FIRST_NAME.equals(currentTag)) {
-				user.setFirstName(new String(ch, start, length));
+			if (new String(ch, start, length).trim().length() == 0) {
+				return;
 			}
-			if (TagConstants.LAST_NAME.equals(currentTag)) {
-				user.setLastName(new String(ch, start, length));
+			switch (tag) {
+				case FIRST_NAME:
+					user.setFirstName(new String(ch, start, length));
+					break;
+				case LAST_NAME:
+					user.setLastName(new String(ch, start, length));
+					break;
+				case EMAIL_ADDRESS:
+					user.setEmailAddress(new String(ch, start, length));
+					break;
+				case PASSWORD: 
+					user.setPassword(new String(ch, start, length));
+					break;
+				case ROLE:
+					int roleId = Integer.parseInt(new String(ch, start, length));
+					IRoleDAO rDAO = new RoleDAO();
+					try {
+						user.setRole(rDAO.getById(roleId));
+					} catch (Exception e) {
+						throw new SAXException(e);
+					}
+					break;
+				default: 
+					break;
 			}
-			if (TagConstants.EMAIL_ADDRESS.equals(currentTag)) {
-				user.setEmailAddress(new String(ch, start, length));
-			}
-			if (TagConstants.PASSWORD.equals(currentTag)) {
-				user.setPassword(new String(ch, start, length));
-			}
-			if (TagConstants.ROLE.equals(currentTag)) {
-				int roleId = Integer.parseInt(new String(ch, start, length));
-				IRoleDAO rDAO = new RoleDAO();
-				try {
-					user.setRole(rDAO.getById(roleId));
-				} catch (Exception e) {
-					throw new SAXException(e);
-				}
-			}
-			currentTag = null;
 		}
 	}
 	

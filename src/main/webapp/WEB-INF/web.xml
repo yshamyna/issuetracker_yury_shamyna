@@ -3,14 +3,6 @@
   <display-name>Issue Tracker</display-name>
   <description>JEE training project implementation by Yury Shamyna</description>
   <servlet>
-    <servlet-name>SampleServlet</servlet-name>
-    <servlet-class>org.training.issuetracker.SampleServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>SampleServlet</servlet-name>
-    <url-pattern>/SampleServlet</url-pattern>
-  </servlet-mapping>
-  <servlet>
     <servlet-name>Dashboard</servlet-name>
     <servlet-class>org.training.issuetracker.servlets.Dashboard</servlet-class>
   </servlet>
@@ -39,12 +31,12 @@
   </filter-mapping>
   <servlet>
     <description></description>
-    <display-name>IssueServlet</display-name>
-    <servlet-name>IssueServlet</servlet-name>
-    <servlet-class>org.training.issuetracker.servlets.IssueServlet</servlet-class>
+    <display-name>EditIssue</display-name>
+    <servlet-name>EditIssue</servlet-name>
+    <servlet-class>org.training.issuetracker.servlets.EditIssue</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>IssueServlet</servlet-name>
-    <url-pattern>/issue</url-pattern>
+    <servlet-name>EditIssue</servlet-name>
+    <url-pattern>/editissue</url-pattern>
   </servlet-mapping>
 </web-app>

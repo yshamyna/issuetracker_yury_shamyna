@@ -42,7 +42,7 @@ public class DashboardContent implements IContent {
 		table.append("<th>priority <a href=\"dashboard?column=priority_asc&currentPage=" 
 				+currentPage + "\">Asc</a>&nbsp;<a href=\"dashboard?column=priority_desc&currentPage="
 				+currentPage + "\">Desc</a></th>");
-		table.append("<th>priority <a href=\"dashboard?column=assignee_asc&currentPage=" 
+		table.append("<th>assignee <a href=\"dashboard?column=assignee_asc&currentPage=" 
 				+currentPage + "\">Asc</a>&nbsp;<a href=\"dashboard?column=assignee_desc&currentPage="
 				+currentPage + "\">Desc</a></th>");
 		table.append("<th>type <a href=\"dashboard?column=type_asc&currentPage=" 
@@ -51,13 +51,13 @@ public class DashboardContent implements IContent {
 		table.append("<th>status <a href=\"dashboard?column=status_asc&currentPage=" 
 				+currentPage + "\">Asc</a>&nbsp;<a href=\"dashboard?column=status_desc&currentPage="
 				+currentPage + "\">Desc</a></th>");
-		table.append("<th>status <a href=\"dashboard?column=summary_asc&currentPage=" 
+		table.append("<th>summary <a href=\"dashboard?column=summary_asc&currentPage=" 
 				+currentPage + "\">Asc</a>&nbsp;<a href=\"dashboard?column=summary_desc&currentPage="
 				+currentPage + "\">Desc</a></th>");
 		User assignee = null;
 		for (Issue issue : issues) {
 			table.append("<tr>");
-			table.append("<td><a href=\"issue?id=" + issue.getId() +"\">" + issue.getId() + "</a></td>");
+			table.append("<td><a href=\"editissue?id=" + issue.getId() +"\">" + issue.getId() + "</a></td>");
 			table.append("<td>" + issue.getPriority().getValue() + "</td>");
 			assignee = issue.getAssignee();
 			if (assignee == null) {

@@ -20,6 +20,7 @@ import org.training.issuetracker.dao.interfaces.IIssueDAO;
 import org.training.issuetracker.dao.interfaces.IUserDAO;
 import org.training.issuetracker.dao.xml.service.IssueDAO;
 import org.training.issuetracker.dao.xml.service.UserDAO;
+import org.training.issuetracker.servlets.service.Authorization;
 import org.training.issuetracker.servlets.service.comparators.AssigneeIssueAscComparator;
 import org.training.issuetracker.servlets.service.comparators.AssigneeIssueDescComparator;
 import org.training.issuetracker.servlets.service.comparators.IdIssueAscComparator;
@@ -64,10 +65,10 @@ public class DashboardFilter implements Filter {
 				Action actn = Action.valueOf(action.toUpperCase());
 				switch (actn) {
 					case LOGOUT:
-						logout(request, response);
+						Authorization.logout(request, response);
 						break;
 					case LOGIN:
-						login(request, response);
+						Authorization.login(request, response);
 						break;
 					case NEXT_PAGE:
 						nextPage(request, response);
@@ -89,61 +90,6 @@ public class DashboardFilter implements Filter {
 	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
-	}
-	
-	private void logout(ServletRequest request, ServletResponse response) throws Exception {
-		HttpServletRequest req = (HttpServletRequest) request; 
-		req.getSession().removeAttribute("user");
-		HttpServletResponse res = (HttpServletResponse) response;
-		res.sendRedirect("/issuetracker/dashboard");
-	}
-	
-	private void login(ServletRequest request, ServletResponse response) throws Exception {
-		HttpServletRequest req = (HttpServletRequest) request; 
-		String login = request.getParameter("emailAddress");
-		String password = request.getParameter("password");
-		String message = checkLoginAndPassword(login, password);
-		if (message != null) {
-			request.setAttribute("errorMessage", message);
-			return;
-		}
-		IUserDAO userDAO = new UserDAO();
-		boolean isRegistered = false;
-		try {
-			List<User> users = userDAO.getAll();
-			for (User user : users) {
-				if (user.getEmailAddress().equals(login) 
-						&& user.getPassword().equals(password)) {
-					isRegistered = true;
-					HttpSession session = req.getSession();
-					session.setAttribute("user", user);
-					break;
-				}
-			}
-		} catch (Exception e) {
-			throw new Exception(e);
-		}
-		if (!isRegistered) {
-			request.setAttribute("errorMessage", "You are not authorized.");
-		}
-	}
-	
-	private String checkLoginAndPassword(String login, String password) {
-		if (login == null) {
-			return "Login is not entered.";
-		}
-		if (password == null) {
-			return "Password is not entered.";
-		}
-		login = login.trim();
-		if (login.isEmpty()) {
-			return "Login is empty.";
-		}
-		password = password.trim();
-		if (password.isEmpty()) {
-			return "Password is empty.";
-		}
-		return null;
 	}
 	
 	private void nextPage(ServletRequest request, ServletResponse response) {
@@ -198,6 +144,7 @@ public class DashboardFilter implements Filter {
 			issues = sort(request, response, issues);
 			request.setAttribute("issues", issues);
 		} catch (Exception e) {
+			e.printStackTrace();
 			request.setAttribute("issues", null);
 		}
 	}

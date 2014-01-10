@@ -8,6 +8,7 @@ import org.training.issuetracker.beans.Project;
 import org.training.issuetracker.dao.interfaces.IManagerDAO;
 import org.training.issuetracker.dao.xml.constants.AttrsConstants;
 import org.training.issuetracker.dao.xml.constants.TagConstants;
+import org.training.issuetracker.dao.xml.parsers.enums.XMLTag;
 import org.training.issuetracker.dao.xml.service.ManagerDAO;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -18,7 +19,7 @@ public class ProjectParser extends DefaultHandler {
 	private Project project;
 	private boolean insideTagProjects = false;
 	private boolean insideTagBuilds = false;
-	private String currentTag;
+	private XMLTag tag;
 	private List<Build> builds;
 	
 	public List<Project> getProjects() {
@@ -29,43 +30,64 @@ public class ProjectParser extends DefaultHandler {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (insideTagProjects) {
-			if (TagConstants.NAME.equals(currentTag)) {
-				project.setName(new String(ch, start, length));
-			} else if (TagConstants.DESCRIPTION.equals(currentTag)) {
-				project.setDescription(new String(ch, start, length));
-			} else if (TagConstants.BUILD.equals(currentTag) && !insideTagBuilds) {
-				Build build = null;
-				int buildId = Integer.parseInt(new String(ch, start, length));
-				for (Build b : builds) {
-					if (buildId == b.getId()) {
-						build = b;
-					}
-				}
-				project.setBuild(build);
-			} else if (TagConstants.MANAGER.equals(currentTag)) {
-				int managerId = Integer.parseInt(new String(ch, start, length));
-				IManagerDAO mDAO = new ManagerDAO();
-				try {
-					project.setManager(mDAO.getById(managerId));
-				} catch (Exception e) {
-					throw new SAXException(e);
-				}
+			if (new String(ch, start, length).trim().length() == 0) {
+				return;
 			}
-			currentTag = null;
+			switch (tag) {
+				case NAME:
+					project.setName(new String(ch, start, length));
+					break;
+				case DESCRIPTION:
+					project.setDescription(new String(ch, start, length));
+					break;
+				case BUILD:
+					if (!insideTagBuilds) {
+						Build build = null;
+						int buildId = Integer.parseInt(new String(ch, start, length));
+						for (Build b : builds) {
+							if (buildId == b.getId()) {
+								build = b;
+							}
+						}
+						project.setBuild(build);
+					}
+					break;
+				case MANAGER:
+					int managerId = Integer.parseInt(new String(ch, start, length));
+					IManagerDAO mDAO = new ManagerDAO();
+					try {
+						project.setManager(mDAO.getById(managerId));
+					} catch (Exception e) {
+						throw new SAXException(e);
+					}
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
+		if (TagConstants.TNS_ISSUETRACKER.equals(qName)) {
+			tag = XMLTag.ISSUETRACKER;
+		} else {
+			tag = XMLTag.valueOf(qName.toUpperCase());	
+		}
 		if (insideTagProjects) {
-			if (TagConstants.PROJECTS.equals(qName)) {
-				insideTagProjects = false;
-			} else if (TagConstants.PROJECT.equals(qName)) {
-				projects.add(project);
-			} else if (TagConstants.BUILDS.equals(qName)) {
-				project.setBuilds(builds);
-				insideTagBuilds = false;
+			switch (tag) {
+				case PROJECTS:
+					insideTagProjects = false;
+					break;
+				case PROJECT:
+					projects.add(project);
+					break;
+				case BUILDS:
+					project.setBuilds(builds);
+					insideTagBuilds = false;
+					break;
+				default: break;
 			}
 		}
 	}
@@ -78,27 +100,40 @@ public class ProjectParser extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
-		if (TagConstants.PROJECTS.equals(qName)) {
-			insideTagProjects = true;
+		if (TagConstants.TNS_ISSUETRACKER.equals(qName)) {
+			tag = XMLTag.ISSUETRACKER;
+		} else {
+			tag = XMLTag.valueOf(qName.toUpperCase());	
 		}
-		if (TagConstants.PROJECT.equals(qName) && insideTagProjects) {
-			project = new Project();
-			int id = Integer.parseInt(attributes.getValue(AttrsConstants.ID));
-			project.setId(id);
+		switch (tag) {
+			case PROJECTS:
+				insideTagProjects = true;
+				break;
+			case PROJECT:
+				if (insideTagProjects) {
+					project = new Project();
+					int id = Integer.parseInt(attributes.getValue(AttrsConstants.ID));
+					project.setId(id);
+				}
+				break;
+			case BUILDS:
+				if (insideTagProjects) {
+					builds = new ArrayList<Build>();
+					insideTagBuilds = true;
+				}
+				break;
+			case BUILD:
+				if (insideTagProjects && insideTagBuilds) {
+					int id = Integer.parseInt(attributes.getValue(AttrsConstants.ID));
+					String version = attributes.getValue(AttrsConstants.VERSION);
+					Build build = new Build();
+					build.setId(id);
+					build.setVersion(version);
+					builds.add(build);
+				}
+				break;
+			default: break;
 		}
-		if (TagConstants.BUILDS.equals(qName) && insideTagProjects) {
-			builds = new ArrayList<Build>();
-			insideTagBuilds = true;
-		}
-		if (TagConstants.BUILD.equals(qName) && insideTagProjects && insideTagBuilds) {
-			int id = Integer.parseInt(attributes.getValue(AttrsConstants.ID));
-			String version = attributes.getValue(AttrsConstants.VERSION);
-			Build build = new Build();
-			build.setId(id);
-			build.setVersion(version);
-			builds.add(build);
-		}
-		currentTag = qName;
 	}
 
 }

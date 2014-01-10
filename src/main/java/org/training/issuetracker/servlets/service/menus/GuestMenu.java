@@ -4,17 +4,15 @@ import org.training.issuetracker.servlets.service.intefaces.IMenu;
 
 public class GuestMenu implements IMenu {
 	private String msg;
-	private String currentServlet;
 	
-	public GuestMenu(String message, String currServlet) {
+	public GuestMenu(String message) {
 		msg = message;
-		currentServlet = currServlet;
 	}
 
 	@Override
 	public StringBuilder getValue() {
 		StringBuilder form = new StringBuilder();
-		form.append("<form method=\"post\" action=\"" + currentServlet + "?action=login\">");
+		form.append("<form method=\"post\" action=\"dashboard?action=login\">");
 		form.append("Email address: <input type=\"text\" name=\"emailAddress\"/>&nbsp;");
 		form.append("Password: <input type=\"password\" name=\"password\"/>");
 		form.append("<input type=\"submit\" name=\"loginBtn\" value=\"Login\"/>");

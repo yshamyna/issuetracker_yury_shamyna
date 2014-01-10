@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.training.issuetracker.beans.Issue;
 import org.training.issuetracker.beans.User;
 import org.training.issuetracker.dao.xml.parsers.Parser;
+import org.training.issuetracker.servlets.enums.Role;
 import org.training.issuetracker.servlets.service.HTMLPage;
 import org.training.issuetracker.servlets.service.contents.DashboardContent;
 import org.training.issuetracker.servlets.service.intefaces.IContent;
@@ -28,10 +29,6 @@ import org.training.issuetracker.servlets.service.menus.GuestMenu;
 import org.training.issuetracker.servlets.service.menus.UserMenu;
 
 public class Dashboard implements Servlet {
-	
-	private static enum Role {
-		ADMINISTRATOR, USER, GUEST;
-	}
 	
 	private ServletConfig servletConfig;
 
@@ -48,7 +45,7 @@ public class Dashboard implements Servlet {
 	public String getServletInfo() {
 		return null;
 	}
-
+	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		servletConfig = config;
@@ -70,7 +67,7 @@ public class Dashboard implements Servlet {
 		} else {
 			role = Role.valueOf(user.getRole().getValue().toUpperCase());
 		}
-		int currentPage = (int) request.getAttribute("currentPage");
+		int	currentPage = (int) request.getAttribute("currentPage");
 		int allPages = (int) request.getAttribute("allPages");
 		List<Issue> issues = (List<Issue>) request.getAttribute("issues");
 		ILink link = null;
@@ -80,8 +77,7 @@ public class Dashboard implements Servlet {
 			case GUEST:
 				link = new GuestLink();
 				String message = (String) request.getAttribute("errorMessage");
-				String servletName = servletConfig.getServletName().toLowerCase();
-				menu = new GuestMenu(message, servletName);
+				menu = new GuestMenu(message);
 				break;
 			case USER:
 				link = new UserLink();
