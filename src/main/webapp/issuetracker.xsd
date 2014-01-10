@@ -159,7 +159,7 @@
   	
   	<simpleType name="Data"> 
 		<restriction base="string"> 
-			<pattern value="[0-9]{4}-[0-9]{1,2}-[0-9]{1,2} [0-9]{1,2}:[0-9]{2} (am|pm)"/> 
+			<pattern value="2[0-9]{3}-([1-9]|1[0-2])-([1-9]|[1-2][0-9]|3[01]) ([1-9]|1[0-2]):([0-5][0-9]) (am|pm)" /> 
 		</restriction> 
 	</simpleType> 
   
