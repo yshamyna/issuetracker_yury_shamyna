@@ -28,7 +28,17 @@
 		</script>
 	</head>
 		<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
-		<%@ include file="/includes/guestMenu.html" %>
+		<c:choose>
+			<c:when test="${user.role.value eq 'administrator'}">
+				<div style="background-color:red;width:100%;height:100px;"></div>
+			</c:when>
+			<c:when test="${user.role.value eq 'user'}">
+				<div style="background-color:green;width:100%;height:100px;"></div>
+			</c:when>
+			<c:otherwise>
+				<%@ include file="/includes/guestMenu.html" %>
+			</c:otherwise>
+		</c:choose>
 		<c:if test="${not empty errMsg}">
 			<script type="text/javascript"> 
 				userNotExistsError("${errMsg}");
@@ -42,22 +52,16 @@
 				<th style="border: 2px solid black;">type</th>
 				<th style="border: 2px solid black;">status</th>
 				<th style="border: 2px solid black;">summary</th>
-				<tr style="border: 2px solid black;">
-					<td style="border: 2px solid black;">1</td>
-					<td style="border: 2px solid black;">minor</td>
-					<td style="border: 2px solid black;">Main Verymain</td>
-					<td style="border: 2px solid black;">cosmetic</td>
-					<td style="border: 2px solid black;">in progress</td>
-					<td style="border: 2px solid black;">Web browsing Error has occurred</td>
-				</tr>
-				<tr style="border: 2px solid black;">
-					<td style="border: 2px solid black;">2</td>
-					<td style="border: 2px solid black;">important</td>
-					<td style="border: 2px solid black;">Sidr Sidorov</td>
-					<td style="border: 2px solid black;">bug</td>
-					<td style="border: 2px solid black;">in progress</td>
-					<td style="border: 2px solid black;">Do not work increment at a fixed frequency</td>
-				</tr>
+				<c:forEach var="issue" items="${issues}">
+ 					<tr style="border: 2px solid black;">
+						<td style="border: 2px solid black;">${issue.id}</td>
+						<td style="border: 2px solid black;">${issue.priority.value}</td>
+						<td style="border: 2px solid black;">${issue.assignee.firstName} ${issue.assignee.lastName}</td>
+						<td style="border: 2px solid black;">${issue.type.value}</td>
+						<td style="border: 2px solid black;">${issue.status.value}</td>
+						<td style="border: 2px solid black;">${issue.summary}</td>
+					</tr>				
+				</c:forEach>
 			</table>
 		</div>
 	</body>

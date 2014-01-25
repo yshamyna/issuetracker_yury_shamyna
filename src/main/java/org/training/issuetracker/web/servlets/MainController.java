@@ -39,7 +39,7 @@ public class MainController extends HttpServlet {
 	private void performTask(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			String action = request.getParameter("action");
-			Class c = Class.forName("org.training.issuetracker.servlets.service." + action); 
+			Class c = Class.forName("org.training.issuetracker.web.service." + action); 
 			Object obj = c.newInstance();
 			IAction actn = (IAction) obj;
 			String url = actn.perform(request, response);

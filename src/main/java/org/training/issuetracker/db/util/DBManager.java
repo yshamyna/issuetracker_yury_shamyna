@@ -7,11 +7,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DBManager {
-	public static Connection getConnsection() 
+	public static Connection getConnection() 
 			throws ClassNotFoundException, SQLException {
 		Class.forName("org.h2.Driver");
         Connection connection = DriverManager.
-        		getConnection("jdbc:h2:issuetracker", "guest", 
+        		getConnection("jdbc:h2:issuetracker", "administrator", 
         				"Issue_tracker_administrator");
 		return connection;
 	}

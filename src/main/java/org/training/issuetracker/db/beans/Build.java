@@ -2,8 +2,26 @@ package org.training.issuetracker.db.beans;
 
 public class Build {
 	private long id;
+	private long projectId;
 	private String version;
+	private boolean isCurrent;
 	
+	public long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(long projectId) {
+		this.projectId = projectId;
+	}
+
+	public boolean isCurrent() {
+		return isCurrent;
+	}
+
+	public void setCurrent(boolean isCurrent) {
+		this.isCurrent = isCurrent;
+	}
+
 	public Build() {
 		super();
 	}

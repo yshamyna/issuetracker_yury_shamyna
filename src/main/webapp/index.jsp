@@ -7,6 +7,6 @@
 <title></title>
 </head>
 <body>
-	<jsp:forward page="dashboard">
+	<%response.sendRedirect("dashboard");%>
 </body>
 </html>

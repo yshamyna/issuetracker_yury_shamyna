@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.beans.UserRole;
+import org.training.issuetracker.db.dao.interfaces.IRoleDAO;
 import org.training.issuetracker.db.dao.interfaces.IUserDAO;
 import org.training.issuetracker.db.util.DBManager;
 
@@ -19,9 +20,33 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
-	public User getById(int id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public User getById(long id) throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		User user = null;
+		try {
+			connection = DBManager.getConnection();
+	        ps = connection.prepareStatement("select id, firstName, lastName, roleId, email, password from users where id=?");
+	        ps.setLong(1, id);
+	        rs = ps.executeQuery();
+	        if (rs.next()) {
+	        	user = new User();
+	        	user.setId(id);
+	        	user.setEmailAddress(rs.getString("email"));
+	        	user.setPassword(rs.getString("password"));
+	        	user.setFirstName(rs.getString("firstName"));
+	        	user.setLastName(rs.getString("lastName"));
+	        	IRoleDAO roleDAO = new RoleDAO();
+	        	UserRole role = roleDAO.getById(rs.getInt("roleId"));
+	        	user.setRole(role);
+	        }
+		} finally {
+			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
+		return user;
 	}
 
 	@Override
@@ -38,7 +63,7 @@ public class UserDAO implements IUserDAO {
 		ResultSet rs = null;
 		User user = null;
 		try {
-			connection = DBManager.getConnsection();
+			connection = DBManager.getConnection();
 	        ps = connection.prepareStatement("select users.id, firstName, lastName, name as role, roleId from users, roles where email=? and password=? and roleId=roles.id");
 	        ps.setString(1, email);
 	        ps.setString(2, password);
@@ -56,9 +81,9 @@ public class UserDAO implements IUserDAO {
 	        	user.setRole(role);
 	        }
 		} finally {
-			DBManager.closeConnection(connection);
-			DBManager.closeStatements(ps);
 			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
 		}
 		return user;
 	}

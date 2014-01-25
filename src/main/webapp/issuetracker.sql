@@ -182,7 +182,7 @@ drop user if exists administrator;
 drop user if exists user;
 drop user if exists guest;
 
-create user administrator password 'Issue_tracker_admin';
+create user administrator password 'Issue_tracker_administrator';
 create user user password 'Issue_tracker_user';
 create user guest password 'Issue_tracker_guest';
 

@@ -1,13 +1,13 @@
 package org.training.issuetracker.db.beans;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Issue {
 	private long id;
-	private Date createDate;
+	private Timestamp createDate;
 	private User createdBy;
-	private Date modifyDate;
+	private Timestamp modifyDate;
 	private User modifyBy;
 	private String summary;
 	private String description;
@@ -17,16 +17,25 @@ public class Issue {
 	private Project project;
 	private Build buildFound;
 	private User assignee;
+	private IssueResolution resolution;
 	
+	public IssueResolution getResolution() {
+		return resolution;
+	}
+
+	public void setResolution(IssueResolution resolution) {
+		this.resolution = resolution;
+	}
+
 	public Issue() {
 		super();
 	}
 
-	public Date getCreateDate() {
+	public Timestamp getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(Date createDate) {
+	public void setCreateDate(Timestamp createDate) {
 		this.createDate = createDate;
 	}
 
@@ -38,11 +47,11 @@ public class Issue {
 		this.createdBy = createdBy;
 	}
 
-	public Date getModifyDate() {
+	public Timestamp getModifyDate() {
 		return modifyDate;
 	}
 
-	public void setModifyDate(Date modifyDate) {
+	public void setModifyDate(Timestamp modifyDate) {
 		this.modifyDate = modifyDate;
 	}
 
