@@ -5,6 +5,7 @@
 <html>
 	<head>
 		<title>Welcome to issue tracker</title>
+		<link rel=stylesheet href=menu.css type="text/css">
 		<script type="text/javascript">
 			function userNotExistsError(errMsg) {
 				var span = document.getElementById("errMsg");
@@ -30,10 +31,10 @@
 		<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
 		<c:choose>
 			<c:when test="${user.role.value eq 'administrator'}">
-				<div style="background-color:red;width:100%;height:100px;"></div>
+				<%@ include file="/includes/administratorMenu.html" %>
 			</c:when>
 			<c:when test="${user.role.value eq 'user'}">
-				<div style="background-color:green;width:100%;height:100px;"></div>
+				<%@ include file="/includes/userMenu.html" %>
 			</c:when>
 			<c:otherwise>
 				<%@ include file="/includes/guestMenu.html" %>
