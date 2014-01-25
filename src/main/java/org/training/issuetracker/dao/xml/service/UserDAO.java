@@ -32,4 +32,10 @@ public class UserDAO implements IUserDAO {
 		// nothing
 	}
 
+	@Override
+	public User getByEmailAndPassword(String email, String password)
+			throws Exception {
+		return null;
+	}
+
 }

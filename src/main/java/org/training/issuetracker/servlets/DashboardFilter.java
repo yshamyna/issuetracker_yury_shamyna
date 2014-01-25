@@ -57,30 +57,30 @@ public class DashboardFilter implements Filter {
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		try {
-			String action = request.getParameter(RequestConstants.ACTION_PARAMETER);
-			if (action != null) {
-				Action actn = Action.valueOf(action.toUpperCase());
-				switch (actn) {
-					case LOGOUT:
-						Authorization.logout(request, response);
-						break;
-					case LOGIN:
-						Authorization.login(request, response);
-						break;
-					case NEXT_PAGE:
-						nextPage(request, response);
-						break;
-					case PREVIOUS_PAGE:
-						previousPage(request, response);
-						break;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			showIssue(request, response);
-		}
+//		try {
+//			String action = request.getParameter(RequestConstants.ACTION_PARAMETER);
+//			if (action != null) {
+//				Action actn = Action.valueOf(action.toUpperCase());
+//				switch (actn) {
+//					case LOGOUT:
+//						Authorization.logout(request, response);
+//						break;
+//					case LOGIN:
+//						//Authorization.login(request, response);
+//						break;
+//					case NEXT_PAGE:
+//						nextPage(request, response);
+//						break;
+//					case PREVIOUS_PAGE:
+//						previousPage(request, response);
+//						break;
+//				}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			showIssue(request, response);
+//		}
 		chain.doFilter(request, response);
 	}
 
