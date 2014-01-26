@@ -3,6 +3,8 @@ package org.training.issuetracker.db.dao.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.IssueType;
@@ -13,8 +15,28 @@ public class TypeDAO implements ITypeDAO {
 
 	@Override
 	public List<IssueType> getAll() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			connection = DBManager.getConnection();
+			st = connection.createStatement();
+			st.execute("select id, name from types");
+			rs = st.getResultSet();
+			List<IssueType> types = new ArrayList<IssueType>();
+			IssueType type = null;
+			while (rs.next()) {
+				type = new IssueType();
+				type.setId(rs.getInt("id"));
+				type.setValue(rs.getString("name"));
+				types.add(type);
+			}
+			return types;
+		} finally {
+			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(st);
+			DBManager.closeConnection(connection);
+		}
 	}
 
 	@Override

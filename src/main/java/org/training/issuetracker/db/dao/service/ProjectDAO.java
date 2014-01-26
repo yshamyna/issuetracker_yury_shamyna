@@ -3,6 +3,8 @@ package org.training.issuetracker.db.dao.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.Manager;
@@ -15,8 +17,31 @@ public class ProjectDAO implements IProjectDAO {
 
 	@Override
 	public List<Project> getAll() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			connection = DBManager.getConnection();
+			st = connection.createStatement();
+			st.execute("select id, name, managerId, description from projects");
+			rs = st.getResultSet();
+			List<Project> projects = new ArrayList<Project>();
+			Project project = null;
+			IManagerDAO managerDAO = new ManagerDAO();
+			while (rs.next()) {
+				project = new Project();
+				project.setId(rs.getInt("id"));
+				project.setName(rs.getString("name"));
+				project.setDescription(rs.getString("description"));
+				project.setManager(managerDAO.getById(rs.getInt("managerId")));
+				projects.add(project);
+			}
+			return projects;
+		} finally {
+			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(st);
+			DBManager.closeConnection(connection);
+		}
 	}
 
 	@Override
