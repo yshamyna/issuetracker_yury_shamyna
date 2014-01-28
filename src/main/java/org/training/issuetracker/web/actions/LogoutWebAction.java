@@ -1,4 +1,4 @@
-package org.training.issuetracker.web.service;
+package org.training.issuetracker.web.actions;
 
 import java.io.IOException;
 
@@ -6,12 +6,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.web.interfaces.IAction;
+import org.training.issuetracker.web.actions.interfaces.IWebAction;
 
-public class Logout implements IAction {
+public class LogoutWebAction implements IWebAction {
 
 	@Override
-	public String perform(HttpServletRequest request,
+	public String execute(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		request.getSession().removeAttribute("user");
 		response.sendRedirect("dashboard");

@@ -1,4 +1,4 @@
-package org.training.issuetracker.web.service;
+package org.training.issuetracker.web.actions;
 
 import java.io.IOException;
 
@@ -10,13 +10,13 @@ import javax.servlet.http.HttpSession;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.dao.interfaces.IUserDAO;
 import org.training.issuetracker.db.dao.service.UserDAO;
-import org.training.issuetracker.web.interfaces.IAction;
+import org.training.issuetracker.web.actions.interfaces.IWebAction;
 
-public class Authorization implements IAction{
-	
+public class LoginWebAction implements IWebAction {
+
 	@Override
-	public String perform(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	public String execute(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 		IUserDAO userDAO = new UserDAO();
@@ -24,7 +24,7 @@ public class Authorization implements IAction{
 			User user = userDAO.getByEmailAndPassword(email, password);
 			if (user == null) {
 				request.setAttribute("errMsg", "Email or password is incorrect.");
-				return "/dashboard.jsp";
+				return "/dashboard";
 			} 
 			HttpSession session = request.getSession();
 			session.setAttribute("user", user);
@@ -34,4 +34,5 @@ public class Authorization implements IAction{
 		}
 		return null;
 	}
+
 }

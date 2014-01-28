@@ -65,8 +65,17 @@ public class TypeDAO implements ITypeDAO {
 
 	@Override
 	public void add(IssueType type) throws Exception {
-		// TODO Auto-generated method stub
-
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("insert into types(name) values(?)");
+			ps.setString(1, type.getValue());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
 	}
 
 }

@@ -65,7 +65,17 @@ public class StatusDAO implements IStatusDAO {
 
 	@Override
 	public void add(IssueStatus status) throws Exception {
-		// TODO Auto-generated method stub
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("insert into statuses(name) values(?)");
+			ps.setString(1, status.getValue());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
 
 	}
 

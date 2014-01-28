@@ -2,12 +2,9 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   <display-name>Issue Tracker</display-name>
   <description>JEE training project implementation by Yury Shamyna</description>
-  
-  	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
-	</welcome-file-list>
-  
-  
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
   <servlet>
     <servlet-name>H2Console</servlet-name>
     <servlet-class>org.h2.server.web.WebServlet</servlet-class>
@@ -38,5 +35,65 @@
   <servlet-mapping>
     <servlet-name>IssueReaderServlet</servlet-name>
     <url-pattern>/dashboard</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddTypeServlet</display-name>
+    <servlet-name>AddTypeServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.type.AddTypeServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddTypeServlet</servlet-name>
+    <url-pattern>/types/add</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>TypeServlet</display-name>
+    <servlet-name>TypeServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.type.TypeServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>TypeServlet</servlet-name>
+    <url-pattern>/types</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>StatusServlet</display-name>
+    <servlet-name>StatusServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.status.StatusServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>StatusServlet</servlet-name>
+    <url-pattern>/statuses</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddStatusServlet</display-name>
+    <servlet-name>AddStatusServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.status.AddStatusServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddStatusServlet</servlet-name>
+    <url-pattern>/statuses/add</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>PriorityReaderServlet</display-name>
+    <servlet-name>PriorityReaderServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.priority.PriorityReaderServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PriorityReaderServlet</servlet-name>
+    <url-pattern>/priorities</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddPriorityServlet</display-name>
+    <servlet-name>AddPriorityServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.priority.AddPriorityServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddPriorityServlet</servlet-name>
+    <url-pattern>/priorities/add</url-pattern>
   </servlet-mapping>
 </web-app>

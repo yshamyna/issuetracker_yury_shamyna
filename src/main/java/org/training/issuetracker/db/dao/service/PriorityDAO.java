@@ -65,8 +65,17 @@ public class PriorityDAO implements IPriorityDAO {
 
 	@Override
 	public void add(IssuePriority priority) throws Exception {
-		// TODO Auto-generated method stub
-
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("insert into priorities(name) values(?)");
+			ps.setString(1, priority.getValue());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
 	}
 
 }

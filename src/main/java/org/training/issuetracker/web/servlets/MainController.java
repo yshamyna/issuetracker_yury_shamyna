@@ -7,7 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.web.interfaces.IAction;
+import org.training.issuetracker.web.actions.factories.WebActionFactory;
+import org.training.issuetracker.web.actions.interfaces.IWebAction;
 
 /**
  * Servlet implementation class MainController
@@ -37,22 +38,12 @@ public class MainController extends HttpServlet {
 	}
 
 	private void performTask(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
-			String action = request.getParameter("action");
-			Class c = Class.forName("org.training.issuetracker.web.service." + action); 
-			Object obj = c.newInstance();
-			IAction actn = (IAction) obj;
-			String url = actn.perform(request, response);
-			if(url != null) {
-				getServletContext().getRequestDispatcher(url).
-						forward(request, response);
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} 
+		String action = request.getParameter("action");
+		IWebAction webAction = WebActionFactory.getWebActionFromFactory(action);
+		String url = webAction.execute(request, response);
+		if (url != null) {
+			getServletContext().getRequestDispatcher(url).
+					forward(request, response);
+		}
 	}
 }
