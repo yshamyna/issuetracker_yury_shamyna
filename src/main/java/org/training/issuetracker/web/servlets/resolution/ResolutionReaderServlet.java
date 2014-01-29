@@ -1,4 +1,4 @@
-package org.training.issuetracker.web.servlets.priority;
+package org.training.issuetracker.web.servlets.resolution;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,20 +8,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.IssuePriority;
-import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
-import org.training.issuetracker.db.dao.service.PriorityDAO;
+import org.training.issuetracker.db.beans.IssueResolution;
+import org.training.issuetracker.db.dao.interfaces.IResolutionDAO;
+import org.training.issuetracker.db.dao.service.ResolutionDAO;
 
 /**
- * Servlet implementation class PriorityReaderServlet
+ * Servlet implementation class ResolutionReaderServlet
  */
-public class PriorityReaderServlet extends HttpServlet {
+public class ResolutionReaderServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public PriorityReaderServlet() {
+    public ResolutionReaderServlet() {
         super();
     }
 
@@ -38,18 +38,17 @@ public class PriorityReaderServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		execute(request, response);
 	}
-	
-	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
 		try {
-			IPriorityDAO priorityDAO = new PriorityDAO();
-			List<IssuePriority> priorities = priorityDAO.getAll();
-			request.setAttribute("priorities", priorities);
+			IResolutionDAO resolutionDAO = new ResolutionDAO();
+			List<IssueResolution> resolutions = resolutionDAO.getAll();
+			request.setAttribute("resolutions", resolutions);
 		}  catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			getServletContext().getRequestDispatcher("/priorities.jsp").
+			getServletContext().getRequestDispatcher("/resolutions.jsp").
 				forward(request, response);
 		}
 	}
-
 }

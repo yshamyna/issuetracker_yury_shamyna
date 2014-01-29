@@ -74,9 +74,31 @@ public class ProjectDAO implements IProjectDAO {
 	}
 
 	@Override
-	public void add(Project project) throws Exception {
-		// TODO Auto-generated method stub
-
+	public long add(Project project) throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("insert into projects(name, description, managerId) values(?, ?, ?)");
+			ps.setString(1, project.getName());
+			ps.setString(2, project.getDescription());
+			ps.setLong(3, project.getManager().getId());
+			ps.executeUpdate();
+			
+			st = connection.createStatement();
+			st.execute("select max(id) as lastProjectId from projects");
+			rs = st.getResultSet();
+			if (rs.next()) {
+				return rs.getLong("lastProjectId");
+			}
+		} finally {
+			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(st, ps);
+			DBManager.closeConnection(connection);
+		}
+		return -1;
 	}
 
 }

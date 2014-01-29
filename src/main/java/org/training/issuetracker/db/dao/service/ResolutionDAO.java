@@ -65,6 +65,17 @@ public class ResolutionDAO implements IResolutionDAO {
 
 	@Override
 	public void add(IssueResolution resolution) throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("insert into resolutions(name) values(?)");
+			ps.setString(1, resolution.getValue());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
 	}
 
 }

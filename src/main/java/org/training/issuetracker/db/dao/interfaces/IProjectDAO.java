@@ -7,5 +7,5 @@ import org.training.issuetracker.db.beans.Project;
 public interface IProjectDAO {
 	public List<Project> getAll() throws Exception;
 	public Project getById(int id) throws Exception;
-	public void add(Project project) throws Exception;
+	public long add(Project project) throws Exception;
 }

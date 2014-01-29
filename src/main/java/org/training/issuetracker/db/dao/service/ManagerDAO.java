@@ -3,6 +3,8 @@ package org.training.issuetracker.db.dao.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.Manager;
@@ -13,8 +15,29 @@ public class ManagerDAO implements IManagerDAO {
 
 	@Override
 	public List<Manager> getAll() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			connection = DBManager.getConnection();
+			st = connection.createStatement();
+			st.execute("select id, firstName, lastName from managers");
+			rs = st.getResultSet();
+			List<Manager> managers = new ArrayList<Manager>();
+			Manager manager = null;
+			while (rs.next()) {
+				manager = new Manager();
+				manager.setId(rs.getInt("id"));
+				manager.setFirstName(rs.getString("firstName"));
+				manager.setLastName(rs.getString("lastName"));
+				managers.add(manager);
+			}
+			return managers;
+		} finally {
+			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(st);
+			DBManager.closeConnection(connection);
+		}
 	}
 
 	@Override

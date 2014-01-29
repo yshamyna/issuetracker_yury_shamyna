@@ -96,4 +96,44 @@
     <servlet-name>AddPriorityServlet</servlet-name>
     <url-pattern>/priorities/add</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ResolutionReaderServlet</display-name>
+    <servlet-name>ResolutionReaderServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.resolution.ResolutionReaderServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ResolutionReaderServlet</servlet-name>
+    <url-pattern>/resolutions</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddResolutionServlet</display-name>
+    <servlet-name>AddResolutionServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.resolution.AddResolutionServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddResolutionServlet</servlet-name>
+    <url-pattern>/resolutions/add</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ProjectReaderServlet</display-name>
+    <servlet-name>ProjectReaderServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.project.ProjectReaderServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ProjectReaderServlet</servlet-name>
+    <url-pattern>/projects</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddProjectServlet</display-name>
+    <servlet-name>AddProjectServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.project.AddProjectServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddProjectServlet</servlet-name>
+    <url-pattern>/projects/add</url-pattern>
+  </servlet-mapping>
 </web-app>

@@ -45,7 +45,19 @@ public class BuildDAO implements IBuildDAO {
 
 	@Override
 	public void add(Build build) throws Exception {
-		// TODO Auto-generated method stub
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("insert into builds(projectId, version, isCurrent) values(?, ?, ?)");
+			ps.setLong(1, build.getProjectId());
+			ps.setString(2, build.getVersion());
+			ps.setBoolean(3, build.isCurrent());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
 
 	}
 

@@ -1,13 +1,10 @@
 package org.training.issuetracker.db.beans;
 
-import java.util.List;
 
 public class Project {
 	private long id;
-	private List<Build> builds;
 	private String name;
 	private String description;
-	private Build build;
 	private Manager manager;
 	
 	public Project() {
@@ -20,14 +17,6 @@ public class Project {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public List<Build> getBuilds() {
-		return builds;
-	}
-
-	public void setBuilds(List<Build> builds) {
-		this.builds = builds;
 	}
 
 	public String getName() {
@@ -44,14 +33,6 @@ public class Project {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Build getBuild() {
-		return build;
-	}
-
-	public void setBuild(Build build) {
-		this.build = build;
 	}
 
 	public Manager getManager() {
