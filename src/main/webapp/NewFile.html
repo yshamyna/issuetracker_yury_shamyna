@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript">
+			function getXmlHttp(){
+		  		var xmlhttp;
+		  		try {
+		    		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		  		} catch (e) {
+		    		try {
+		      			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		    		} catch (E) {
+		      			xmlhttp = false;
+		    		}
+		  		}
+		  		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+		    		xmlhttp = new XMLHttpRequest();
+		  		}
+		  		return xmlhttp;
+			}
+		
+			function go() {
+				var list = document.getElementById('selectId');
+				while(list.childNodes[0]){
+					list.removeChild(list.childNodes[0]);
+				}
+			}
+			
+			function selectChange() {
+				var req = getXmlHttp();
+				req.onreadystatechange = function() { 
+		        	if (req.readyState == 4 && req.status == 200) {
+		        		var ansDiv = document.getElementById('answer');
+		        		alert(req.responseText);
+		            }
+		     	}
+				var select = document.getElementById('selectId');
+				var value = select.options[select.selectedIndex].value;
+				req.open('GET', '/issuetracker/get_builds?id=' + value, true);
+				req.send(null);
+			}
+		</script>
+	</head>
+	<body>
+		<select id="selectId" name="roles" onchange="selectChange();"/>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option value="5">5</option>
+		</select>
+		<input type="button" onclick="go();" value="GO"/>
+		<div id="answer" style="background-color:red;width:200px;height:200px;"></div>
+	</body>
+</html>

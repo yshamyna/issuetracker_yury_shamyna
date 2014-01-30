@@ -136,4 +136,34 @@
     <servlet-name>AddProjectServlet</servlet-name>
     <url-pattern>/projects/add</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddUserServlet</display-name>
+    <servlet-name>AddUserServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.user.AddUserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddUserServlet</servlet-name>
+    <url-pattern>/users/add</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>GetBuildsByProjectServlet</display-name>
+    <servlet-name>GetBuildsByProjectServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.GetBuildsByProjectServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetBuildsByProjectServlet</servlet-name>
+    <url-pattern>/get_builds</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddIssueServlet</display-name>
+    <servlet-name>AddIssueServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.issue.AddIssueServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddIssueServlet</servlet-name>
+    <url-pattern>/issues/add</url-pattern>
+  </servlet-mapping>
 </web-app>

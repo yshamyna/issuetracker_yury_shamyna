@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,8 +88,36 @@ public class IssueDAO implements IIssueDAO {
 
 	@Override
 	public void add(Issue issue) throws Exception {
-		// TODO Auto-generated method stub
-
+		Connection connection = null;
+		PreparedStatement ps = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			ps.setTimestamp(1, issue.getCreateDate());
+			ps.setLong(2, issue.getCreatedBy().getId());
+			ps.setTimestamp(3, issue.getModifyDate());
+			ps.setLong(4, issue.getModifyBy().getId());
+			ps.setString(5, issue.getSummary());
+			ps.setString(6, issue.getDescription());
+			ps.setLong(7, issue.getStatus().getId());
+			ps.setLong(8, issue.getType().getId());
+			ps.setLong(9, issue.getPriority().getId());
+			ps.setLong(10, issue.getProject().getId());
+			ps.setLong(11, issue.getBuildFound().getId());
+			if (issue.getAssignee() == null) {
+				ps.setNull(12, Types.INTEGER);
+			} else {
+				ps.setLong(12, issue.getAssignee().getId());
+			}
+			ps.setNull(13, Types.INTEGER);
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(st, ps);
+			DBManager.closeConnection(connection);
+		}
 	}
 
 	@Override

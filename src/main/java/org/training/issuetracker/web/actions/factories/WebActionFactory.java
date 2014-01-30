@@ -1,10 +1,12 @@
 package org.training.issuetracker.web.actions.factories;
 
+import org.training.issuetracker.web.actions.AddIssueWebAction;
 import org.training.issuetracker.web.actions.AddPriorityWebAction;
 import org.training.issuetracker.web.actions.AddProjectWebAction;
 import org.training.issuetracker.web.actions.AddResolutionWebAction;
 import org.training.issuetracker.web.actions.AddStatusWebAction;
 import org.training.issuetracker.web.actions.AddTypeWebAction;
+import org.training.issuetracker.web.actions.AddUserWebAction;
 import org.training.issuetracker.web.actions.LoginWebAction;
 import org.training.issuetracker.web.actions.LogoutWebAction;
 import org.training.issuetracker.web.actions.ShowPrioritiesWebAction;
@@ -18,7 +20,7 @@ public class WebActionFactory {
 	private static enum Action {
 		LOGIN, LOGOUT, SHOW_TYPES, SHOW_STATUSES, SHOW_PRIORITIES, ADD_PRIORITY,
 		ADD_STATUS, ADD_TYPE, ADD_RESOLUTION, SHOW_RESOLUTIONS, ADD_PROJECT,
-		SHOW_PROJECTS;
+		SHOW_PROJECTS, ADD_USER, ADD_ISSUE;
 	}
 	
 	public static IWebAction getWebActionFromFactory(String action) {
@@ -37,6 +39,8 @@ public class WebActionFactory {
 			case ADD_PRIORITY: webAction = new AddPriorityWebAction(); break;
 			case ADD_RESOLUTION: webAction = new AddResolutionWebAction(); break;
 			case ADD_PROJECT: webAction = new AddProjectWebAction(); break;
+			case ADD_USER: webAction = new AddUserWebAction();
+			case ADD_ISSUE: webAction = new AddIssueWebAction();
 		}
 		return webAction;
 	}

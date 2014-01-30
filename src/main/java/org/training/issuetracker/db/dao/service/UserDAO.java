@@ -3,6 +3,8 @@ package org.training.issuetracker.db.dao.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.User;
@@ -15,8 +17,34 @@ public class UserDAO implements IUserDAO {
 
 	@Override
 	public List<User> getAll() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			connection = DBManager.getConnection();
+			st = connection.createStatement();
+			st.execute("select id, firstName, lastName, email, password, roleId from users");
+			rs = st.getResultSet();
+			List<User> users = new ArrayList<User>();
+			User user = null;
+			while (rs.next()) {
+				user = new User();
+	        	user.setId(rs.getLong("id"));
+	        	user.setEmailAddress(rs.getString("email"));
+	        	user.setPassword(rs.getString("password"));
+	        	user.setFirstName(rs.getString("firstName"));
+	        	user.setLastName(rs.getString("lastName"));
+	        	IRoleDAO roleDAO = new RoleDAO();
+	        	UserRole role = roleDAO.getById(rs.getInt("roleId"));
+	        	user.setRole(role);
+				users.add(user);
+			}
+			return users;
+		} finally {
+			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(st);
+			DBManager.closeConnection(connection);
+		}
 	}
 
 	@Override
@@ -51,8 +79,21 @@ public class UserDAO implements IUserDAO {
 
 	@Override
 	public void add(User user) throws Exception {
-		// TODO Auto-generated method stub
-
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("insert into users(firstName, lastName, email, roleId, password) values(?, ?, ?, ?, ?)");
+			ps.setString(1, user.getFirstName());
+			ps.setString(2, user.getLastName());
+			ps.setString(3, user.getEmailAddress());
+			ps.setLong(4, user.getRole().getId());
+			ps.setString(5, user.getPassword());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
 	}
 
 	@Override
