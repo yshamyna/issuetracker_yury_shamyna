@@ -5,7 +5,7 @@
 <html>
 	<head>
 		<title>Resolutions</title>
-		<link rel=stylesheet href=menu.css type="text/css">
+		<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
 	</head>
 	<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
 		<%@ include file="/includes/administratorMenu.html" %>
@@ -15,7 +15,7 @@
 				<th style="border: 2px solid black;">name</th>
 				<c:forEach var="resolution" items="${resolutions}">
  					<tr style="border: 2px solid black;">
-						<td style="border: 2px solid black;">${resolution.value}</td>
+						<td style="border: 2px solid black;"><a href="/issuetracker/resolutions/edit?id=${resolution.id}">${resolution.value}</a></td>
 					</tr>				
 				</c:forEach>
 			</table>

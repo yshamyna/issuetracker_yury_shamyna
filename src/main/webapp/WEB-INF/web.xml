@@ -166,4 +166,24 @@
     <servlet-name>AddIssueServlet</servlet-name>
     <url-pattern>/issues/add</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EditTypeServlet</display-name>
+    <servlet-name>EditTypeServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.type.EditTypeServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EditTypeServlet</servlet-name>
+    <url-pattern>/types/edit</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EditResolutionServlet</display-name>
+    <servlet-name>EditResolutionServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.resolution.EditResolutionServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EditResolutionServlet</servlet-name>
+    <url-pattern>/resolutions/edit</url-pattern>
+  </servlet-mapping>
 </web-app>

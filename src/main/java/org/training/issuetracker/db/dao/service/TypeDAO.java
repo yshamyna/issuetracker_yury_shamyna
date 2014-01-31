@@ -40,14 +40,14 @@ public class TypeDAO implements ITypeDAO {
 	}
 
 	@Override
-	public IssueType getById(int id) throws Exception {
+	public IssueType getById(long id) throws Exception {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("select name from types where id=?");
-			ps.setInt(1, id);
+			ps.setLong(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				IssueType type = new IssueType();
@@ -76,6 +76,24 @@ public class TypeDAO implements ITypeDAO {
 			DBManager.closeStatements(ps);
 			DBManager.closeConnection(connection);
 		}
+	}
+
+	@Override
+	public void updateName(IssueType newType)
+			throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("update types set name=? where id=?");
+			ps.setString(1, newType.getValue());
+			ps.setLong(2, newType.getId());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
+		
 	}
 
 }

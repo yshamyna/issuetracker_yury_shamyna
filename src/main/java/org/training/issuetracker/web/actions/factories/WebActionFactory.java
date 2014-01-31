@@ -39,8 +39,8 @@ public class WebActionFactory {
 			case ADD_PRIORITY: webAction = new AddPriorityWebAction(); break;
 			case ADD_RESOLUTION: webAction = new AddResolutionWebAction(); break;
 			case ADD_PROJECT: webAction = new AddProjectWebAction(); break;
-			case ADD_USER: webAction = new AddUserWebAction();
-			case ADD_ISSUE: webAction = new AddIssueWebAction();
+			case ADD_USER: webAction = new AddUserWebAction(); break;
+			case ADD_ISSUE: webAction = new AddIssueWebAction(); break;
 		}
 		return webAction;
 	}

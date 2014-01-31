@@ -15,7 +15,7 @@
 				<th style="border: 2px solid black;">name</th>
 				<c:forEach var="type" items="${types}">
  					<tr style="border: 2px solid black;">
-						<td style="border: 2px solid black;">${type.value}</td>
+						<td style="border: 2px solid black;"><a href="/issuetracker/types/edit?id=${type.id}">${type.value}</a></td>
 					</tr>				
 				</c:forEach>
 			</table>

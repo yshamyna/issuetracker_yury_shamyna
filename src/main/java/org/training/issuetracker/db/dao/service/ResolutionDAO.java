@@ -40,14 +40,14 @@ public class ResolutionDAO implements IResolutionDAO {
 	}
 
 	@Override
-	public IssueResolution getById(int id) throws Exception {
+	public IssueResolution getById(long id) throws Exception {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("select name from resolutions where id=?");
-			ps.setInt(1, id);
+			ps.setLong(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				IssueResolution resolution = new IssueResolution();
@@ -71,6 +71,22 @@ public class ResolutionDAO implements IResolutionDAO {
 			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("insert into resolutions(name) values(?)");
 			ps.setString(1, resolution.getValue());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
+	}
+
+	@Override
+	public void updateName(IssueResolution resolution) throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("update resolutions set name=? where id=?");
+			ps.setString(1, resolution.getValue());
+			ps.setLong(2, resolution.getId());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);

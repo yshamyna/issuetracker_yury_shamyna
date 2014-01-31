@@ -86,14 +86,6 @@ public class AddIssueServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-//			Project project = new Project();
-//			project.setName(request.getParameter("projectName"));
-//			project.setDescription(request.getParameter("projectDescription"));
-//			Manager manager = new Manager();
-//			manager.setId(Integer.parseInt(request.getParameter("managers")));
-//			project.setManager(manager);
-//			IProjectDAO projectDAO = new ProjectDAO();
-//			long projectId = projectDAO.add(project);
 			Issue issue = new Issue();
 			Timestamp createDate = new Timestamp(System.currentTimeMillis());
 			User createBy = (User)request.getSession().getAttribute("user");

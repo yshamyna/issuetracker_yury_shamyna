@@ -6,6 +6,7 @@ import org.training.issuetracker.db.beans.IssueType;
 
 public interface ITypeDAO {
 	public List<IssueType> getAll() throws Exception;
-	public IssueType getById(int id) throws Exception;
+	public IssueType getById(long id) throws Exception;
 	public void add(IssueType type) throws Exception;
+	public void updateName(IssueType newType) throws Exception;
 }
