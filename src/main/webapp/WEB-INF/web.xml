@@ -186,4 +186,24 @@
     <servlet-name>EditResolutionServlet</servlet-name>
     <url-pattern>/resolutions/edit</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EditStatusServlet</display-name>
+    <servlet-name>EditStatusServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.status.EditStatusServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EditStatusServlet</servlet-name>
+    <url-pattern>/statuses/edit</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EditPriorityServlet</display-name>
+    <servlet-name>EditPriorityServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.priority.EditPriorityServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EditPriorityServlet</servlet-name>
+    <url-pattern>/priorities/edit</url-pattern>
+  </servlet-mapping>
 </web-app>

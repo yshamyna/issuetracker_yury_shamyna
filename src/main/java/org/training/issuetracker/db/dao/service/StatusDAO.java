@@ -40,14 +40,14 @@ public class StatusDAO implements IStatusDAO {
 	}
 
 	@Override
-	public IssueStatus getById(int id) throws Exception {
+	public IssueStatus getById(long id) throws Exception {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("select name from statuses where id=?");
-			ps.setInt(1, id);
+			ps.setLong(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				IssueStatus status = new IssueStatus();
@@ -77,6 +77,22 @@ public class StatusDAO implements IStatusDAO {
 			DBManager.closeConnection(connection);
 		}
 
+	}
+
+	@Override
+	public void updateName(IssueStatus status) throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("update statuses set name=? where id=?");
+			ps.setString(1, status.getValue());
+			ps.setLong(2, status.getId());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
 	}
 
 }
