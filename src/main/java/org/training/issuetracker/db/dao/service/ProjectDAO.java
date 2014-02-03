@@ -45,14 +45,14 @@ public class ProjectDAO implements IProjectDAO {
 	}
 
 	@Override
-	public Project getById(int id) throws Exception {
+	public Project getById(long id) throws Exception {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			connection = DBManager.getConnection();
 	        ps = connection.prepareStatement("select name, description, managerId from projects where id=?");
-	        ps.setInt(1, id);
+	        ps.setLong(1, id);
 	        rs = ps.executeQuery();
 	        if (rs.next()) {
 	        	Project project = new Project();

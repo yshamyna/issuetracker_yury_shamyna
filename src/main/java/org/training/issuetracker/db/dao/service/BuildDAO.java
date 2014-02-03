@@ -52,7 +52,7 @@ public class BuildDAO implements IBuildDAO {
 			ps = connection.prepareStatement("insert into builds(projectId, version, isCurrent) values(?, ?, ?)");
 			ps.setLong(1, build.getProjectId());
 			ps.setString(2, build.getVersion());
-			ps.setBoolean(3, build.isCurrent());
+			ps.setBoolean(3, build.getIsCurrent());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);

@@ -206,4 +206,24 @@
     <servlet-name>EditPriorityServlet</servlet-name>
     <url-pattern>/priorities/edit</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EditProjectServlet</display-name>
+    <servlet-name>EditProjectServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.project.EditProjectServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EditProjectServlet</servlet-name>
+    <url-pattern>/projects/edit</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddBuildServlet</display-name>
+    <servlet-name>AddBuildServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.build.AddBuildServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddBuildServlet</servlet-name>
+    <url-pattern>/builds/add</url-pattern>
+  </servlet-mapping>
 </web-app>

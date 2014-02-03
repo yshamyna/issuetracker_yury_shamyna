@@ -14,7 +14,7 @@ public class Build {
 		this.projectId = projectId;
 	}
 
-	public boolean isCurrent() {
+	public boolean getIsCurrent() {
 		return isCurrent;
 	}
 

@@ -5,7 +5,7 @@
 <html>
 	<head>
 		<title>Projects</title>
-		<link rel=stylesheet href=menu.css type="text/css">
+		<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
 	</head>
 	<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
 		<%@ include file="/includes/administratorMenu.html" %>
@@ -17,7 +17,7 @@
 				<th style="border: 2px solid black;">description</th>
 				<c:forEach var="project" items="${projects}">
  					<tr style="border: 2px solid black;">
-						<td style="border: 2px solid black;width:200px;">${project.name}</td>
+						<td style="border: 2px solid black;width:200px;"><a href="/issuetracker/projects/edit?id=${project.id}">${project.name}</a></td>
 						<td style="border: 2px solid black;width:200px;">${project.manager.firstName} ${project.manager.lastName}</td>
 						<td style="border: 2px solid black;">${project.description}</td>
 					</tr>				

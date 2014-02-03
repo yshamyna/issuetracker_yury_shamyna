@@ -45,6 +45,7 @@ create table builds(
     projectId int not null references projects(id),
     isCurrent boolean not null
 );
+create unique index IND_BUILDS_VERSION_PROJECT on builds(version, projectId);
 create table issues(
     id int primary key auto_increment, 
     createDate timestamp not null,
