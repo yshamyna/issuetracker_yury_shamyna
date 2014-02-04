@@ -191,3 +191,47 @@ grant select on issues, builds, projects, users, roles, statuses, types, resolut
 grant update on issues, users to user;
 grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers to guest;
 grant all on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers to administrator;
+
+drop alias if exists updateBuildVersionOfProject;
+create alias updateBuildVersionOfProject as $$
+void updateBuilds(java.sql.Connection connection, long buildId, long projectId) throws Exception {
+	java.sql.PreparedStatement getIsCurrentFieldOfBuildTable = null;
+	java.sql.ResultSet rsIsCurrent = null;
+	try {
+		getIsCurrentFieldOfBuildTable = connection.prepareStatement("select isCurrent from builds where id=? and projectId=?");
+		getIsCurrentFieldOfBuildTable.setLong(1, buildId);
+		getIsCurrentFieldOfBuildTable.setLong(2, projectId);
+		
+		rsIsCurrent = getIsCurrentFieldOfBuildTable.executeQuery();
+		if (!(rsIsCurrent.next() && rsIsCurrent.getBoolean("isCurrent"))) {
+			java.sql.PreparedStatement uncheckIsCurrent = null;
+			java.sql.PreparedStatement checkIsCurrent = null;
+			try {
+				uncheckIsCurrent = connection.
+					prepareStatement("update builds set isCurrent=false where projectId=? and isCurrent=true");
+				uncheckIsCurrent.setLong(1, projectId);
+				uncheckIsCurrent.executeUpdate();
+				
+				checkIsCurrent = connection.
+					prepareStatement("update builds set isCurrent=true where id=?");
+				checkIsCurrent.setLong(1, buildId);
+				checkIsCurrent.executeUpdate();
+			} finally {
+				if (checkIsCurrent != null) {
+				 	checkIsCurrent.close();
+				}
+				if (uncheckIsCurrent != null) {
+					uncheckIsCurrent.close();
+				}
+			}
+		} 
+	} finally {
+		if (rsIsCurrent != null) {
+			rsIsCurrent.close();
+		}
+		if (getIsCurrentFieldOfBuildTable != null) {
+			getIsCurrentFieldOfBuildTable.close();
+		}
+	}
+}
+$$;

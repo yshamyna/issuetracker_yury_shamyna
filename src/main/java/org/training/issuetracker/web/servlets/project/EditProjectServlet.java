@@ -9,17 +9,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.Build;
-import org.training.issuetracker.db.beans.IssueStatus;
 import org.training.issuetracker.db.beans.Manager;
 import org.training.issuetracker.db.beans.Project;
 import org.training.issuetracker.db.dao.interfaces.IBuildDAO;
 import org.training.issuetracker.db.dao.interfaces.IManagerDAO;
 import org.training.issuetracker.db.dao.interfaces.IProjectDAO;
-import org.training.issuetracker.db.dao.interfaces.IStatusDAO;
 import org.training.issuetracker.db.dao.service.BuildDAO;
 import org.training.issuetracker.db.dao.service.ManagerDAO;
 import org.training.issuetracker.db.dao.service.ProjectDAO;
-import org.training.issuetracker.db.dao.service.StatusDAO;
 
 /**
  * Servlet implementation class EditProjectServlet
@@ -77,21 +74,29 @@ public class EditProjectServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		try {
-//			String id = request.getParameter("id");
-//			String name = request.getParameter("name");
-//			
-//			IssueStatus status = new IssueStatus();
-//			status.setId(Integer.parseInt(id));
-//			status.setValue(name);	
-//			
-//			IStatusDAO statusDAO = new StatusDAO();
-//			statusDAO.updateName(status);
-//			
-//			response.getWriter().println("Issue status was updated successfully.");
-//		} catch (Exception e) {
-//			response.getWriter().println("Sorry, but current service is not available... Please try later.");
-//		}
+		try {
+			Project project = new Project();
+			project.setId(Integer.parseInt(request.getParameter("id")));
+			project.setName(request.getParameter("name"));
+			project.setDescription(request.getParameter("description"));
+			Manager manager = new Manager();
+			manager.setId(Integer.parseInt(request.getParameter("managerId")));
+			project.setManager(manager);
+			
+			IProjectDAO projectDAO = new ProjectDAO();
+			projectDAO.update(project);
+			
+			Build build = new Build();
+			build.setId(Integer.parseInt(request.getParameter("buildId")));
+			build.setProjectId(project.getId());
+			IBuildDAO buildDAO = new BuildDAO();
+			buildDAO.changeVersion(build);
+			
+			response.getWriter().println("Project was updated successfully.");
+		} catch (Exception e) {
+			response.getWriter().println("Sorry, but current service is not available... Please try later.");
+			e.printStackTrace();
+		}
 	}
 
 }

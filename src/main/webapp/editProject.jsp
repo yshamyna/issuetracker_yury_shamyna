@@ -25,7 +25,7 @@
 	  		return xmlhttp;
 		}
 		
-		function update(id, url, inputs) {
+		function update(id, url, data) {
 			if (!isCorrectData()) return;
 			var req = getXmlHttp();
 			req.onreadystatechange = function() { 
@@ -37,9 +37,9 @@
 			req.open("post", url, true);
 			req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 			var body = "";
-			for (var i = 0; i < inputs.length; i++) {
-				var parameterName = inputs[i].getParameter();
-				var parameterValue = inputs[i].getElement().value;
+			for (var i = 0; i < data.length; i++) {
+				var parameterName = data[i].getParameter();
+				var parameterValue = data[i].getElement().value;
 				body += parameterName + "=" + parameterValue + "&";
 			}
 			body += "id=" + id;
@@ -68,6 +68,12 @@
 					msg += inputs[i].name + " is empty. ";
 				}
 			}
+			var textareas = document.getElementsByTagName("textarea");
+			for (var i = 0; i < textareas.length; i++) {
+				if (!textareas[i].value.trim()) {
+					msg += textareas[i].name + " is empty. ";
+				}
+			}
 			return msg;
 		}
 		
@@ -84,10 +90,12 @@
 		}
 		
 		function onclick() {
-			var name = new Element("entityName", 
-					document.getElementById("name"));
-			var inputs = [name];
-			update("${priority.id}", "/issuetracker/priorities/edit", inputs);
+			var name = new Element("name", document.getElementById("name"));
+			var description = new Element("description", document.getElementById("description"));
+			var build = new Element("buildId", document.getElementById("build"));
+			var manager = new Element("managerId", document.getElementById("manager"));
+			var data = [name, description, build, manager];
+			update("${project.id}", "/issuetracker/projects/edit", data);
 		}
 	</script>
 </head>
@@ -95,14 +103,13 @@
 	<%@ include file="/includes/administratorMenu.html" %>
 	<div style="position:relative;width:100%;height:250px;background-color:rgb(25, 28, 36);font-family:arial;color:white;font-size:10pt;margin-top:1px;">
 			<span style="position:absolute;right:50%;top:10px;margin-right:100px;">Name:</span> 
-			<input style="position:absolute;left:50%;top:5px;margin-left:-100px;width:200px;" type="text" name="Name" value="${project.name}"/>
+			<input id="name" style="position:absolute;left:50%;top:5px;margin-left:-100px;width:200px;" type="text" name="Name" value="${project.name}"/>
 			
 			<span style="position:absolute;right:50%;top:35px;margin-right:100px;">Description:</span>
-			<input style="position:absolute;left:50%;top:30px;margin-left:-100px;width:200px;" type="text" name="Description" value="${project.description}"/>
-			<textarea style="position:absolute;left:50%;top:30px;margin-left:-100px;width:200px;max-height:100px;width:200px;height:100px;">${project.description}</textarea>
+			<textarea id="description" style="position:absolute;left:50%;top:30px;margin-left:-100px;width:200px;max-height:100px;width:200px;height:100px;" name="Description">${project.description}</textarea>
 			
 			<span style="position:absolute;right:50%;top:145px;margin-right:100px;">Build:</span>
-			<select style="position:absolute;left:50%;top:140px;margin-left:-100px;width:200px;" name="Version">
+			<select id="build" style="position:absolute;left:50%;top:140px;margin-left:-100px;width:200px;" name="Build">
 				<c:forEach var="build" items="${builds}">
 					<c:choose>
 						<c:when test="${build.isCurrent eq true}">
@@ -114,10 +121,10 @@
 					</c:choose>
 				</c:forEach>
 			</select> 
-			<a href="/issuetracker/builds/add?id=${project.id}" style="position:absolute;right:50%;top:145px;margin-right:-130px;">Add</a>
+			<a href="/issuetracker/builds/add?id=${project.id}" style="position:absolute;right:50%;top:145px;margin-right:-150px;color:rgb(153,249,163);">Add</a>
 			
 			<span style="position:absolute;right:50%;top:170px;margin-right:100px;">Manager:</span>
-			<select style="position:absolute;left:50%;top:165px;margin-left:-100px;width:204px;" name="Manager"/>
+			<select id="manager" style="position:absolute;left:50%;top:165px;margin-left:-100px;width:204px;" name="Manager"/>
 				<c:forEach var="manager" items="${managers}">
 					<c:choose>
 						<c:when test="${manager.id eq project.manager.id}">
@@ -129,10 +136,10 @@
 					</c:choose>
 				</c:forEach>
 			</select>
-			<div style="text-align:center;position:absolute;top:130px;width:100%">
-				<span id="errMsg" style="font-size:10pt;color:red;margin:auto;"></span>
+			<div style="text-align:center;position:absolute;top:250px;width:100%">
+				<span id="msg" style="font-size:10pt;color:red;margin:auto;"></span>
 			</div>
-			<input id="submitBtn" style="position:absolute;left:50%;top:200px;margin-left:-100px;width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;border-radius:3px;height:30px;font-size:12pt;font-weight:bold;" type="button" value="Edit">
+			<input id="submitBtn" style="position:absolute;left:50%;top:210px;margin-left:-100px;width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;border-radius:3px;height:30px;font-size:12pt;font-weight:bold;" type="button" value="Edit">
 		</div>
 	
 	<script type="text/javascript">

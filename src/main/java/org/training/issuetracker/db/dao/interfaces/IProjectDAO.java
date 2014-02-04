@@ -8,4 +8,5 @@ public interface IProjectDAO {
 	public List<Project> getAll() throws Exception;
 	public Project getById(long id) throws Exception;
 	public long add(Project project) throws Exception;
+	public void update(Project project) throws Exception;
 }

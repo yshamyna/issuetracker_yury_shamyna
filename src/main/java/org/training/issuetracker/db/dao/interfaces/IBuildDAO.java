@@ -9,4 +9,5 @@ public interface IBuildDAO {
 	public Build getById(long id) throws Exception;
 	public void add(Build build) throws Exception;
 	public List<Build> getByProjectId(long id) throws Exception;
+	public void changeVersion(Build build) throws Exception;
 }

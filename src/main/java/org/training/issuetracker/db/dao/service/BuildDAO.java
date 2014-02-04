@@ -1,5 +1,6 @@
 package org.training.issuetracker.db.dao.service;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -87,6 +88,23 @@ public class BuildDAO implements IBuildDAO {
 			DBManager.closeStatements(ps);
 			DBManager.closeConnection(connection);
 		}
+	}
+
+	@Override
+	public void changeVersion(Build build) throws Exception {
+		Connection connection = null;
+		CallableStatement cs = null;
+		try {
+			connection = DBManager.getConnection();
+			cs = connection.prepareCall("call updateBuildVersionOfProject(?, ?)");
+			cs.setLong(1, build.getId());
+			cs.setLong(2, build.getProjectId());
+			cs.executeUpdate();
+		} finally {
+			DBManager.closeStatements(cs);
+			DBManager.closeConnection(connection);
+		}
+		
 	}
 
 }

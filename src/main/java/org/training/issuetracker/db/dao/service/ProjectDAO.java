@@ -101,4 +101,22 @@ public class ProjectDAO implements IProjectDAO {
 		return -1;
 	}
 
+	@Override
+	public void update(Project project) throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("update projects set name=?, description=?, managerId=? where id=?");
+			ps.setString(1, project.getName());
+			ps.setString(2, project.getDescription());
+			ps.setLong(3, project.getManager().getId());
+			ps.setLong(4, project.getId());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
+	}
+
 }
