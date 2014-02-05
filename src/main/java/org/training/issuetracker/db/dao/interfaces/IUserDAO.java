@@ -9,4 +9,6 @@ public interface IUserDAO {
 	public User getById(long id) throws Exception;
 	public void add(User user) throws Exception;
 	public User getByEmailAndPassword(String email, String password) throws Exception;
+	public void changePassword(User user) throws Exception;
+	public void update(User user) throws Exception;
 }

@@ -5,7 +5,7 @@
 <html>
 	<head>
 		<title>Welcome to issue tracker</title>
-		<link rel=stylesheet href=menu.css type="text/css">
+		<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
 		<script type="text/javascript">
 			function userNotExistsError(errMsg) {
 				var span = document.getElementById("errMsg");
@@ -55,7 +55,7 @@
 				<th style="border: 2px solid black;">summary</th>
 				<c:forEach var="issue" items="${issues}">
  					<tr style="border: 2px solid black;">
-						<td style="border: 2px solid black;">${issue.id}</td>
+						<td style="border: 2px solid black;"><a href="/issuetracker/issues/edit?id=${issue.id}">${issue.id}</a></td>
 						<td style="border: 2px solid black;">${issue.priority.value}</td>
 						<td style="border: 2px solid black;">${issue.assignee.firstName} ${issue.assignee.lastName}</td>
 						<td style="border: 2px solid black;">${issue.type.value}</td>

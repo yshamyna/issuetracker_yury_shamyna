@@ -128,4 +128,39 @@ public class UserDAO implements IUserDAO {
 		}
 		return user;
 	}
+
+	@Override
+	public void changePassword(User user) throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("update users set password=? where id=?");
+			ps.setString(1, user.getPassword());
+			ps.setLong(2, user.getId());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
+	}
+
+	@Override
+	public void update(User user) throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("update users set firstName=?, lastName=?, email=?, roleId=? where id=?");
+			ps.setString(1, user.getFirstName());
+			ps.setString(2, user.getLastName());
+			ps.setString(3, user.getEmailAddress());
+			ps.setLong(4, user.getRole().getId());
+			ps.setLong(5, user.getId());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
+	}
 }

@@ -1,17 +1,16 @@
 <div class="menu">
-	<div>
+	<div>User: 
 		<ul class="link-menu">
-			<li>User: <a href="">${user.firstName} ${user.lastName}</a>
+			<li><a href="">${user.firstName} ${user.lastName}</a>
 				<ul>
-					<li><a href="">Edit profile</a></li>
-					<li><a href="">Change password</a></li>
-					<li><a href="">Logout</a></li>
+					<li><a href="/issuetracker/controller?action=edit_profile">Edit profile</a></li>
+					<li><a href="/issuetracker/controller?action=change_password">Change password</a></li>
+					<li><a href="/issuetracker/controller?action=logout">Logout</a></li>
 				</ul>
 			</li>
 		</ul>
 	</div>
 	<ul class="color-menu">
-		<li><a href="">Profile</a></li>
 		<li><a href="">Search</a>
 			<ul>
 				<li><a href="">Issue</a></li>
@@ -34,6 +33,6 @@
 		<li><a href="/issuetracker/controller?action=show_projects">Projects</a></li>
 		<li><a href="/issuetracker/controller?action=show_statuses">Statuses</a></li>
 		<li><a href="/issuetracker/controller?action=show_types">Types</a></li>
-		<li><a href="/issuetracker/controller?action=logout">Logout</a></li>
+		<li><a href="/issuetracker/controller?action=show_users">Users</a></li>
 	</ul>
 </div>

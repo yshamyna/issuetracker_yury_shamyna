@@ -1,9 +1,17 @@
 <div class="menu">
-	<div>User: ${user.firstName} ${user.lastName}</div>
+	<div>User: 
+		<ul class="link-menu">
+			<li><a href="">${user.firstName} ${user.lastName}</a>
+				<ul>
+					<li><a href="/issuetracker/controller?action=edit_profile">Edit profile</a></li>
+					<li><a href="/issuetracker/controller?action=change_password">Change password</a></li>
+					<li><a href="/issuetracker/controller?action=logout">Logout</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
 	<ul class="color-menu">
-		<li><a href="">Profile</a></li>
 		<li><a href="">Add issue</a></li>
 		<li><a href="">Search issue</a></li>
-		<li><a href="controller?action=Logout">Logout</a></li>
 	</ul>
 </div>

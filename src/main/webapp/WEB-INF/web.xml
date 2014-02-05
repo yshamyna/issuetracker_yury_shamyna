@@ -226,4 +226,54 @@
     <servlet-name>AddBuildServlet</servlet-name>
     <url-pattern>/builds/add</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ChangePasswordServlet</display-name>
+    <servlet-name>ChangePasswordServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.user.ChangePasswordServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ChangePasswordServlet</servlet-name>
+    <url-pattern>/profile/change-password</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EditProfileServlet</display-name>
+    <servlet-name>EditProfileServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.user.EditProfileServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EditProfileServlet</servlet-name>
+    <url-pattern>/profile/edit</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>UserReaderServlet</display-name>
+    <servlet-name>UserReaderServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.user.UserReaderServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserReaderServlet</servlet-name>
+    <url-pattern>/users</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EditUserServlet</display-name>
+    <servlet-name>EditUserServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.user.EditUserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EditUserServlet</servlet-name>
+    <url-pattern>/users/edit</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>EditIssueServlet</display-name>
+    <servlet-name>EditIssueServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.issue.EditIssueServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EditIssueServlet</servlet-name>
+    <url-pattern>/issues/edit</url-pattern>
+  </servlet-mapping>
 </web-app>

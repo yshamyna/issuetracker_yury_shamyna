@@ -82,7 +82,52 @@ public class IssueDAO implements IIssueDAO {
 
 	@Override
 	public Issue getById(long id) throws Exception {
-		// TODO Auto-generated method stub
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			connection = DBManager.getConnection();
+	        ps = connection.prepareStatement("select createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId from issues where id=?");
+	        ps.setLong(1, id);
+	        rs = ps.executeQuery();
+	        if (rs.next()) {
+	        	Issue issue = new Issue();
+	        	issue.setId(id);
+	        	issue.setCreateDate(rs.getTimestamp("createDate"));
+				issue.setModifyDate(rs.getTimestamp("modifyDate"));
+				issue.setSummary(rs.getString("summary"));
+				issue.setDescription(rs.getString("description"));
+				
+				IUserDAO userDAO = new UserDAO();
+				issue.setAssignee(userDAO.getById(rs.getInt("assignee")));
+				issue.setCreatedBy(userDAO.getById(rs.getInt("createBy")));
+				issue.setModifyBy(userDAO.getById(rs.getInt("modifyBy")));
+				
+				IStatusDAO statusDAO = new StatusDAO();
+				issue.setStatus(statusDAO.getById(rs.getInt("statusId")));
+				
+				ITypeDAO typeDAO = new TypeDAO();
+				issue.setType(typeDAO.getById(rs.getInt("typeId")));
+				
+				IPriorityDAO priorityDAO = new PriorityDAO();
+				issue.setPriority(priorityDAO.getById(rs.getInt("priorityId")));
+				
+				IProjectDAO projectDAO = new ProjectDAO();
+				issue.setProject(projectDAO.getById(rs.getInt("projectId")));
+				
+				IBuildDAO buildDAO = new BuildDAO();
+				issue.setBuildFound(buildDAO.getById(rs.getInt("buildId")));
+				
+				IResolutionDAO resolutionDAO = new ResolutionDAO();
+				issue.setResolution(resolutionDAO.getById(rs.getInt("resolutionId")));
+				
+	        	return issue;
+	        }
+		} finally {
+			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
 		return null;
 	}
 
@@ -172,6 +217,31 @@ public class IssueDAO implements IIssueDAO {
 			DBManager.closeStatements(ps);
 			DBManager.closeConnection(connection);
 		} 
+	}
+
+	@Override
+	public void update(Issue issue) throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("update issues set modifyDate=?, modifyBy, summary=?, description=?, statusId=?, typeId=?, priorityId=?, projectId=?, buildId=?, assignee=?, resolutionId=? where id=?");
+			ps.setTimestamp(1, issue.getModifyDate());
+			ps.setLong(2, issue.getModifyBy().getId());
+			ps.setString(3, issue.getSummary());
+			ps.setString(4, issue.getDescription());
+			ps.setLong(5, issue.getStatus().getId());
+			ps.setLong(6, issue.getType().getId());
+			ps.setLong(7, issue.getPriority().getId());
+			ps.setLong(8, issue.getProject().getId());
+			ps.setLong(9, issue.getBuildFound().getId());
+			ps.setLong(10, issue.getAssignee().getId());
+			ps.setNull(11, Types.INTEGER);
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		}
 	}
 
 }

@@ -9,4 +9,5 @@ public interface IIssueDAO {
 	public Issue getById(long id) throws Exception;
 	public void add(Issue issue) throws Exception;
 	public List<Issue> getAllByUserId(long id) throws Exception;
+	public void update(Issue issue) throws Exception;
 }
