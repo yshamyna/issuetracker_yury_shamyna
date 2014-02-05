@@ -1,7 +1,6 @@
 package org.training.issuetracker.web.servlets.user;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -9,18 +8,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.Build;
-import org.training.issuetracker.db.beans.Issue;
-import org.training.issuetracker.db.beans.IssuePriority;
-import org.training.issuetracker.db.beans.IssueStatus;
-import org.training.issuetracker.db.beans.IssueType;
-import org.training.issuetracker.db.beans.Project;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.beans.UserRole;
-import org.training.issuetracker.db.dao.interfaces.IIssueDAO;
 import org.training.issuetracker.db.dao.interfaces.IRoleDAO;
 import org.training.issuetracker.db.dao.interfaces.IUserDAO;
-import org.training.issuetracker.db.dao.service.IssueDAO;
 import org.training.issuetracker.db.dao.service.RoleDAO;
 import org.training.issuetracker.db.dao.service.UserDAO;
 
@@ -77,7 +68,19 @@ public class EditUserServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			long id = Integer.parseInt(request.getParameter("id"));
-			
+			String firstName = request.getParameter("fName");
+			String lastName = request.getParameter("lName");
+			String email = request.getParameter("email");
+			User user = new User();
+			user.setId(id);
+			user.setFirstName(firstName);
+			user.setLastName(lastName);
+			user.setEmailAddress(email);
+			UserRole role = new UserRole();
+			role.setId(Integer.parseInt(request.getParameter("roleId")));
+			user.setRole(role);
+			IUserDAO userDAO = new UserDAO();
+			userDAO.update(user);
 			response.getWriter().println("User data was changed successfully.");
 		} catch(Exception e) {
 			response.getWriter().println("Sorry, but current service is not available... Please try later.");

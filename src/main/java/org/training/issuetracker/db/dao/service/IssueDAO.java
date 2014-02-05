@@ -225,7 +225,7 @@ public class IssueDAO implements IIssueDAO {
 		PreparedStatement ps = null;
 		try {
 			connection = DBManager.getConnection();
-			ps = connection.prepareStatement("update issues set modifyDate=?, modifyBy, summary=?, description=?, statusId=?, typeId=?, priorityId=?, projectId=?, buildId=?, assignee=?, resolutionId=? where id=?");
+			ps = connection.prepareStatement("update issues set modifyDate=?, modifyBy=?, summary=?, description=?, statusId=?, typeId=?, priorityId=?, projectId=?, buildId=?, assignee=?, resolutionId=? where id=?");
 			ps.setTimestamp(1, issue.getModifyDate());
 			ps.setLong(2, issue.getModifyBy().getId());
 			ps.setString(3, issue.getSummary());
@@ -235,8 +235,13 @@ public class IssueDAO implements IIssueDAO {
 			ps.setLong(7, issue.getPriority().getId());
 			ps.setLong(8, issue.getProject().getId());
 			ps.setLong(9, issue.getBuildFound().getId());
-			ps.setLong(10, issue.getAssignee().getId());
+			if (issue.getAssignee() == null) {
+				ps.setNull(10, Types.INTEGER);
+			} else {
+				ps.setLong(10, issue.getAssignee().getId());
+			}
 			ps.setNull(11, Types.INTEGER);
+			ps.setLong(12, issue.getId());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);

@@ -138,7 +138,7 @@ public class EditIssueServlet extends HttpServlet {
 			build.setId(Integer.parseInt(request.getParameter("buildId")));
 			issue.setBuildFound(build);
 			
-			long userId = Integer.parseInt(request.getParameter("assignee"));
+			long userId = Integer.parseInt(request.getParameter("assigneeId"));
 			if (userId == -1) {
 				issue.setAssignee(null);
 			} else {
@@ -150,6 +150,7 @@ public class EditIssueServlet extends HttpServlet {
 			issueDAO.update(issue);
 			response.getWriter().println("Issue was changed successfully.");
 		} catch(Exception e) {
+			e.printStackTrace();
 			response.getWriter().println("Sorry, but current service is not available... Please try later.");
 		}
 	}
