@@ -6,6 +6,8 @@
 	<head>
 		<title>Welcome to issue tracker</title>
 		<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
+		<link rel=stylesheet href="/issuetracker/css/table.css" type="text/css">
+		<link rel=stylesheet href="/issuetracker/css/content.css" type="text/css">
 		<script type="text/javascript">
 			function userNotExistsError(errMsg) {
 				var span = document.getElementById("errMsg");
@@ -45,25 +47,32 @@
 				userNotExistsError("${errMsg}");
 			</script> 
 		</c:if>
-		<div style="padding-left:5px;padding-right:5px;background-color:rgb(243, 245, 245);padding-top:5px;font-family:arial;">
-			<table border="1" style="width:100%;border-collapse:collapse;border: 2px solid black;">
-				<th style="border: 2px solid black;">id</th>
-				<th style="border: 2px solid black;">priority</th>
-				<th style="border: 2px solid black;">assignee</th>
-				<th style="border: 2px solid black;">type</th>
-				<th style="border: 2px solid black;">status</th>
-				<th style="border: 2px solid black;">summary</th>
-				<c:forEach var="issue" items="${issues}">
- 					<tr style="border: 2px solid black;">
-						<td style="border: 2px solid black;"><a href="/issuetracker/issues/edit?id=${issue.id}">${issue.id}</a></td>
-						<td style="border: 2px solid black;">${issue.priority.value}</td>
-						<td style="border: 2px solid black;">${issue.assignee.firstName} ${issue.assignee.lastName}</td>
-						<td style="border: 2px solid black;">${issue.type.value}</td>
-						<td style="border: 2px solid black;">${issue.status.value}</td>
-						<td style="border: 2px solid black;">${issue.summary}</td>
-					</tr>				
-				</c:forEach>
+		<div class="content">
+			<table class="table">
+				<thead>
+					<tr>
+						<td>id</td>
+						<td>priority</td>
+						<td>assignee</td>
+						<td>type</td>
+						<td>status</td>
+						<td>summary</td>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="issue" items="${issues}">
+	 					<tr>
+							<td><a href="/issuetracker/issues/edit?id=${issue.id}">${issue.id}</a></td>
+							<td>${issue.priority.value}</td>
+							<td>${issue.assignee.firstName} ${issue.assignee.lastName}</td>
+							<td>${issue.type.value}</td>
+							<td>${issue.status.value}</td>
+							<td>${issue.summary}</td>
+						</tr>				
+					</c:forEach>
+				</tbody>
 			</table>
 		</div>
+		<script type="text/javascript" src="/issuetracker/js/sort.js"></script>
 	</body>
 </html>

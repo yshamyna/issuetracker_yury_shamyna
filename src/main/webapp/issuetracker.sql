@@ -194,9 +194,14 @@ grant all on issues, builds, projects, users, roles, statuses, types, resolution
 
 drop alias if exists updateBuildVersionOfProject;
 create alias updateBuildVersionOfProject as $$
-void updateBuilds(java.sql.Connection connection, long buildId, long projectId) throws Exception {
-	java.sql.PreparedStatement getIsCurrentFieldOfBuildTable = null;
-	java.sql.ResultSet rsIsCurrent = null;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Connection;
+
+@CODE
+void updateBuilds(Connection connection, long buildId, long projectId) throws Exception {
+	PreparedStatement getIsCurrentFieldOfBuildTable = null;
+	ResultSet rsIsCurrent = null;
 	try {
 		getIsCurrentFieldOfBuildTable = connection.prepareStatement("select isCurrent from builds where id=? and projectId=?");
 		getIsCurrentFieldOfBuildTable.setLong(1, buildId);
@@ -204,8 +209,8 @@ void updateBuilds(java.sql.Connection connection, long buildId, long projectId) 
 		
 		rsIsCurrent = getIsCurrentFieldOfBuildTable.executeQuery();
 		if (!(rsIsCurrent.next() && rsIsCurrent.getBoolean("isCurrent"))) {
-			java.sql.PreparedStatement uncheckIsCurrent = null;
-			java.sql.PreparedStatement checkIsCurrent = null;
+			PreparedStatement uncheckIsCurrent = null;
+			PreparedStatement checkIsCurrent = null;
 			try {
 				uncheckIsCurrent = connection.
 					prepareStatement("update builds set isCurrent=false where projectId=? and isCurrent=true");
@@ -232,6 +237,55 @@ void updateBuilds(java.sql.Connection connection, long buildId, long projectId) 
 		if (getIsCurrentFieldOfBuildTable != null) {
 			getIsCurrentFieldOfBuildTable.close();
 		}
+	}
+}
+$$;
+
+drop alias if exists getNIssuesFromPageY;
+create alias getNIssuesFromPageY as $$
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Connection;
+
+@CODE
+ResultSet getIssues(Connection connection, long userId, 
+									long pageNumber,long recordsPerPage) throws Exception {
+	//PreparedStatement getRecordsNumber = connection.prepareStatement("select count(*) from issues where assignee=?");
+	PreparedStatement getRecordsNumber = null;
+	ResultSet rs = null;
+	PreparedStatement getIssues = null;
+	try {
+		getRecordsNumber = connection.prepareStatement("select count(*) as n from issues");
+		rs = getRecordsNumber.executeQuery();
+		long recordsNumber = 0;
+		if (rs.next()) {
+			recordsNumber = rs.getLong("n");
+		}
+		
+		long offset = (pageNumber - 1) * recordsPerPage;
+		if (offset < 0) {
+			offset = 0;
+		}
+		if (offset >= recordsNumber) {
+			offset = ((long) java.lang.Math.ceil((double)recordsNumber / recordsPerPage) - 1) * recordsPerPage;
+		}
+		
+		getIssues = connection.prepareStatement("select id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId from issues order by id desc limit ? offset ?");
+		getIssues.setLong(1, recordsPerPage);
+		getIssues.setLong(2, offset);
+		ResultSet rs2 = getIssues.executeQuery();
+		
+		return rs2;
+	} finally {
+//		if (getIssues != null) {
+//			getIssues.close();
+//		}
+//		if (rs != null) {
+//			rs.close();
+//		}
+//		if (getRecordsNumber != null) {
+//			getRecordsNumber.close();
+//		}
 	}
 }
 $$;

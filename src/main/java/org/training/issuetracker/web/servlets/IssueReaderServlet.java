@@ -49,6 +49,12 @@ public class IssueReaderServlet extends HttpServlet {
 		try {
 			if (user == null) {
 				issues = issueDAO.getAll();
+				String page = request.getParameter("page");
+				long pageNumber = 1;
+				if (page != null) {
+					pageNumber = Integer.parseInt(page);
+				}
+				issues = issueDAO.getNRecordsFromPageY(10, pageNumber);
 			} else {
 				issues = issueDAO.getAllByUserId(user.getId());
 			}

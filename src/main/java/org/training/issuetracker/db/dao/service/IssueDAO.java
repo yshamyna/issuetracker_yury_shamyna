@@ -1,5 +1,6 @@
 package org.training.issuetracker.db.dao.service;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -249,4 +250,65 @@ public class IssueDAO implements IIssueDAO {
 		}
 	}
 
+	@Override
+	public List<Issue> getNRecordsFromPageY(long recordsPerPage, long pageNumber)
+			throws Exception {
+		Connection connection = null;
+		CallableStatement cs = null;
+		ResultSet rs = null;
+		try {
+			connection = DBManager.getConnection();
+			cs = connection.prepareCall("{call getNIssuesFromPageY(?, ?, ?)}");
+			
+			//cs.setObject(1, rs);
+			cs.setLong(1, 1);
+			cs.setLong(2, pageNumber);
+			cs.setLong(3, recordsPerPage);
+			rs = cs.executeQuery();
+			
+			List<Issue> issues = new ArrayList<Issue>();
+			Issue issue = null;
+			while(rs.next()) {
+				issue = new Issue();
+				
+				issue.setId(rs.getLong("id"));
+				issue.setCreateDate(rs.getTimestamp("createDate"));
+				issue.setModifyDate(rs.getTimestamp("modifyDate"));
+				issue.setSummary(rs.getString("summary"));
+				issue.setDescription(rs.getString("description"));
+				
+				IUserDAO userDAO = new UserDAO();
+				//issue.setAssignee(userDAO.getById(id));
+				issue.setAssignee(userDAO.getById(rs.getInt("assignee")));
+				issue.setCreatedBy(userDAO.getById(rs.getInt("createBy")));
+				issue.setModifyBy(userDAO.getById(rs.getInt("modifyBy")));
+				
+				IStatusDAO statusDAO = new StatusDAO();
+				issue.setStatus(statusDAO.getById(rs.getInt("statusId")));
+				
+				ITypeDAO typeDAO = new TypeDAO();
+				issue.setType(typeDAO.getById(rs.getInt("typeId")));
+				
+				IPriorityDAO priorityDAO = new PriorityDAO();
+				issue.setPriority(priorityDAO.getById(rs.getInt("priorityId")));
+				
+				IProjectDAO projectDAO = new ProjectDAO();
+				issue.setProject(projectDAO.getById(rs.getInt("projectId")));
+				
+				IBuildDAO buildDAO = new BuildDAO();
+				issue.setBuildFound(buildDAO.getById(rs.getInt("buildId")));
+				
+				IResolutionDAO resolutionDAO = new ResolutionDAO();
+				issue.setResolution(resolutionDAO.getById(rs.getInt("resolutionId")));
+				
+				issues.add(issue);
+			}
+			
+			return issues;
+		} finally {
+			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(cs);
+			DBManager.closeConnection(connection);
+		}
+	}
 }
