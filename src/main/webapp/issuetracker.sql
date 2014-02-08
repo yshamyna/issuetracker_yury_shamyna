@@ -1,4 +1,4 @@
-drop table if exists issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers;
+drop table if exists comments, issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers;
 
 create table roles(
     id int primary key auto_increment, 
@@ -62,6 +62,13 @@ create table issues(
     assignee int null references users(id),
     resolutionId int null references resolutions(id)
 );
+create table comments(
+	id int primary key auto_increment, 
+	sender int not null references users(id),
+	issueId int not null references issues(id),
+	comment varchar(4000) not null,
+	createDate timestamp not null
+);
 
 insert into roles(name) values('administrator');
 insert into roles(name) values('user');
@@ -118,26 +125,26 @@ insert into projects(name, description, managerId)
     values('ICQ', 'ICQ is an instant messaging computer program.', 5);
     
 /*To delete*/    
-insert into projects(name, description, managerId)
-    values('asdasda sdad ddf s', 'Outlook Web App (OWA)is a webmail service. Outlook Web App is used to access e-mail (including support for S/MIME), calendars, contacts, tasks, documents.', 1);
-insert into projects(name, description, managerId)
-    values('sdsdf  sd fsdfd', 'Digital counters that either increment or decrement at a fixed frequency.', 2);
-insert into projects(name, description, managerId)
-    values('dfgsdgdfgsfg', 'Skype is a freemium voice-over-IP service and instant messaging client. The service allows users to communicate with peers by voice using a microphone, video by using a webcam, and instant messaging over the Internet.', 3);
-insert into projects(name, description, managerId)
-    values('sdfgsdfgsdfhdfgsdfgfg', 'Google Talk is an instant messaging service that provides both text and voice communication.', 4);
-insert into projects(name, description, managerId)
-    values(' fdssds rs rs srsdr d', 'ICQ is an instant messaging computer program.', 5);
-insert into projects(name, description, managerId)
-    values('sdgf Web App', 'Outlook Web App (OWA)is a webmail service. Outlook Web App is used to access e-mail (including support for S/MIME), calendars, contacts, tasks, documents.', 1);
-insert into projects(name, description, managerId)
-    values('hgf fg df fd sdf d', 'Digital counters that either increment or decrement at a fixed frequency.', 2);
-insert into projects(name, description, managerId)
-    values('gd fgh df', 'Skype is a freemium voice-over-IP service and instant messaging client. The service allows users to communicate with peers by voice using a microphone, video by using a webcam, and instant messaging over the Internet.', 3);
-insert into projects(name, description, managerId)
-    values('saa32 3 ', 'Google Talk is an instant messaging service that provides both text and voice communication.', 4);
-insert into projects(name, description, managerId)
-    values('gd sdfg 4 adsf sdf wr', 'ICQ is an instant messaging computer program.', 5);
+	insert into projects(name, description, managerId)
+	    values('asdasda sdad ddf s', 'Outlook Web App (OWA)is a webmail service. Outlook Web App is used to access e-mail (including support for S/MIME), calendars, contacts, tasks, documents.', 1);
+	insert into projects(name, description, managerId)
+	    values('sdsdf  sd fsdfd', 'Digital counters that either increment or decrement at a fixed frequency.', 2);
+	insert into projects(name, description, managerId)
+	    values('dfgsdgdfgsfg', 'Skype is a freemium voice-over-IP service and instant messaging client. The service allows users to communicate with peers by voice using a microphone, video by using a webcam, and instant messaging over the Internet.', 3);
+	insert into projects(name, description, managerId)
+	    values('sdfgsdfgsdfhdfgsdfgfg', 'Google Talk is an instant messaging service that provides both text and voice communication.', 4);
+	insert into projects(name, description, managerId)
+	    values(' fdssds rs rs srsdr d', 'ICQ is an instant messaging computer program.', 5);
+	insert into projects(name, description, managerId)
+	    values('sdgf Web App', 'Outlook Web App (OWA)is a webmail service. Outlook Web App is used to access e-mail (including support for S/MIME), calendars, contacts, tasks, documents.', 1);
+	insert into projects(name, description, managerId)
+	    values('hgf fg df fd sdf d', 'Digital counters that either increment or decrement at a fixed frequency.', 2);
+	insert into projects(name, description, managerId)
+	    values('gd fgh df', 'Skype is a freemium voice-over-IP service and instant messaging client. The service allows users to communicate with peers by voice using a microphone, video by using a webcam, and instant messaging over the Internet.', 3);
+	insert into projects(name, description, managerId)
+	    values('saa32 3 ', 'Google Talk is an instant messaging service that provides both text and voice communication.', 4);
+	insert into projects(name, description, managerId)
+	    values('gd sdfg 4 adsf sdf wr', 'ICQ is an instant messaging computer program.', 5);
 /*-------------------------------------------------------*/     
 
 insert into builds(projectId, version, isCurrent) values(1, '0.1', false);
@@ -204,55 +211,61 @@ values('2014-1-4 10:36:36', 4, '2014-1-4 10:41:41', 4, 'Do not work increment an
 
 
 /*To delete*/ 
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '1', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '2', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '3', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '4', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '5', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '6', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '7', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '8', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '9', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '10', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '11', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '12', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '13', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '14', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '15', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '16', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '17', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '18', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '19', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '20', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '21', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '22', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '23', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
-values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '24', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '1', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '2', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '3', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '4', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '5', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '6', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '7', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '8', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '9', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '10', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '11', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '12', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '13', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '14', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '15', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '16', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '17', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '18', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '19', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '20', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '21', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '22', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '23', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
+	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '24', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
 /*----------------------------------------------------------*/ 
+
+insert into comments(sender, issueId, comment, createDate) values(1, 5, 'First comment', '2014-1-1 10:16:42');
+insert into comments(sender, issueId, comment, createDate) values(1, 5, 'Second comment', '2014-1-2 8:56:14');
+insert into comments(sender, issueId, comment, createDate) values(1, 5, 'Third comment', '2014-1-3 9:13:25');
+insert into comments(sender, issueId, comment, createDate) values(1, 5, 'Fourth comment', '2014-1-4 17:37:36');
+insert into comments(sender, issueId, comment, createDate) values(1, 5, 'Fifth comment', '2014-1-5 14:48:59');
 
 drop user if exists administrator;
 drop user if exists user;
@@ -262,10 +275,11 @@ create user administrator password 'Issue_tracker_administrator';
 create user user password 'Issue_tracker_user';
 create user guest password 'Issue_tracker_guest';
 
-grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers to user;
+grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers,comments to user;
 grant update on issues, users to user;
+grant insert on comments to user;
 grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers to guest;
-grant all on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers to administrator;
+grant all on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers,comments to administrator;
 
 drop alias if exists updateBuildVersionOfProject;
 create alias updateBuildVersionOfProject as $$

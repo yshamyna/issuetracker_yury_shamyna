@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.Build;
+import org.training.issuetracker.db.beans.Comment;
 import org.training.issuetracker.db.beans.Issue;
 import org.training.issuetracker.db.beans.IssuePriority;
 import org.training.issuetracker.db.beans.IssueStatus;
@@ -17,6 +18,7 @@ import org.training.issuetracker.db.beans.IssueType;
 import org.training.issuetracker.db.beans.Project;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.dao.interfaces.IBuildDAO;
+import org.training.issuetracker.db.dao.interfaces.ICommentDAO;
 import org.training.issuetracker.db.dao.interfaces.IIssueDAO;
 import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
 import org.training.issuetracker.db.dao.interfaces.IProjectDAO;
@@ -24,6 +26,7 @@ import org.training.issuetracker.db.dao.interfaces.IStatusDAO;
 import org.training.issuetracker.db.dao.interfaces.ITypeDAO;
 import org.training.issuetracker.db.dao.interfaces.IUserDAO;
 import org.training.issuetracker.db.dao.service.BuildDAO;
+import org.training.issuetracker.db.dao.service.CommentDAO;
 import org.training.issuetracker.db.dao.service.IssueDAO;
 import org.training.issuetracker.db.dao.service.PriorityDAO;
 import org.training.issuetracker.db.dao.service.ProjectDAO;
@@ -42,7 +45,6 @@ public class EditIssueServlet extends HttpServlet {
      */
     public EditIssueServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -88,6 +90,10 @@ public class EditIssueServlet extends HttpServlet {
 					List<User> users = userDAO.getAll();
 					request.setAttribute("assignees", users);
 					
+					ICommentDAO commentDAO = new CommentDAO();
+					List<Comment> comments = commentDAO.getCommentsByIssueId(issueId);
+					request.setAttribute("comments", comments);
+					
 					getServletContext().getRequestDispatcher("/editIssue.jsp").
 							forward(request, response);	
 				}
@@ -95,6 +101,7 @@ public class EditIssueServlet extends HttpServlet {
 				getServletContext().getRequestDispatcher("/dashboard").
 					forward(request, response);
 			} catch(Exception e) {
+				e.printStackTrace();
 				response.getWriter().println("Sorry, but current service is not available... Please try later.");
 			}
 		}

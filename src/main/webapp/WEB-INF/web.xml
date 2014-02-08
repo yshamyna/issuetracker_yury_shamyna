@@ -276,4 +276,14 @@
     <servlet-name>EditIssueServlet</servlet-name>
     <url-pattern>/issues/edit</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AddCommentServlet</display-name>
+    <servlet-name>AddCommentServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.comment.AddCommentServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddCommentServlet</servlet-name>
+    <url-pattern>/add-comment</url-pattern>
+  </servlet-mapping>
 </web-app>

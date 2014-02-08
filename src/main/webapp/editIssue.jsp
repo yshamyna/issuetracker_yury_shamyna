@@ -133,6 +133,52 @@
 			body += "id=" + id;
 			req.send(body);
 		}
+		
+		function check() {
+			var textarea = document.getElementById("comment");
+			if (!textarea.trim()) {
+				return false;
+			} 
+			return true;
+		}
+		
+		function add() {
+			addComment("${issue.id}", "/issuetracker/add-comment");
+		}
+		
+		function addComment(id, url) {
+			if (!check) return;
+			var req = getXmlHttp();
+			req.onreadystatechange = function() { 
+	        	if (req.readyState == 4 && req.status == 200) {
+	        		var jsonText = req.responseText;
+	        		var jsonData = JSON.parse(jsonText);
+	        		var data = jsonData.data;
+	        		
+	        		var addedBySpan = document.createElement("span");
+	        		addedBySpan.innerHTML = "Added by: " + data.addedBy;
+	        		var addDateSpan = document.createElement("span");
+	        		addDateSpan.innerHTML = "Add date: " + data.createDate;
+	        		var textSpan = document.createElement("span");
+	        		textSpan.innerHTML = "Comment: " + data.comment;
+	        		
+	        		var newComment = document.createElement("div");
+	        		newComment.appendChild(addedBySpan);
+	        		newComment.appendChild(document.createElement("br"));
+	        		newComment.appendChild(addDateSpan);
+	        		newComment.appendChild(document.createElement("br"));
+	        		newComment.appendChild(textSpan);
+	        		newComment.setAttribute("style", "background-color:rgb(206, 227, 253);width:100%;margin-top:2px;padding-left:2px;");
+	        		
+	        		var commentsStorage = document.getElementById("commentsStorage");
+	        		commentsStorage.appendChild(newComment);
+	            }
+	     	};
+			req.open("post", url, true);
+			req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			var value = document.getElementById("comment").value;
+			req.send("issueId=" + id + "&comment=" + value);
+		}
 	</script>
 </head>
 <body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
@@ -190,118 +236,165 @@
 			</div>
 		</c:when>
 		<c:otherwise>
-			<div style="position:relative;width:100%;height:400px;background-color:rgb(25, 28, 36);font-family:arial;color:white;font-size:10pt;margin-top:1px;">
-				<span style="position:absolute;right:50%;top:10px;margin-right:100px;">Create date:</span> 
-				<input style="position:absolute;left:50%;top:5px;margin-left:-100px;width:200px;" type="text" name="Create date" value="${issue.createDate}" readonly/>
-			
-				<span style="position:absolute;right:50%;top:35px;margin-right:100px;">Create by:</span> 
-				<input style="position:absolute;left:50%;top:30px;margin-left:-100px;width:200px;" type="text" name="Create by" value="${issue.createdBy.firstName} ${issue.createdBy.lastName}" readonly/>
-				
-				<span style="position:absolute;right:50%;top:60px;margin-right:100px;">Modify date:</span> 
-				<input style="position:absolute;left:50%;top:55px;margin-left:-100px;width:200px;" type="text" name="Modify date" value="${issue.modifyDate}" readonly/>
-				
-				<span style="position:absolute;right:50%;top:85px;margin-right:100px;">Modify by:</span> 
-				<input style="position:absolute;left:50%;top:80px;margin-left:-100px;width:200px;" type="text" name="Modify by" value="${issue.modifyBy.firstName} ${issue.modifyBy.lastName}" readonly/>
-			
-				<span style="position:absolute;right:50%;top:110px;margin-right:100px;">Summary:</span> 
-				<input id="summary" style="position:absolute;left:50%;top:105px;margin-left:-100px;width:200px;" type="text" name="Summary" value="${issue.summary}"/>
-		
-				<span style="position:absolute;right:50%;top:135px;margin-right:100px;">Description:</span>
-				<textarea id="description" style="position:absolute;left:50%;top:130px;margin-left:-100px;max-width:200px;max-height:50px;width:200px;height:50px;" name="Description">${issue.description}</textarea>
-		
-				<span style="position:absolute;right:50%;top:190px;margin-right:100px;">Status:</span>
-				<select id="status" style="position:absolute;left:50%;top:185px;margin-left:-100px;width:204px;" name="status"/>
-					<c:forEach var="status" items="${statuses}">
-						<c:choose>
-							<c:when test="${status.id eq issue.status.id}">
-								<option value="${status.id}" selected>${status.value}</option>
-							</c:when>
-							<c:otherwise>
-								<option value="${status.id}">${status.value}</option>		
-							</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</select>
-				
-				<span style="position:absolute;right:50%;top:212px;margin-right:100px;">Type:</span>
-				<select id="type" style="position:absolute;left:50%;top:207px;margin-left:-100px;width:204px;" name="type"/>
-					<c:forEach var="type" items="${types}">
-						<c:choose>
-							<c:when test="${type.id eq issue.type.id}">
-								<option value="${type.id}" selected>${type.value}</option>
-							</c:when>
-							<c:otherwise>
-								<option value="${type.id}">${type.value}</option>	
-							</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</select>
-				
-				<span style="position:absolute;right:50%;top:234px;margin-right:100px;">Priority:</span>
-				<select id="priority" style="position:absolute;left:50%;top:229px;margin-left:-100px;width:204px;" name="priority"/>
-					<c:forEach var="priority" items="${priorities}">
-						<c:choose>
-							<c:when test="${priority.id eq issue.priority.id}">
-								<option value="${priority.id}" selected>${priority.value}</option>
-							</c:when>
-							<c:otherwise>
-								<option value="${priority.id}">${priority.value}</option>	
-							</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</select>
-				
-				<span style="position:absolute;right:50%;top:256px;margin-right:100px;">Project:</span>
-				<select id="select-projects" onchange="changeProject();" style="position:absolute;left:50%;top:251px;margin-left:-100px;width:204px;" name="project"/>
-					<c:forEach var="project" items="${projects}">
-						<c:choose>
-							<c:when test="${project.id eq issue.project.id}">
-								<option value="${project.id}" selected>${project.name}</option>
-							</c:when>
-							<c:otherwise>
-								<option value="${project.id}">${project.name}</option>	
-							</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</select>
-				
-				<span style="position:absolute;right:50%;top:278px;margin-right:100px;">Build found:</span>
-				<select id="select-builds" style="position:absolute;left:50%;top:273px;margin-left:-100px;width:204px;" name="build"/>
-					<c:forEach var="build" items="${builds}">
-						<c:choose>
-							<c:when test="${build.id eq issue.buildFound.id}">
-								<option value="${build.id}" selected>${build.version}</option>
-							</c:when>
-							<c:otherwise>
-								<option value="${build.id}">${build.version}</option>	
-							</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</select>
-				
-				<span style="position:absolute;right:50%;top:300px;margin-right:100px;">Assignee:</span>
-				<select id="assignee" style="position:absolute;left:50%;top:295px;margin-left:-100px;width:204px;" name="assignee"/>
-					<option value="-1" selected></option>
-					<c:forEach var="assignee" items="${assignees}">
-						<c:choose>
-							<c:when test="${assignee.id eq issue.assignee.id}">
-								<option value="${assignee.id}" selected>${assignee.firstName} ${assignee.lastName}</option>
-							</c:when>
-							<c:otherwise>
-								<option value="${assignee.id}">${assignee.firstName} ${assignee.lastName}</option>	
-							</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</select>
-				
-				<div style="text-align:center;position:absolute;top:320px;width:100%">
-					<span id="msg" style="font-size:10pt;color:red;margin:auto;"></span>
+			<div style="width:700px; height:250px;font-family:arial;font-size:10pt; padding-left:5px;padding-top:5px;">
+				<div style="height:50px">
+					<div style="float:left;width:220px;">
+						<span>Create by: </span><br/>
+						<input type="text"  style="width:200px;" name="Create by" value="${issue.createdBy.firstName} ${issue.createdBy.lastName}" readonly/>
+					</div>
+					
+					<div style="float:left;width:220px;">
+						<span>Status: </span><br/>
+						<select id="status" style="width:200px;" name="status">
+							<c:forEach var="status" items="${statuses}">
+								<c:choose>
+									<c:when test="${status.id eq issue.status.id}">
+										<option value="${status.id}" selected>${status.value}</option>
+									</c:when>
+									<c:otherwise>
+										<option value="${status.id}">${status.value}</option>		
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+						</select>
+					</div>
+					
+					<div style="float:left;width:220px; ">
+						<span>Project: </span><br/>
+						<select id="select-projects" name="project" onchange="changeProject();" style="width:200px;">
+							<c:forEach var="project" items="${projects}">
+								<c:choose>
+									<c:when test="${project.id eq issue.project.id}">
+										<option value="${project.id}" selected>${project.name}</option>
+									</c:when>
+									<c:otherwise>
+										<option value="${project.id}">${project.name}</option>	
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+						</select>
+					</div>
 				</div>
-				<input id="submitBtn" style="position:absolute;left:50%;top:340px;margin-left:-100px;width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;border-radius:3px;height:30px;font-size:12pt;font-weight:bold;" type="button" value="Edit">
+				
+				
+				<div style="height:50px;">
+					<div style="float:left; width:220px;">
+						<span>Create date: </span><br/>
+						<input type="text" style="width:200px;" name="Create date" value="${issue.createDate}" readonly/>
+					</div>
+					
+					<div style="float:left; width:220px;">
+						<span>Type:</span><br/>
+						<select id="type" name="type" style="width:200px;">
+							<c:forEach var="type" items="${types}">
+								<c:choose>
+									<c:when test="${type.id eq issue.type.id}">
+										<option value="${type.id}" selected>${type.value}</option>
+									</c:when>
+									<c:otherwise>
+										<option value="${type.id}">${type.value}</option>	
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+						</select>
+					</div>
+					
+					<div style="float:left; width:220px;">
+						<span>Build found: </span><br/>
+						<select id="select-builds" name="build" style="width:200px;">
+							<c:forEach var="build" items="${builds}">
+								<c:choose>
+									<c:when test="${build.id eq issue.buildFound.id}">
+										<option value="${build.id}" selected>${build.version}</option>
+									</c:when>
+									<c:otherwise>
+										<option value="${build.id}">${build.version}</option>	
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+						</select>
+					</div>
+				</div>
+				
+				
+				<div style="height:50px;">
+					<div style="float:left; width:220px;">
+						<span>Modify by: </span><br/>
+						<input type="text" style="width:200px;" name="Modify by" 
+										value="${issue.modifyBy.firstName} ${issue.modifyBy.lastName}" readonly/>
+					</div>
+					
+					<div style="float:left; width:220px;">
+						<span>Priority: </span><br/>
+						<select id="priority" name= "priority" style="width:200px;">
+							<c:forEach var="priority" items="${priorities}">
+								<c:choose>
+									<c:when test="${priority.id eq issue.priority.id}">
+										<option value="${priority.id}" selected>${priority.value}</option>
+									</c:when>
+									<c:otherwise>
+										<option value="${priority.id}">${priority.value}</option>	
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+						</select>
+					</div>
+					
+					<div style="float:left; width:220px;">
+						<span>Summary:</span><br/>
+						<textarea style="width:200px;" name="Summary">${issue.summary}</textarea>
+					</div>
+				</div>
+				
+				
+				<div style="height:50px;">
+					<div style="float:left; width:220px;">
+						<span>Modify date:</span><br/>
+						<input type="text" style="width:200px;" name="Modify date" value="${issue.modifyDate}" readonly/>
+					</div>
+					
+					<div style="float:left; width:220px;">
+						<span>Assignee:</span><br/>
+						<select id="assignee" name="assignee" style="width:200px;">
+							<option value="-1" selected></option>
+							<c:forEach var="assignee" items="${assignees}">
+								<c:choose>
+									<c:when test="${assignee.id eq issue.assignee.id}">
+										<option value="${assignee.id}" selected>${assignee.firstName} ${assignee.lastName}</option>
+									</c:when>
+									<c:otherwise>
+										<option value="${assignee.id}">${assignee.firstName} ${assignee.lastName}</option>	
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+						</select>
+					</div>
+					
+					<div style="float:left; width:220px;">
+						<span>Description:</span><br/>
+						<textarea style="width:200px;" name="Description">${issue.description}</textarea>
+					</div>
+				</div>
+				
+				<span id="msg" style="font-size:10pt;color:red;"></span><br/><br/>
+				<input id="submitBtn" style="width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;height:30px;font-size:12pt;font-weight:bold;" type="button" value="Edit">
 			</div>
+			<div id="commentsStorage" style="overflow-y:auto;overflow-x:hidden;margin-top:20px;width:100%; height:200px;background-color:rgb(25,28,36)">
+				<c:forEach var="comment" items="${comments}">
+					<div style="background-color:rgb(206, 227, 253);width:100%;margin-top:2px;padding-left:2px;">
+						<span>Added by: ${comment.sender.firstName} ${comment.sender.lastName}</span><br/>
+						<span>Add date: ${comment.createDate}</span><br/>
+						<span>Comment: ${comment.comment}</span>
+					</div>	
+				</c:forEach>
+			</div><br/>
+				<textarea id="comment" name="comment"></textarea><br/>
+				<input id="addCommentBtn" type="button" value="Add comment">
 			<script type="text/javascript">
 				var submit = document.getElementById("submitBtn");
 				submit.onclick = onClick;
+				var addCommentBtn = document.getElementById("addCommentBtn");
+				addCommentBtn.onclick = add;
 			</script>
 		</c:otherwise>
 	</c:choose>
