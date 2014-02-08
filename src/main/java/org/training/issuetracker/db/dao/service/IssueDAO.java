@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.Issue;
+import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.dao.interfaces.IBuildDAO;
 import org.training.issuetracker.db.dao.interfaces.IIssueDAO;
 import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
@@ -251,7 +252,7 @@ public class IssueDAO implements IIssueDAO {
 	}
 
 	@Override
-	public List<Issue> getNRecordsFromPageY(long recordsPerPage, long pageNumber)
+	public List<Issue> getNRecordsFromPageY(User user, long recordsPerPage, long pageNumber)
 			throws Exception {
 		Connection connection = null;
 		CallableStatement cs = null;
@@ -260,8 +261,7 @@ public class IssueDAO implements IIssueDAO {
 			connection = DBManager.getConnection();
 			cs = connection.prepareCall("{call getNIssuesFromPageY(?, ?, ?)}");
 			
-			//cs.setObject(1, rs);
-			cs.setLong(1, 1);
+			cs.setLong(1, user.getId());
 			cs.setLong(2, pageNumber);
 			cs.setLong(3, recordsPerPage);
 			rs = cs.executeQuery();
@@ -279,7 +279,7 @@ public class IssueDAO implements IIssueDAO {
 				
 				IUserDAO userDAO = new UserDAO();
 				//issue.setAssignee(userDAO.getById(id));
-				issue.setAssignee(userDAO.getById(rs.getInt("assignee")));
+				issue.setAssignee(userDAO.getById(user.getId()));
 				issue.setCreatedBy(userDAO.getById(rs.getInt("createBy")));
 				issue.setModifyBy(userDAO.getById(rs.getInt("modifyBy")));
 				
@@ -308,6 +308,87 @@ public class IssueDAO implements IIssueDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(cs);
+			DBManager.closeConnection(connection);
+		}
+	}
+
+	@Override
+	public List<Issue> getLastNRecords(long n) throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("SELECT id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId from issues order by id desc limit ?");
+			ps.setLong(1, n);
+			rs = ps.executeQuery();
+			List<Issue> issues = new ArrayList<Issue>();
+			Issue issue = null;
+			while (rs.next()) {
+				issue = new Issue();
+				
+				issue.setId(rs.getLong("id"));
+				issue.setCreateDate(rs.getTimestamp("createDate"));
+				issue.setModifyDate(rs.getTimestamp("modifyDate"));
+				issue.setSummary(rs.getString("summary"));
+				issue.setDescription(rs.getString("description"));
+				
+				IUserDAO userDAO = new UserDAO();
+				issue.setAssignee(userDAO.getById(rs.getInt("assignee")));
+				issue.setCreatedBy(userDAO.getById(rs.getInt("createBy")));
+				issue.setModifyBy(userDAO.getById(rs.getInt("modifyBy")));
+				
+				IStatusDAO statusDAO = new StatusDAO();
+				issue.setStatus(statusDAO.getById(rs.getInt("statusId")));
+				
+				ITypeDAO typeDAO = new TypeDAO();
+				issue.setType(typeDAO.getById(rs.getInt("typeId")));
+				
+				IPriorityDAO priorityDAO = new PriorityDAO();
+				issue.setPriority(priorityDAO.getById(rs.getInt("priorityId")));
+				
+				IProjectDAO projectDAO = new ProjectDAO();
+				issue.setProject(projectDAO.getById(rs.getInt("projectId")));
+				
+				IBuildDAO buildDAO = new BuildDAO();
+				issue.setBuildFound(buildDAO.getById(rs.getInt("buildId")));
+				
+				IResolutionDAO resolutionDAO = new ResolutionDAO();
+				issue.setResolution(resolutionDAO.getById(rs.getInt("resolutionId")));
+				
+				issues.add(issue);
+			}
+			return issues;
+		} finally {
+			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(ps);
+			DBManager.closeConnection(connection);
+		} 
+	}
+
+	@Override
+	public long getQuantityPages(User user, long recordsPerPage) throws Exception {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("select count(*) as cnt from issues where assignee=?");
+			ps.setLong(1, user.getId());
+			rs = ps.executeQuery();
+			long count = 0;
+			if (rs.next()) {
+				count = rs.getLong("cnt");
+			}
+			long div = count / recordsPerPage;
+			long mod = count % recordsPerPage;
+			if (mod != 0) {
+				div++;
+			}
+			return div;
+		} finally {
+			DBManager.closeResultSets(rs);
+			DBManager.closeStatements(ps);
 			DBManager.closeConnection(connection);
 		}
 	}

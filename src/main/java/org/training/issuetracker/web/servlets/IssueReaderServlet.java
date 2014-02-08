@@ -48,19 +48,25 @@ public class IssueReaderServlet extends HttpServlet {
 		List<Issue> issues = null;
 		try {
 			if (user == null) {
-				issues = issueDAO.getAll();
+				issues = issueDAO.getLastNRecords(10);
+			} else {
 				String page = request.getParameter("page");
 				long pageNumber = 1;
 				if (page != null) {
 					pageNumber = Integer.parseInt(page);
 				}
-				issues = issueDAO.getNRecordsFromPageY(10, pageNumber);
-			} else {
-				issues = issueDAO.getAllByUserId(user.getId());
+				issues = issueDAO.getNRecordsFromPageY(user, 10, pageNumber);
+				long maxPage = issueDAO.getQuantityPages(user, 10);
+				
+				pageNumber = pageNumber > maxPage ? maxPage : pageNumber;
+				pageNumber = pageNumber < 1 ? 1 : pageNumber;
+				
+				request.setAttribute("page", pageNumber);
+				request.setAttribute("maxPage", maxPage);
 			}
 			request.setAttribute("issues", issues);
 			getServletContext().getRequestDispatcher("/dashboard.jsp").
-							forward(request, response);
+					forward(request, response);	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

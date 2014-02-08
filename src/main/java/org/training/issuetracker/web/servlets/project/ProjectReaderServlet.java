@@ -41,9 +41,22 @@ public class ProjectReaderServlet extends HttpServlet {
 	
 	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
+			String page = request.getParameter("page");
+			long pageNumber = 1;
+			if (page != null) {
+				pageNumber = Integer.parseInt(page);
+			}
+			
 			IProjectDAO projectDAO = new ProjectDAO();
-			List<Project> projects = projectDAO.getAll();
+			List<Project> projects = projectDAO.getNRecordsFromPageY(10, pageNumber);
+			
+			long maxPage = projectDAO.getQuantityPages(10);
+			pageNumber = pageNumber > maxPage ? maxPage : pageNumber;
+			pageNumber = pageNumber < 1 ? 1 : pageNumber;
+			
 			request.setAttribute("projects", projects);
+			request.setAttribute("page", pageNumber);
+			request.setAttribute("maxPage", maxPage);
 		}  catch (Exception e) {
 			e.printStackTrace();
 		} finally {

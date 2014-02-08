@@ -9,4 +9,7 @@ public interface IProjectDAO {
 	public Project getById(long id) throws Exception;
 	public long add(Project project) throws Exception;
 	public void update(Project project) throws Exception;
+	public List<Project> getNRecordsFromPageY(long recordsPerPage, long pageNumber) throws Exception;
+	public long getQuantityPages(long recordsPerPage) throws Exception;
+
 }
