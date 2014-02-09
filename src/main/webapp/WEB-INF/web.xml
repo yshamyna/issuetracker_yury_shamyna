@@ -324,4 +324,14 @@
     <servlet-name>DownloadTestServlet</servlet-name>
     <url-pattern>/list-files</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ActionControllerServlet</display-name>
+    <servlet-name>ActionControllerServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.ActionControllerServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ActionControllerServlet</servlet-name>
+    <url-pattern>/action-controller</url-pattern>
+  </servlet-mapping>
 </web-app>

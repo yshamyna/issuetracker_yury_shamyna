@@ -45,6 +45,7 @@ public class IssueReaderServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 		IIssueDAO issueDAO = new IssueDAO();
+		//List<Issue> issues = null;
 		List<Issue> issues = null;
 		try {
 			if (user == null) {

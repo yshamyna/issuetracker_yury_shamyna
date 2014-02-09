@@ -27,7 +27,7 @@ public class IssueDAO implements IIssueDAO {
 			"SELECT id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId from issues";
 	private static final String GET_ALL_ISSUES_BY_ASSIGNEE_SQL = 
 			"SELECT id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, resolutionId from issues where assignee=?";
-
+	
 	@Override
 	public List<Issue> getAll() throws Exception {
 		Connection connection = null;
@@ -322,6 +322,8 @@ public class IssueDAO implements IIssueDAO {
 			ps = connection.prepareStatement("SELECT id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId from issues order by id desc limit ?");
 			ps.setLong(1, n);
 			rs = ps.executeQuery();
+//			List<Issue> issues = new ArrayList<Issue>();
+//			Issue issue = null;
 			List<Issue> issues = new ArrayList<Issue>();
 			Issue issue = null;
 			while (rs.next()) {

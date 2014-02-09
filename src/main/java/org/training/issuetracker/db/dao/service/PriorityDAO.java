@@ -93,5 +93,18 @@ public class PriorityDAO implements IPriorityDAO {
 			DBManager.closeConnection(connection);
 		}
 	}
+	
+	public void update(Connection connection, IssuePriority priotity) throws Exception {
+		PreparedStatement ps = null;
+		try {
+			connection = DBManager.getConnection();
+			ps = connection.prepareStatement("update priorities set name=? where id=?");
+			ps.setString(1, priotity.getValue());
+			ps.setLong(2, priotity.getId());
+			ps.executeUpdate();
+		} finally {
+			DBManager.closeStatements(ps);
+		}
+	}
 
 }
