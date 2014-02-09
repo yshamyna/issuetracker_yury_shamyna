@@ -236,6 +236,7 @@
 			</div>
 		</c:when>
 		<c:otherwise>
+			<span style="margin-top:20px;font-family:arial; font-size:16pt;color:gray;">Edit section</span>
 			<div style="width:700px; height:250px;font-family:arial;font-size:10pt; padding-left:5px;padding-top:5px;">
 				<div style="height:50px">
 					<div style="float:left;width:220px;">
@@ -379,6 +380,7 @@
 				<span id="msg" style="font-size:10pt;color:red;"></span><br/><br/>
 				<input id="submitBtn" style="width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;height:30px;font-size:12pt;font-weight:bold;" type="button" value="Edit">
 			</div>
+			<div style="padding-top:20px;font-family:arial; font-size:16pt;color:gray;">Comment section</div>
 			<div id="commentsStorage" style="overflow-y:auto;overflow-x:hidden;margin-top:20px;width:100%; height:200px;background-color:rgb(25,28,36)">
 				<c:forEach var="comment" items="${comments}">
 					<div style="background-color:rgb(206, 227, 253);width:100%;margin-top:2px;padding-left:2px;">
@@ -389,13 +391,27 @@
 				</c:forEach>
 			</div><br/>
 				<textarea id="comment" name="comment"></textarea><br/>
-				<input id="addCommentBtn" type="button" value="Add comment">
+				<input id="addCommentBtn" type="button" value="Add comment"><br/>
 			<script type="text/javascript">
 				var submit = document.getElementById("submitBtn");
 				submit.onclick = onClick;
 				var addCommentBtn = document.getElementById("addCommentBtn");
 				addCommentBtn.onclick = add;
 			</script>
+			<span style="margin-top:20px;font-family:arial; font-size:16pt;color:gray;">Attachment section</span>
+			<div>
+				<c:forEach var="attachment" items="${attachments}">
+					<div style="background-color:rgb(206, 227, 253);width:100%;margin-top:2px;padding-left:2px;">
+						<span>Added by: ${attachment.addedBy.firstName} ${attachment.addedBy.lastName}</span><br/>
+						<span>Add date: ${attachment.addDate}</span><br/>
+						<span>File: <a href="/issuetracker/download?issue=${issue.id}&filename=${attachment.filename}">${attachment.filename}</a></span>
+					</div>	
+				</c:forEach>
+			</div>
+			<form action="/issuetracker/upload?issue=${issue.id}" enctype="multipart/form-data" method="POST">
+    			<input type="file" name="file"><br>
+    			<input type="Submit" value="Upload File"><br>
+			</form>
 		</c:otherwise>
 	</c:choose>
 		

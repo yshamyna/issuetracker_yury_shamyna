@@ -1,4 +1,4 @@
-drop table if exists comments, issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers;
+drop table if exists comments, attachments, issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers;
 
 create table roles(
     id int primary key auto_increment, 
@@ -68,6 +68,13 @@ create table comments(
 	issueId int not null references issues(id),
 	comment varchar(4000) not null,
 	createDate timestamp not null
+);
+create table attachments(
+	id int primary key auto_increment,
+	filename varchar(100) not null,
+	addedBy int not null references users(id),
+	addDate timestamp not null,
+	issueId int not null references issues(id)
 );
 
 insert into roles(name) values('administrator');
@@ -277,9 +284,9 @@ create user guest password 'Issue_tracker_guest';
 
 grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers,comments to user;
 grant update on issues, users to user;
-grant insert on comments to user;
+grant insert on comments,attachments to user;
 grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers to guest;
-grant all on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers,comments to administrator;
+grant all on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers,comments,attachments to administrator;
 
 drop alias if exists updateBuildVersionOfProject;
 create alias updateBuildVersionOfProject as $$

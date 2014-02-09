@@ -48,10 +48,10 @@ public class AddCommentServlet extends HttpServlet {
 			commentDAO.addComment(comment);
 			
 			// {"builds":[{"id":1, "version":"1.2"},{"id":2, "version":"1.2"}]}
-			StringBuilder jsonData = new StringBuilder("{\"data\":{\"addedBy\":\"" 
+			String jsonData = "{\"data\":{\"addedBy\":\"" 
 								+ user.getFirstName() + " " + user.getLastName() + "\", "
 								+ "\"createDate\":\"" + S + "\", " 
-								+  "\"comment\":\"" + text + "\"}}");
+								+  "\"comment\":\"" + text + "\"}}";
 			response.getWriter().println(jsonData);
 //			getServletContext().getRequestDispatcher("/issues/edit?id=" + issueId).
 //				forward(request, response);

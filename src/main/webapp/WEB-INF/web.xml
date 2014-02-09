@@ -286,4 +286,42 @@
     <servlet-name>AddCommentServlet</servlet-name>
     <url-pattern>/add-comment</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>FileUploadServlet</display-name>
+    <servlet-name>FileUploadServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.FileUploadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FileUploadServlet</servlet-name>
+    <url-pattern>/upload</url-pattern>
+  </servlet-mapping>
+  <context-param>
+    <param-name>tempDirPath</param-name>
+    <param-value>c:\\temp</param-value>
+  </context-param>
+  <context-param>
+    <param-name>destinationDirPath</param-name>
+    <param-value>c:\\temp1</param-value>
+  </context-param>
+  <servlet>
+    <description></description>
+    <display-name>FileDownloadServlet</display-name>
+    <servlet-name>FileDownloadServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.FileDownloadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FileDownloadServlet</servlet-name>
+    <url-pattern>/download</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>DownloadTestServlet</display-name>
+    <servlet-name>DownloadTestServlet</servlet-name>
+    <servlet-class>org.training.issuetracker.web.servlets.DownloadTestServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DownloadTestServlet</servlet-name>
+    <url-pattern>/list-files</url-pattern>
+  </servlet-mapping>
 </web-app>

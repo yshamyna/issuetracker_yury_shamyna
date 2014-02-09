@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.training.issuetracker.db.beans.Attachment;
 import org.training.issuetracker.db.beans.Build;
 import org.training.issuetracker.db.beans.Comment;
 import org.training.issuetracker.db.beans.Issue;
@@ -17,6 +18,7 @@ import org.training.issuetracker.db.beans.IssueStatus;
 import org.training.issuetracker.db.beans.IssueType;
 import org.training.issuetracker.db.beans.Project;
 import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.dao.interfaces.IAttachmentDAO;
 import org.training.issuetracker.db.dao.interfaces.IBuildDAO;
 import org.training.issuetracker.db.dao.interfaces.ICommentDAO;
 import org.training.issuetracker.db.dao.interfaces.IIssueDAO;
@@ -25,6 +27,7 @@ import org.training.issuetracker.db.dao.interfaces.IProjectDAO;
 import org.training.issuetracker.db.dao.interfaces.IStatusDAO;
 import org.training.issuetracker.db.dao.interfaces.ITypeDAO;
 import org.training.issuetracker.db.dao.interfaces.IUserDAO;
+import org.training.issuetracker.db.dao.service.AttachmentDAO;
 import org.training.issuetracker.db.dao.service.BuildDAO;
 import org.training.issuetracker.db.dao.service.CommentDAO;
 import org.training.issuetracker.db.dao.service.IssueDAO;
@@ -93,6 +96,10 @@ public class EditIssueServlet extends HttpServlet {
 					ICommentDAO commentDAO = new CommentDAO();
 					List<Comment> comments = commentDAO.getCommentsByIssueId(issueId);
 					request.setAttribute("comments", comments);
+					
+					IAttachmentDAO attachmentDAO = new AttachmentDAO();
+					List<Attachment> attachments = attachmentDAO.getListByIssueId(issueId);
+					request.setAttribute("attachments", attachments);
 					
 					getServletContext().getRequestDispatcher("/editIssue.jsp").
 							forward(request, response);	
