@@ -1,6 +1,8 @@
 package org.training.issuetracker.db.beans;
 
-public class Build {
+import org.training.issuetracker.db.interfaces.Entity;
+
+public class Build implements Entity {
 	private long id;
 	private long projectId;
 	private String version;

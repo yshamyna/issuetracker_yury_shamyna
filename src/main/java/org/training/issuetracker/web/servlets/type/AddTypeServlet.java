@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.h2.jdbc.JdbcSQLException;
-import org.training.issuetracker.db.beans.IssueType;
+import org.training.issuetracker.db.beans.Type;
 import org.training.issuetracker.db.dao.interfaces.ITypeDAO;
 import org.training.issuetracker.db.dao.service.TypeDAO;
 
@@ -38,7 +38,7 @@ public class AddTypeServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IssueType  type = new IssueType();
+			Type  type = new Type();
 			type.setValue(request.getParameter("entityName"));
 			ITypeDAO typeDAO = new TypeDAO();
 			typeDAO.add(type);

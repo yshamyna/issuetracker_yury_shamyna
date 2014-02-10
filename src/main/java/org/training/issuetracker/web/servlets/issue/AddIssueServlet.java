@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.h2.jdbc.JdbcSQLException;
 import org.training.issuetracker.db.beans.Build;
 import org.training.issuetracker.db.beans.Issue;
-import org.training.issuetracker.db.beans.IssuePriority;
-import org.training.issuetracker.db.beans.IssueStatus;
-import org.training.issuetracker.db.beans.IssueType;
+import org.training.issuetracker.db.beans.Priority;
+import org.training.issuetracker.db.beans.Status;
+import org.training.issuetracker.db.beans.Type;
 import org.training.issuetracker.db.beans.Project;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.dao.interfaces.IBuildDAO;
@@ -51,15 +51,15 @@ public class AddIssueServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			IStatusDAO statusDAO = new StatusDAO();
-			List<IssueStatus> statuses = statusDAO.getAll();
+			List<Status> statuses = statusDAO.getAll();
 			request.setAttribute("statuses", statuses);
 			
 			ITypeDAO typeDAO = new TypeDAO();
-			List<IssueType> types = typeDAO.getAll();
+			List<Type> types = typeDAO.getAll();
 			request.setAttribute("types", types);
 			
 			IPriorityDAO priorityDAO = new PriorityDAO();
-			List<IssuePriority> priorities = priorityDAO.getAll();
+			List<Priority> priorities = priorityDAO.getAll();
 			request.setAttribute("priorities", priorities);
 			
 			IProjectDAO projectDAO = new ProjectDAO();
@@ -98,15 +98,15 @@ public class AddIssueServlet extends HttpServlet {
 			issue.setSummary(request.getParameter("summary"));
 			issue.setDescription(request.getParameter("description"));
 			
-			IssueStatus status = new IssueStatus();
+			Status status = new Status();
 			status.setId(Integer.parseInt(request.getParameter("status")));
 			issue.setStatus(status);
 			
-			IssueType type = new IssueType();
+			Type type = new Type();
 			type.setId(Integer.parseInt(request.getParameter("type")));
 			issue.setType(type);
 			
-			IssuePriority priority = new IssuePriority();
+			Priority priority = new Priority();
 			priority.setId(Integer.parseInt(request.getParameter("priority")));
 			issue.setPriority(priority);
 			

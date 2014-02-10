@@ -40,14 +40,12 @@ public class RoleDAO implements IRoleDAO {
 	}
 
 	@Override
-	public UserRole getById(int id) throws Exception {
-		Connection connection = null;
+	public UserRole getById(Connection connection, long id) throws Exception {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("select name from roles where id=?");
-			ps.setInt(1, id);
+			ps.setLong(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				UserRole role = new UserRole();
@@ -58,7 +56,6 @@ public class RoleDAO implements IRoleDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 		return null;
 	}

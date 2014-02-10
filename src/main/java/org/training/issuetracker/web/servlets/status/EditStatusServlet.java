@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.IssueStatus;
+import org.training.issuetracker.db.beans.Status;
 import org.training.issuetracker.db.dao.interfaces.IStatusDAO;
 import org.training.issuetracker.db.dao.service.StatusDAO;
 
@@ -36,7 +36,7 @@ public class EditStatusServlet extends HttpServlet {
 			try {
 				long statusId = Integer.parseInt(id);
 				IStatusDAO dao = new StatusDAO();
-				IssueStatus status = dao.getById(statusId);
+				Status status = dao.getById(statusId);
 				if (status == null) {
 					getServletContext().getRequestDispatcher("/statuses").
 							forward(request, response);
@@ -62,7 +62,7 @@ public class EditStatusServlet extends HttpServlet {
 			String id = request.getParameter("id");
 			String name = request.getParameter("entityName");
 			
-			IssueStatus status = new IssueStatus();
+			Status status = new Status();
 			status.setId(Integer.parseInt(id));
 			status.setValue(name);	
 			

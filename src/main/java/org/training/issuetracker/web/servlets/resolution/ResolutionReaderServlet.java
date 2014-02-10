@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.IssueResolution;
+import org.training.issuetracker.db.beans.Resolution;
 import org.training.issuetracker.db.dao.interfaces.IResolutionDAO;
 import org.training.issuetracker.db.dao.service.ResolutionDAO;
 
@@ -42,7 +42,7 @@ public class ResolutionReaderServlet extends HttpServlet {
 	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
 		try {
 			IResolutionDAO resolutionDAO = new ResolutionDAO();
-			List<IssueResolution> resolutions = resolutionDAO.getAll();
+			List<Resolution> resolutions = resolutionDAO.getAll();
 			request.setAttribute("resolutions", resolutions);
 		}  catch (Exception e) {
 			e.printStackTrace();

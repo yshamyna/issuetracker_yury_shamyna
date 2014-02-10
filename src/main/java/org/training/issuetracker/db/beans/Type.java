@@ -1,10 +1,12 @@
 package org.training.issuetracker.db.beans;
 
-public class IssueStatus {
+import org.training.issuetracker.db.interfaces.Entity;
+
+public class Type implements Entity {
 	private long id;
 	private String value;
 	
-	public IssueStatus() {
+	public Type() {
 		super();
 	}
 

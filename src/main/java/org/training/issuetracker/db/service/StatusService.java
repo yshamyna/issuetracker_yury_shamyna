@@ -3,37 +3,39 @@ package org.training.issuetracker.db.service;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.training.issuetracker.db.beans.Priority;
+import org.training.issuetracker.db.beans.Status;
 import org.training.issuetracker.db.beans.User;
-import org.training.issuetracker.db.dao.service.PriorityDAO;
+import org.training.issuetracker.db.dao.service.StatusDAO;
 import org.training.issuetracker.db.enums.Role;
 import org.training.issuetracker.db.util.DBManager;
 
-public class PriorityService {
-
+public class StatusService {
 	private Connection connection;
 	
-	public PriorityService(User user) 
+	public StatusService(User user) 
 			throws ClassNotFoundException, SQLException {
 		Role role = Role.valueOf(user.getRole().getValue());
 		connection = DBManager.getConnection(role);
 	}
+	
 
-	public void add(Priority priority) throws Exception {
+	public void add(Status status) throws Exception {
 		try {
-			PriorityDAO priorityDAO = new PriorityDAO();
-			priorityDAO.add(connection, priority);
+			StatusDAO statusDAO = new StatusDAO();
+			statusDAO.add(connection, status);	
 		} finally {
 			DBManager.closeConnection(connection);
 		}
 	}
 
-	public void update(Priority priority) throws Exception {
+	public void update(Status status) throws Exception {
 		try {
-			PriorityDAO priorityDAO = new PriorityDAO();
-			priorityDAO.update(connection, priority);
+			StatusDAO statusDAO = new StatusDAO();
+			statusDAO.update(connection, status);	
 		} finally {
 			DBManager.closeConnection(connection);
 		}
 	}
+
+
 }

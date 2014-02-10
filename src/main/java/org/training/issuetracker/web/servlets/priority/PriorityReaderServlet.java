@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.IssuePriority;
+import org.training.issuetracker.db.beans.Priority;
 import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
 import org.training.issuetracker.db.dao.service.PriorityDAO;
 
@@ -42,7 +42,7 @@ public class PriorityReaderServlet extends HttpServlet {
 	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			IPriorityDAO priorityDAO = new PriorityDAO();
-			List<IssuePriority> priorities = priorityDAO.getAll();
+			List<Priority> priorities = priorityDAO.getAll();
 			request.setAttribute("priorities", priorities);
 		}  catch (Exception e) {
 			e.printStackTrace();

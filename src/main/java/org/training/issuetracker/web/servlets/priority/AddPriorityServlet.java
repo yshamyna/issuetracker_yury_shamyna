@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.h2.jdbc.JdbcSQLException;
-import org.training.issuetracker.db.beans.IssuePriority;
+import org.training.issuetracker.db.beans.Priority;
 import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
 import org.training.issuetracker.db.dao.service.PriorityDAO;
 
@@ -38,7 +38,7 @@ public class AddPriorityServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IssuePriority priority = new IssuePriority();
+			Priority priority = new Priority();
 			priority.setValue(request.getParameter("entityName"));
 			IPriorityDAO priorityDAO = new PriorityDAO();
 			priorityDAO.add(priority);

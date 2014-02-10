@@ -1,10 +1,12 @@
 package org.training.issuetracker.db.beans;
 
-public class IssueResolution {
+import org.training.issuetracker.db.interfaces.Entity;
+
+public class Resolution implements Entity {
 	private long id;
 	private String value;
 	
-	public IssueResolution() {
+	public Resolution() {
 		super();
 	}
 

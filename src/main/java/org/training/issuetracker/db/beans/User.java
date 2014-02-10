@@ -1,6 +1,8 @@
 package org.training.issuetracker.db.beans;
 
-public class User {
+import org.training.issuetracker.db.interfaces.Entity;
+
+public class User implements Entity {
 	private long id;
 	private String firstName;
 	private String lastName;

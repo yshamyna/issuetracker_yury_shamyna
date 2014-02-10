@@ -1,10 +1,12 @@
 package org.training.issuetracker.db.beans;
 
-public class IssuePriority {
+import org.training.issuetracker.db.interfaces.Entity;
+
+public class Priority implements Entity {
 	private long id;
 	private String value;
 	
-	public IssuePriority() {
+	public Priority() {
 		super();
 	}
 

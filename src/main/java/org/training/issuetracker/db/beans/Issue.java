@@ -3,7 +3,9 @@ package org.training.issuetracker.db.beans;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-public class Issue {
+import org.training.issuetracker.db.interfaces.Entity;
+
+public class Issue implements Entity {
 	private long id;
 	private Timestamp createDate;
 	private User createdBy;
@@ -11,19 +13,19 @@ public class Issue {
 	private User modifyBy;
 	private String summary;
 	private String description;
-	private IssueStatus status;
-	private IssueType type;
-	private IssuePriority priority;
+	private Status status;
+	private Type type;
+	private Priority priority;
 	private Project project;
 	private Build buildFound;
 	private User assignee;
-	private IssueResolution resolution;
+	private Resolution resolution;
 	
-	public IssueResolution getResolution() {
+	public Resolution getResolution() {
 		return resolution;
 	}
 
-	public void setResolution(IssueResolution resolution) {
+	public void setResolution(Resolution resolution) {
 		this.resolution = resolution;
 	}
 
@@ -87,27 +89,27 @@ public class Issue {
 		this.description = description;
 	}
 
-	public IssueStatus getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(IssueStatus status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 
-	public IssueType getType() {
+	public Type getType() {
 		return type;
 	}
 
-	public void setType(IssueType type) {
+	public void setType(Type type) {
 		this.type = type;
 	}
 
-	public IssuePriority getPriority() {
+	public Priority getPriority() {
 		return priority;
 	}
 
-	public void setPriority(IssuePriority priority) {
+	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
 

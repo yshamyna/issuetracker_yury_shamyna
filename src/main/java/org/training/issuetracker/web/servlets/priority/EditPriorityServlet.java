@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.IssuePriority;
+import org.training.issuetracker.db.beans.Priority;
 import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
 import org.training.issuetracker.db.dao.service.PriorityDAO;
 
@@ -36,7 +36,7 @@ public class EditPriorityServlet extends HttpServlet {
 			try {
 				long entityId = Integer.parseInt(id);
 				IPriorityDAO dao = new PriorityDAO();
-				IssuePriority entity = dao.getById(entityId);
+				Priority entity = dao.getById(entityId);
 				if (entity == null) {
 					getServletContext().getRequestDispatcher("/priorities").
 							forward(request, response);
@@ -62,7 +62,7 @@ public class EditPriorityServlet extends HttpServlet {
 			String id = request.getParameter("id");
 			String name = request.getParameter("entityName");
 			
-			IssuePriority priority  = new IssuePriority();
+			Priority priority  = new Priority();
 			priority.setId(Integer.parseInt(id));
 			priority.setValue(name);	
 			

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.IssueResolution;
+import org.training.issuetracker.db.beans.Resolution;
 import org.training.issuetracker.db.dao.interfaces.IResolutionDAO;
 import org.training.issuetracker.db.dao.service.ResolutionDAO;
 
@@ -37,7 +37,7 @@ public class EditResolutionServlet extends HttpServlet {
 			try {
 				long resolutionId = Integer.parseInt(id);
 				IResolutionDAO dao = new ResolutionDAO();
-				IssueResolution resolution = dao.getById(resolutionId);
+				Resolution resolution = dao.getById(resolutionId);
 				if (resolution == null) {
 					getServletContext().getRequestDispatcher("/resolutions").
 							forward(request, response);
@@ -64,7 +64,7 @@ public class EditResolutionServlet extends HttpServlet {
 			String id = request.getParameter("id");
 			String name = request.getParameter("entityName");
 			
-			IssueResolution resolution = new IssueResolution();
+			Resolution resolution = new Resolution();
 			resolution.setId(Integer.parseInt(id));
 			resolution.setValue(name);	
 			

@@ -7,14 +7,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.training.issuetracker.db.beans.IssueType;
-import org.training.issuetracker.db.dao.interfaces.ITypeDAO;
+import org.training.issuetracker.db.beans.Type;
 import org.training.issuetracker.db.util.DBManager;
 
-public class TypeDAO implements ITypeDAO {
+public class TypeDAO {
 
-	@Override
-	public List<IssueType> getAll() throws Exception {
+	public List<Type> getAll() throws Exception {
 		Connection connection = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -23,10 +21,10 @@ public class TypeDAO implements ITypeDAO {
 			st = connection.createStatement();
 			st.execute("select id, name from types");
 			rs = st.getResultSet();
-			List<IssueType> types = new ArrayList<IssueType>();
-			IssueType type = null;
+			List<Type> types = new ArrayList<Type>();
+			Type type = null;
 			while (rs.next()) {
-				type = new IssueType();
+				type = new Type();
 				type.setId(rs.getInt("id"));
 				type.setValue(rs.getString("name"));
 				types.add(type);
@@ -39,8 +37,7 @@ public class TypeDAO implements ITypeDAO {
 		}
 	}
 
-	@Override
-	public IssueType getById(long id) throws Exception {
+	public Type getById(long id) throws Exception {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -50,7 +47,7 @@ public class TypeDAO implements ITypeDAO {
 			ps.setLong(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				IssueType type = new IssueType();
+				Type type = new Type();
 				type.setId(id);
 				type.setValue(rs.getString("name"));
 				return type;
@@ -63,37 +60,27 @@ public class TypeDAO implements ITypeDAO {
 		return null;
 	}
 
-	@Override
-	public void add(IssueType type) throws Exception {
-		Connection connection = null;
+	public void add(Connection connection, Type type) throws Exception {
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("insert into types(name) values(?)");
 			ps.setString(1, type.getValue());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 
-	@Override
-	public void updateName(IssueType newType)
+	public void update(Connection connection, Type type)
 			throws Exception {
-		Connection connection = null;
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("update types set name=? where id=?");
-			ps.setString(1, newType.getValue());
-			ps.setLong(2, newType.getId());
+			ps.setString(1, type.getValue());
+			ps.setLong(2, type.getId());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
-		
 	}
-
 }

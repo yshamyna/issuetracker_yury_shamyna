@@ -7,14 +7,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.training.issuetracker.db.beans.IssueResolution;
-import org.training.issuetracker.db.dao.interfaces.IResolutionDAO;
+import org.training.issuetracker.db.beans.Resolution;
 import org.training.issuetracker.db.util.DBManager;
 
-public class ResolutionDAO implements IResolutionDAO {
+public class ResolutionDAO {
 
-	@Override
-	public List<IssueResolution> getAll() throws Exception {
+	public List<Resolution> getAll() throws Exception {
 		Connection connection = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -23,10 +21,10 @@ public class ResolutionDAO implements IResolutionDAO {
 			st = connection.createStatement();
 			st.execute("select id, name from resolutions");
 			rs = st.getResultSet();
-			List<IssueResolution> resolutions = new ArrayList<IssueResolution>();
-			IssueResolution resolution = null;
+			List<Resolution> resolutions = new ArrayList<Resolution>();
+			Resolution resolution = null;
 			while (rs.next()) {
-				resolution = new IssueResolution();
+				resolution = new Resolution();
 				resolution.setId(rs.getInt("id"));
 				resolution.setValue(rs.getString("name"));
 				resolutions.add(resolution);
@@ -39,8 +37,7 @@ public class ResolutionDAO implements IResolutionDAO {
 		}
 	}
 
-	@Override
-	public IssueResolution getById(long id) throws Exception {
+	public Resolution getById(long id) throws Exception {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -50,7 +47,7 @@ public class ResolutionDAO implements IResolutionDAO {
 			ps.setLong(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				IssueResolution resolution = new IssueResolution();
+				Resolution resolution = new Resolution();
 				resolution.setId(id);
 				resolution.setValue(rs.getString("name"));
 				return resolution;
@@ -63,34 +60,27 @@ public class ResolutionDAO implements IResolutionDAO {
 		return null;
 	}
 
-	@Override
-	public void add(IssueResolution resolution) throws Exception {
-		Connection connection = null;
+	public void add(Connection connection, Resolution resolution) 
+			throws Exception {
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("insert into resolutions(name) values(?)");
 			ps.setString(1, resolution.getValue());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 
-	@Override
-	public void updateName(IssueResolution resolution) throws Exception {
-		Connection connection = null;
+	public void update(Connection connection, Resolution resolution) throws Exception {
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("update resolutions set name=? where id=?");
 			ps.setString(1, resolution.getValue());
 			ps.setLong(2, resolution.getId());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 

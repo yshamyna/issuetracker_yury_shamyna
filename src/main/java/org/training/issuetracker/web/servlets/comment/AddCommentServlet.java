@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.Comment;
 import org.training.issuetracker.db.beans.User;
-import org.training.issuetracker.db.dao.interfaces.ICommentDAO;
 import org.training.issuetracker.db.dao.service.CommentDAO;
 
 /**
@@ -44,7 +43,7 @@ public class AddCommentServlet extends HttpServlet {
 			comment.setCreateDate(createDate);
 			comment.setIssueId(Integer.parseInt(issueId));
 			
-			ICommentDAO commentDAO = new CommentDAO();
+			CommentDAO commentDAO = new CommentDAO();
 			commentDAO.addComment(comment);
 			
 			// {"builds":[{"id":1, "version":"1.2"},{"id":2, "version":"1.2"}]}

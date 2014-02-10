@@ -8,12 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.Manager;
-import org.training.issuetracker.db.dao.interfaces.IManagerDAO;
 import org.training.issuetracker.db.util.DBManager;
 
-public class ManagerDAO implements IManagerDAO {
+public class ManagerDAO {
 
-	@Override
 	public List<Manager> getAll() throws Exception {
 		Connection connection = null;
 		Statement st = null;
@@ -40,15 +38,12 @@ public class ManagerDAO implements IManagerDAO {
 		}
 	}
 
-	@Override
-	public Manager getById(int id) throws Exception {
-		Connection connection = null;
+	public Manager getById(Connection connection, long id) throws Exception {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 	        ps = connection.prepareStatement("select firstName, lastName from managers where id=?");
-	        ps.setInt(1, id);
+	        ps.setLong(1, id);
 	        rs = ps.executeQuery();
 	        if (rs.next()) {
 	        	Manager manager = new Manager();
@@ -60,15 +55,7 @@ public class ManagerDAO implements IManagerDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 		return null;
 	}
-
-	@Override
-	public void add(Manager manager) throws Exception {
-		// TODO Auto-generated method stub
-
-	}
-
 }

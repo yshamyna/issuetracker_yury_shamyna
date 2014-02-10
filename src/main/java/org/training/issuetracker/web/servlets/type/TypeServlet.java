@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.IssueType;
+import org.training.issuetracker.db.beans.Type;
 import org.training.issuetracker.db.dao.interfaces.ITypeDAO;
 import org.training.issuetracker.db.dao.service.TypeDAO;
 
@@ -43,7 +43,7 @@ public class TypeServlet extends HttpServlet {
 	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			ITypeDAO typeDAO = new TypeDAO();
-			List<IssueType> types = typeDAO.getAll();
+			List<Type> types = typeDAO.getAll();
 			request.setAttribute("types", types);
 		}  catch (Exception e) {
 			e.printStackTrace();

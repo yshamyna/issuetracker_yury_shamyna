@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.IssueStatus;
+import org.training.issuetracker.db.beans.Status;
 import org.training.issuetracker.db.dao.interfaces.IStatusDAO;
 import org.training.issuetracker.db.dao.service.StatusDAO;
 
@@ -42,7 +42,7 @@ public class StatusServlet extends HttpServlet {
 	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			IStatusDAO statusDAO = new StatusDAO();
-			List<IssueStatus> statuses = statusDAO.getAll();
+			List<Status> statuses = statusDAO.getAll();
 			request.setAttribute("statuses", statuses);
 		}  catch (Exception e) {
 			e.printStackTrace();

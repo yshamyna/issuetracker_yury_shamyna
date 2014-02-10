@@ -18,7 +18,6 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.training.issuetracker.db.beans.Attachment;
 import org.training.issuetracker.db.beans.User;
-import org.training.issuetracker.db.dao.interfaces.IAttachmentDAO;
 import org.training.issuetracker.db.dao.service.AttachmentDAO;
 
 /**
@@ -77,7 +76,7 @@ public class FileUploadServlet extends HttpServlet {
                 }
             }
 
-            IAttachmentDAO aDAO = new AttachmentDAO();
+            AttachmentDAO aDAO = new AttachmentDAO();
             Attachment attachment = new Attachment();
             attachment.setFilename(filename);
             User addedBy = (User) request.getSession().getAttribute("user");

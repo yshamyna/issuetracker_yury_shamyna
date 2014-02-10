@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.h2.jdbc.JdbcSQLException;
-import org.training.issuetracker.db.beans.IssueResolution;
+import org.training.issuetracker.db.beans.Resolution;
 import org.training.issuetracker.db.dao.interfaces.IResolutionDAO;
 import org.training.issuetracker.db.dao.service.ResolutionDAO;
 
@@ -38,7 +38,7 @@ public class AddResolutionServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IssueResolution resolution = new IssueResolution();
+			Resolution resolution = new Resolution();
 			resolution.setValue(request.getParameter("entityName"));
 			IResolutionDAO resolutionDAO = new ResolutionDAO();
 			resolutionDAO.add(resolution);

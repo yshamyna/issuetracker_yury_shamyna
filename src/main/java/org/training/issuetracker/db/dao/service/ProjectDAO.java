@@ -9,13 +9,10 @@ import java.util.List;
 
 import org.training.issuetracker.db.beans.Manager;
 import org.training.issuetracker.db.beans.Project;
-import org.training.issuetracker.db.dao.interfaces.IManagerDAO;
-import org.training.issuetracker.db.dao.interfaces.IProjectDAO;
 import org.training.issuetracker.db.util.DBManager;
 
-public class ProjectDAO implements IProjectDAO {
+public class ProjectDAO {
 
-	@Override
 	public List<Project> getAll() throws Exception {
 		Connection connection = null;
 		Statement st = null;
@@ -27,13 +24,13 @@ public class ProjectDAO implements IProjectDAO {
 			rs = st.getResultSet();
 			List<Project> projects = new ArrayList<Project>();
 			Project project = null;
-			IManagerDAO managerDAO = new ManagerDAO();
+			ManagerDAO managerDAO = new ManagerDAO();
 			while (rs.next()) {
 				project = new Project();
 				project.setId(rs.getInt("id"));
 				project.setName(rs.getString("name"));
 				project.setDescription(rs.getString("description"));
-				project.setManager(managerDAO.getById(rs.getInt("managerId")));
+				project.setManager(managerDAO.getById(connection, rs.getInt("managerId")));
 				projects.add(project);
 			}
 			return projects;
@@ -44,7 +41,6 @@ public class ProjectDAO implements IProjectDAO {
 		}
 	}
 
-	@Override
 	public Project getById(long id) throws Exception {
 		Connection connection = null;
 		PreparedStatement ps = null;
@@ -60,8 +56,8 @@ public class ProjectDAO implements IProjectDAO {
 	        	project.setName(rs.getString("name"));
 	        	project.setDescription(rs.getString("description"));
 	        	int managerId = rs.getInt("managerId");
-	        	IManagerDAO managerDAO = new ManagerDAO();
-	        	Manager manager = managerDAO.getById(managerId);
+	        	ManagerDAO managerDAO = new ManagerDAO();
+	        	Manager manager = managerDAO.getById(connection, managerId);
 	        	project.setManager(manager);
 	        	return project;
 	        }
@@ -73,14 +69,11 @@ public class ProjectDAO implements IProjectDAO {
 		return null;
 	}
 
-	@Override
-	public long add(Project project) throws Exception {
-		Connection connection = null;
+	public long add(Connection connection, Project project) throws Exception {
 		PreparedStatement ps = null;
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("insert into projects(name, description, managerId) values(?, ?, ?)");
 			ps.setString(1, project.getName());
 			ps.setString(2, project.getDescription());
@@ -96,14 +89,11 @@ public class ProjectDAO implements IProjectDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(st, ps);
-			DBManager.closeConnection(connection);
 		}
 		return -1;
 	}
 
-	@Override
-	public void update(Project project) throws Exception {
-		Connection connection = null;
+	public void update(Connection connection, Project project) throws Exception {
 		PreparedStatement ps = null;
 		try {
 			connection = DBManager.getConnection();
@@ -115,11 +105,9 @@ public class ProjectDAO implements IProjectDAO {
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 
-	@Override
 	public List<Project> getNRecordsFromPageY(long recordsPerPage,
 			long pageNumber) throws Exception {
 		Connection connection = null;
@@ -172,7 +160,6 @@ public class ProjectDAO implements IProjectDAO {
 		}
 	}
 
-	@Override
 	public long getQuantityPages(long recordsPerPage) throws Exception {
 		Connection connection = null;
 		Statement st = null;

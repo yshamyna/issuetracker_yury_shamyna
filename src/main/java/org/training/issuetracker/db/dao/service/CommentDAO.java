@@ -7,12 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.Comment;
-import org.training.issuetracker.db.dao.interfaces.ICommentDAO;
 import org.training.issuetracker.db.util.DBManager;
 
-public class CommentDAO implements ICommentDAO {
+public class CommentDAO {
 
-	@Override
 	public List<Comment> getCommentsByIssueId(long issueId) throws Exception {
 		Connection connection = null;
 		PreparedStatement ps = null;
@@ -42,12 +40,9 @@ public class CommentDAO implements ICommentDAO {
 		}
 	}
 
-	@Override
-	public void addComment(Comment comment) throws Exception {
-		Connection connection = null;
+	public void add(Connection connection, Comment comment) throws Exception {
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
 	        ps = connection.prepareStatement("insert into comments(sender, createDate, comment, issueId) values(?, ?, ?, ?)");
 	        ps.setLong(1, comment.getSender().getId());
 	        ps.setTimestamp(2, comment.getCreateDate());
@@ -56,8 +51,6 @@ public class CommentDAO implements ICommentDAO {
 	        ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
-		
 	}
 }

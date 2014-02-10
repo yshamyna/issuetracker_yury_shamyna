@@ -2,7 +2,9 @@ package org.training.issuetracker.db.beans;
 
 import java.sql.Timestamp;
 
-public class Attachment {
+import org.training.issuetracker.db.interfaces.Entity;
+
+public class Attachment implements Entity {
 	private long id;
 	private User addedBy;
 	private String filename;

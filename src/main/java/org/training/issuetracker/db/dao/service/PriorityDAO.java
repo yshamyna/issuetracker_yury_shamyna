@@ -7,14 +7,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.training.issuetracker.db.beans.IssuePriority;
+import org.training.issuetracker.db.beans.Priority;
 import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
 import org.training.issuetracker.db.util.DBManager;
 
-public class PriorityDAO implements IPriorityDAO {
+public class PriorityDAO {
 
-	@Override
-	public List<IssuePriority> getAll() throws Exception {
+	public List<Priority> getAll() throws Exception {
 		Connection connection = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -23,10 +22,10 @@ public class PriorityDAO implements IPriorityDAO {
 			st = connection.createStatement();
 			st.execute("select id, name from priorities");
 			rs = st.getResultSet();
-			List<IssuePriority> priotities = new ArrayList<IssuePriority>();
-			IssuePriority priority = null;
+			List<Priority> priotities = new ArrayList<Priority>();
+			Priority priority = null;
 			while (rs.next()) {
-				priority = new IssuePriority();
+				priority = new Priority();
 				priority.setId(rs.getInt("id"));
 				priority.setValue(rs.getString("name"));
 				priotities.add(priority);
@@ -39,8 +38,7 @@ public class PriorityDAO implements IPriorityDAO {
 		}
 	}
 
-	@Override
-	public IssuePriority getById(long id) throws Exception {
+	public Priority getById(long id) throws Exception {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -50,7 +48,7 @@ public class PriorityDAO implements IPriorityDAO {
 			ps.setLong(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				IssuePriority priority = new IssuePriority();
+				Priority priority = new Priority();
 				priority.setId(id);
 				priority.setValue(rs.getString("name"));
 				return priority;
@@ -63,41 +61,21 @@ public class PriorityDAO implements IPriorityDAO {
 		return null;
 	}
 
-	@Override
-	public void add(IssuePriority priority) throws Exception {
-		Connection connection = null;
+	public void add(Connection connection, Priority priority) throws Exception {
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("insert into priorities(name) values(?)");
 			ps.setString(1, priority.getValue());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 
-	@Override
-	public void update(IssuePriority priotity) throws Exception {
-		Connection connection = null;
+	public void update(Connection connection, Priority priotity) 
+			throws Exception {
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
-			ps = connection.prepareStatement("update priorities set name=? where id=?");
-			ps.setString(1, priotity.getValue());
-			ps.setLong(2, priotity.getId());
-			ps.executeUpdate();
-		} finally {
-			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
-		}
-	}
-	
-	public void update(Connection connection, IssuePriority priotity) throws Exception {
-		PreparedStatement ps = null;
-		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("update priorities set name=? where id=?");
 			ps.setString(1, priotity.getValue());
 			ps.setLong(2, priotity.getId());

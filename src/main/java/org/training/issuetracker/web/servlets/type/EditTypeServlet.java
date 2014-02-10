@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.IssueType;
+import org.training.issuetracker.db.beans.Type;
 import org.training.issuetracker.db.dao.interfaces.ITypeDAO;
 import org.training.issuetracker.db.dao.service.TypeDAO;
 
@@ -33,7 +33,7 @@ public class EditTypeServlet extends HttpServlet {
 			try {
 				long typeId = Integer.parseInt(id);
 				ITypeDAO typeDAO = new TypeDAO();
-				IssueType type = typeDAO.getById(typeId);
+				Type type = typeDAO.getById(typeId);
 				request.setAttribute("type", type);
 			} catch (RuntimeException e) {
 				e.printStackTrace();
@@ -53,7 +53,7 @@ public class EditTypeServlet extends HttpServlet {
 		try {
 			String id = request.getParameter("id");
 			String name = request.getParameter("entityName");
-			IssueType type = new IssueType();
+			Type type = new Type();
 			type.setId(Integer.parseInt(id));
 			type.setValue(name);	
 			ITypeDAO typeDAO = new TypeDAO();

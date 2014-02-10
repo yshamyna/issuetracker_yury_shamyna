@@ -9,13 +9,10 @@ import java.util.List;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.beans.UserRole;
-import org.training.issuetracker.db.dao.interfaces.IRoleDAO;
-import org.training.issuetracker.db.dao.interfaces.IUserDAO;
 import org.training.issuetracker.db.util.DBManager;
 
-public class UserDAO implements IUserDAO {
+public class UserDAO {
 
-	@Override
 	public List<User> getAll() throws Exception {
 		Connection connection = null;
 		Statement st = null;
@@ -34,8 +31,8 @@ public class UserDAO implements IUserDAO {
 	        	user.setPassword(rs.getString("password"));
 	        	user.setFirstName(rs.getString("firstName"));
 	        	user.setLastName(rs.getString("lastName"));
-	        	IRoleDAO roleDAO = new RoleDAO();
-	        	UserRole role = roleDAO.getById(rs.getInt("roleId"));
+	        	RoleDAO roleDAO = new RoleDAO();
+	        	UserRole role = roleDAO.getById(connection, rs.getInt("roleId"));
 	        	user.setRole(role);
 				users.add(user);
 			}
@@ -47,7 +44,6 @@ public class UserDAO implements IUserDAO {
 		}
 	}
 
-	@Override
 	public User getById(long id) throws Exception {
 		Connection connection = null;
 		PreparedStatement ps = null;
@@ -65,8 +61,8 @@ public class UserDAO implements IUserDAO {
 	        	user.setPassword(rs.getString("password"));
 	        	user.setFirstName(rs.getString("firstName"));
 	        	user.setLastName(rs.getString("lastName"));
-	        	IRoleDAO roleDAO = new RoleDAO();
-	        	UserRole role = roleDAO.getById(rs.getInt("roleId"));
+	        	RoleDAO roleDAO = new RoleDAO();
+	        	UserRole role = (UserRole) roleDAO.getById(connection, rs.getInt("roleId"));
 	        	user.setRole(role);
 	        }
 		} finally {
@@ -77,12 +73,9 @@ public class UserDAO implements IUserDAO {
 		return user;
 	}
 
-	@Override
-	public void add(User user) throws Exception {
-		Connection connection = null;
+	public void add(Connection connection, User user) throws Exception {
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("insert into users(firstName, lastName, email, roleId, password) values(?, ?, ?, ?, ?)");
 			ps.setString(1, user.getFirstName());
 			ps.setString(2, user.getLastName());
@@ -92,11 +85,9 @@ public class UserDAO implements IUserDAO {
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 
-	@Override
 	public User getByEmailAndPassword(String email, String password)
 			throws Exception {
 		Connection connection = null;
@@ -129,7 +120,6 @@ public class UserDAO implements IUserDAO {
 		return user;
 	}
 
-	@Override
 	public void changePassword(User user) throws Exception {
 		Connection connection = null;
 		PreparedStatement ps = null;
@@ -145,12 +135,9 @@ public class UserDAO implements IUserDAO {
 		}
 	}
 
-	@Override
-	public void update(User user) throws Exception {
-		Connection connection = null;
+	public void update(Connection connection, User user) throws Exception {
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("update users set firstName=?, lastName=?, email=?, roleId=? where id=?");
 			ps.setString(1, user.getFirstName());
 			ps.setString(2, user.getLastName());
@@ -160,7 +147,6 @@ public class UserDAO implements IUserDAO {
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 }
