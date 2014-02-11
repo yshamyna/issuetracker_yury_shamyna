@@ -2,6 +2,7 @@ package org.training.issuetracker.db.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.training.issuetracker.db.beans.Build;
 import org.training.issuetracker.db.beans.Project;
@@ -20,7 +21,7 @@ public class ProjectService {
 		connection = DBManager.getConnection(role);
 	}
 	
-	public void add(Project project, Build build) throws Exception {
+	public void add(Project project, Build build) throws SQLException {
 		try {
 			ProjectDAO projectDAO = new ProjectDAO();
 			long projectId = projectDAO.add(connection, project);	
@@ -34,7 +35,7 @@ public class ProjectService {
 		}
 	}
 
-	public void update(Project project, Build newBuild) throws Exception {
+	public void update(Project project, Build newBuild) throws SQLException {
 		try {
 			ProjectDAO projectDAO = new ProjectDAO();
 			projectDAO.update(connection, project);	
@@ -48,6 +49,24 @@ public class ProjectService {
 			}
 		} finally {
 			DBManager.closeConnection(connection);
+		}
+	}
+	
+	public List<Project> getProjects() throws SQLException {
+		try {
+			ProjectDAO projectDAO = new ProjectDAO();
+			return projectDAO.all(connection);	
+		} finally {
+			DBManager.closeConnection(connection);	
+		}
+	}
+	
+	public Project getProjectById(long projectId) throws SQLException {
+		try {
+			ProjectDAO projectDAO = new ProjectDAO();
+			return projectDAO.getById(connection, projectId);	
+		} finally {
+			DBManager.closeConnection(connection);	
 		}
 	}
 

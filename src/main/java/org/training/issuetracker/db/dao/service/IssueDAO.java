@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -11,14 +12,6 @@ import java.util.List;
 
 import org.training.issuetracker.db.beans.Issue;
 import org.training.issuetracker.db.beans.User;
-import org.training.issuetracker.db.dao.interfaces.IBuildDAO;
-import org.training.issuetracker.db.dao.interfaces.IIssueDAO;
-import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
-import org.training.issuetracker.db.dao.interfaces.IProjectDAO;
-import org.training.issuetracker.db.dao.interfaces.IResolutionDAO;
-import org.training.issuetracker.db.dao.interfaces.IStatusDAO;
-import org.training.issuetracker.db.dao.interfaces.ITypeDAO;
-import org.training.issuetracker.db.dao.interfaces.IUserDAO;
 import org.training.issuetracker.db.util.DBManager;
 
 public class IssueDAO {
@@ -81,12 +74,10 @@ public class IssueDAO {
 		} 
 	}
 
-	public Issue getById(long id) throws Exception {
-		Connection connection = null;
+	public Issue getById(Connection connection, long id) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 	        ps = connection.prepareStatement("select createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId from issues where id=?");
 	        ps.setLong(1, id);
 	        rs = ps.executeQuery();
@@ -99,34 +90,33 @@ public class IssueDAO {
 				issue.setDescription(rs.getString("description"));
 				
 				UserDAO userDAO = new UserDAO();
-				issue.setAssignee(userDAO.getById(rs.getInt("assignee")));
-				issue.setCreatedBy(userDAO.getById(rs.getInt("createBy")));
-				issue.setModifyBy(userDAO.getById(rs.getInt("modifyBy")));
+				issue.setAssignee(userDAO.getById(connection, rs.getInt("assignee")));
+				issue.setCreatedBy(userDAO.getById(connection, rs.getInt("createBy")));
+				issue.setModifyBy(userDAO.getById(connection, rs.getInt("modifyBy")));
 				
 				StatusDAO statusDAO = new StatusDAO();
-				issue.setStatus(statusDAO.getById(rs.getInt("statusId")));
+				issue.setStatus(statusDAO.getById(connection, rs.getInt("statusId")));
 				
 				TypeDAO typeDAO = new TypeDAO();
-				issue.setType(typeDAO.getById(rs.getInt("typeId")));
+				issue.setType(typeDAO.getById(connection, rs.getInt("typeId")));
 				
 				PriorityDAO priorityDAO = new PriorityDAO();
-				issue.setPriority(priorityDAO.getById(rs.getInt("priorityId")));
+				issue.setPriority(priorityDAO.getById(connection, rs.getInt("priorityId")));
 				
 				ProjectDAO projectDAO = new ProjectDAO();
-				issue.setProject(projectDAO.getById(rs.getInt("projectId")));
+				issue.setProject(projectDAO.getById(connection, rs.getInt("projectId")));
 				
 				BuildDAO buildDAO = new BuildDAO();
-				issue.setBuildFound(buildDAO.getById(rs.getInt("buildId")));
+				issue.setBuildFound(buildDAO.getById(connection, rs.getInt("buildId")));
 				
 				ResolutionDAO resolutionDAO = new ResolutionDAO();
-				issue.setResolution(resolutionDAO.getById(rs.getInt("resolutionId")));
+				issue.setResolution(resolutionDAO.getById(connection, rs.getInt("resolutionId")));
 				
 	        	return issue;
 	        }
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 		return null;
 	}

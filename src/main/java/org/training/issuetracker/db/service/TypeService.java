@@ -2,6 +2,7 @@ package org.training.issuetracker.db.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.training.issuetracker.db.beans.Type;
 import org.training.issuetracker.db.beans.User;
@@ -19,7 +20,7 @@ public class TypeService {
 	}
 	
 
-	public void add(Type type) throws Exception {
+	public void add(Type type) throws SQLException {
 		try {
 			TypeDAO typeDAO = new TypeDAO();
 			typeDAO.add(connection, type);	
@@ -28,10 +29,28 @@ public class TypeService {
 		}
 	}
 
-	public void update(Type type) throws Exception {
+	public void update(Type type) throws SQLException {
 		try {
 			TypeDAO typeDAO = new TypeDAO();
 			typeDAO.update(connection, type);	
+		} finally {
+			DBManager.closeConnection(connection);	
+		}
+	}
+	
+	public List<Type> getTypes() throws SQLException {
+		try {
+			TypeDAO typeDAO = new TypeDAO();
+			return typeDAO.all(connection);	
+		} finally {
+			DBManager.closeConnection(connection);	
+		}
+	}
+	
+	public Type getTypeById(long typeId) throws SQLException {
+		try {
+			TypeDAO typeDAO = new TypeDAO();
+			return typeDAO.getById(connection, typeId);	
 		} finally {
 			DBManager.closeConnection(connection);	
 		}

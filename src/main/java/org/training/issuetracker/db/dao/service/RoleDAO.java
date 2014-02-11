@@ -3,17 +3,16 @@ package org.training.issuetracker.db.dao.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.UserRole;
-import org.training.issuetracker.db.dao.interfaces.IRoleDAO;
 import org.training.issuetracker.db.util.DBManager;
 
-public class RoleDAO implements IRoleDAO {
+public class RoleDAO {
 
-	@Override
 	public List<UserRole> getAll() throws Exception {
 		Connection connection = null;
 		Statement st = null;
@@ -39,8 +38,7 @@ public class RoleDAO implements IRoleDAO {
 		}
 	}
 
-	@Override
-	public UserRole getById(Connection connection, long id) throws Exception {
+	public UserRole getById(Connection connection, long id) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -60,7 +58,6 @@ public class RoleDAO implements IRoleDAO {
 		return null;
 	}
 
-	@Override
 	public void add(UserRole role) throws Exception {
 		// TODO Auto-generated method stub
 

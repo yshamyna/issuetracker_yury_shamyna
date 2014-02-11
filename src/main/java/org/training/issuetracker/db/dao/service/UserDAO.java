@@ -3,6 +3,7 @@ package org.training.issuetracker.db.dao.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,44 +14,40 @@ import org.training.issuetracker.db.util.DBManager;
 
 public class UserDAO {
 
-	public List<User> getAll() throws Exception {
-		Connection connection = null;
+	public List<User> all(Connection connection) throws SQLException {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			st = connection.createStatement();
 			st.execute("select id, firstName, lastName, email, password, roleId from users");
 			rs = st.getResultSet();
 			List<User> users = new ArrayList<User>();
 			User user = null;
+			RoleDAO roleDAO = new RoleDAO();
 			while (rs.next()) {
 				user = new User();
+				
 	        	user.setId(rs.getLong("id"));
 	        	user.setEmailAddress(rs.getString("email"));
 	        	user.setPassword(rs.getString("password"));
 	        	user.setFirstName(rs.getString("firstName"));
 	        	user.setLastName(rs.getString("lastName"));
-	        	RoleDAO roleDAO = new RoleDAO();
-	        	UserRole role = roleDAO.getById(connection, rs.getInt("roleId"));
-	        	user.setRole(role);
+	        	user.setRole(roleDAO.getById(connection, rs.getInt("roleId")));
+	        	
 				users.add(user);
 			}
 			return users;
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(st);
-			DBManager.closeConnection(connection);
 		}
 	}
 
-	public User getById(long id) throws Exception {
-		Connection connection = null;
+	public User getById(Connection connection, long id) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		User user = null;
 		try {
-			connection = DBManager.getConnection();
 	        ps = connection.prepareStatement("select id, firstName, lastName, roleId, email, password from users where id=?");
 	        ps.setLong(1, id);
 	        rs = ps.executeQuery();
@@ -62,13 +59,12 @@ public class UserDAO {
 	        	user.setFirstName(rs.getString("firstName"));
 	        	user.setLastName(rs.getString("lastName"));
 	        	RoleDAO roleDAO = new RoleDAO();
-	        	UserRole role = (UserRole) roleDAO.getById(connection, rs.getInt("roleId"));
+	        	UserRole role = roleDAO.getById(connection, rs.getInt("roleId"));
 	        	user.setRole(role);
 	        }
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 		return user;
 	}

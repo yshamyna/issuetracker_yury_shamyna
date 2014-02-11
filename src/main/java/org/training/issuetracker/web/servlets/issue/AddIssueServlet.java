@@ -9,28 +9,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.h2.jdbc.JdbcSQLException;
 import org.training.issuetracker.db.beans.Build;
 import org.training.issuetracker.db.beans.Issue;
 import org.training.issuetracker.db.beans.Priority;
+import org.training.issuetracker.db.beans.Project;
 import org.training.issuetracker.db.beans.Status;
 import org.training.issuetracker.db.beans.Type;
-import org.training.issuetracker.db.beans.Project;
 import org.training.issuetracker.db.beans.User;
-import org.training.issuetracker.db.dao.interfaces.IBuildDAO;
-import org.training.issuetracker.db.dao.interfaces.IIssueDAO;
-import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
-import org.training.issuetracker.db.dao.interfaces.IProjectDAO;
-import org.training.issuetracker.db.dao.interfaces.IStatusDAO;
-import org.training.issuetracker.db.dao.interfaces.ITypeDAO;
-import org.training.issuetracker.db.dao.interfaces.IUserDAO;
-import org.training.issuetracker.db.dao.service.BuildDAO;
-import org.training.issuetracker.db.dao.service.IssueDAO;
-import org.training.issuetracker.db.dao.service.PriorityDAO;
-import org.training.issuetracker.db.dao.service.ProjectDAO;
-import org.training.issuetracker.db.dao.service.StatusDAO;
-import org.training.issuetracker.db.dao.service.TypeDAO;
-import org.training.issuetracker.db.dao.service.UserDAO;
+import org.training.issuetracker.db.service.BuildService;
+import org.training.issuetracker.db.service.IssueService;
+import org.training.issuetracker.db.service.PriorityService;
+import org.training.issuetracker.db.service.ProjectService;
+import org.training.issuetracker.db.service.StatusService;
+import org.training.issuetracker.db.service.TypeService;
+import org.training.issuetracker.db.service.UserService;
 
 /**
  * Servlet implementation class AddIssueServlet
@@ -50,29 +42,31 @@ public class AddIssueServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IStatusDAO statusDAO = new StatusDAO();
-			List<Status> statuses = statusDAO.getAll();
+User user = (User) request.getSession().getAttribute("user");
+			
+			StatusService sService = new StatusService(user);
+			List<Status> statuses = sService.getStatuses();
 			request.setAttribute("statuses", statuses);
 			
-			ITypeDAO typeDAO = new TypeDAO();
-			List<Type> types = typeDAO.getAll();
+			TypeService tService = new TypeService(user);
+			List<Type> types = tService.getTypes();
 			request.setAttribute("types", types);
 			
-			IPriorityDAO priorityDAO = new PriorityDAO();
-			List<Priority> priorities = priorityDAO.getAll();
+			PriorityService pService = new PriorityService(user);
+			List<Priority> priorities = pService.getPriorities();
 			request.setAttribute("priorities", priorities);
-			
-			IProjectDAO projectDAO = new ProjectDAO();
-			List<Project> projects = projectDAO.getAll();
+
+			ProjectService prService = new ProjectService(user);
+			List<Project> projects = prService.getProjects();
 			request.setAttribute("projects", projects);
 			
-			IBuildDAO buildDAO = new BuildDAO();
-			List<Build> builds = buildDAO.getByProjectId(projects.get(0).getId());
+			BuildService bService = new BuildService(user);
+			List<Build> builds = bService.getBuildsByProjectId(projects.get(0).getId());
 			request.setAttribute("builds", builds);
 			
-			IUserDAO userDAO = new UserDAO();
-			List<User> assignee = userDAO.getAll();
-			request.setAttribute("assignees", assignee);
+			UserService uService = new UserService(user);
+			List<User> users = uService.getUsers();
+			request.setAttribute("assignees", users);
 			
 			getServletContext().getRequestDispatcher("/addIssue.jsp").
 				forward(request, response);	
@@ -86,39 +80,41 @@ public class AddIssueServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
+			User user = (User) request.getSession().getAttribute("user");
+			
 			Issue issue = new Issue();
+			
 			Timestamp createDate = new Timestamp(System.currentTimeMillis());
-			User createBy = (User)request.getSession().getAttribute("user");
+			Timestamp modifyDate = new Timestamp(System.currentTimeMillis());
 			
+			issue.setCreatedBy(user);
 			issue.setCreateDate(createDate);
-			issue.setCreatedBy(createBy);
-			issue.setModifyDate(createDate);
-			issue.setModifyBy(createBy);
-			
+			issue.setModifyDate(modifyDate);
+			issue.setModifyBy(user);
 			issue.setSummary(request.getParameter("summary"));
 			issue.setDescription(request.getParameter("description"));
 			
 			Status status = new Status();
-			status.setId(Integer.parseInt(request.getParameter("status")));
+			status.setId(Integer.parseInt(request.getParameter("statusId")));
 			issue.setStatus(status);
 			
 			Type type = new Type();
-			type.setId(Integer.parseInt(request.getParameter("type")));
+			type.setId(Integer.parseInt(request.getParameter("typeId")));
 			issue.setType(type);
 			
 			Priority priority = new Priority();
-			priority.setId(Integer.parseInt(request.getParameter("priority")));
+			priority.setId(Integer.parseInt(request.getParameter("priorityId")));
 			issue.setPriority(priority);
 			
 			Project project = new Project();
-			project.setId(Integer.parseInt(request.getParameter("project")));
+			project.setId(Integer.parseInt(request.getParameter("projectId")));
 			issue.setProject(project);
 			
 			Build build = new Build();
-			build.setId(Integer.parseInt(request.getParameter("build")));
+			build.setId(Integer.parseInt(request.getParameter("buildId")));
 			issue.setBuildFound(build);
 			
-			long userId = Integer.parseInt(request.getParameter("assignee"));
+			long userId = Integer.parseInt(request.getParameter("assigneeId"));
 			if (userId == -1) {
 				issue.setAssignee(null);
 			} else {
@@ -127,14 +123,13 @@ public class AddIssueServlet extends HttpServlet {
 				issue.setAssignee(assignee);
 			}
 			
-			IIssueDAO issueDAO = new IssueDAO();
-			issueDAO.add(issue);
-		} catch (JdbcSQLException e) {
-			request.setAttribute("errMsg", "Undefined error.");
+			IssueService service = new IssueService(user);
+			service.add(issue);
+			
+			response.getWriter().println("Issue was added successfully.");
 		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			doGet(request, response);	
+			response.getWriter().
+				println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 

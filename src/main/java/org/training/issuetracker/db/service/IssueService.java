@@ -34,5 +34,11 @@ public class IssueService {
 		} finally {
 			DBManager.closeConnection(connection);	
 		}
+			
+	}
+	
+	public Issue getIssueById(long id) throws SQLException {
+		IssueDAO issueDAO = new IssueDAO();
+		return issueDAO.getById(connection, id);
 	}
 }

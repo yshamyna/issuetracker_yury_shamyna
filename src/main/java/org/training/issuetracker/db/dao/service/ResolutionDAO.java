@@ -3,6 +3,7 @@ package org.training.issuetracker.db.dao.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +38,10 @@ public class ResolutionDAO {
 		}
 	}
 
-	public Resolution getById(long id) throws Exception {
-		Connection connection = null;
+	public Resolution getById(Connection connection, long id) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("select name from resolutions where id=?");
 			ps.setLong(1, id);
 			rs = ps.executeQuery();
@@ -55,7 +54,6 @@ public class ResolutionDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 		return null;
 	}

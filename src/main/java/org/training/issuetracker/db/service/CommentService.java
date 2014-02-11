@@ -2,6 +2,7 @@ package org.training.issuetracker.db.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.training.issuetracker.db.beans.Comment;
 import org.training.issuetracker.db.beans.User;
@@ -18,12 +19,21 @@ public class CommentService {
 		connection = DBManager.getConnection(role);
 	}
 
-	public void add(Comment comment) throws Exception {
+	public void add(Comment comment) throws SQLException {
 		try {
 			CommentDAO commentDAO = new CommentDAO();
 			commentDAO.add(connection, comment);
 		} finally {
 			DBManager.closeConnection(connection);
+		}
+	}
+	
+	public List<Comment> getCommentsByIssueId(long issueId) throws SQLException {
+		try {
+			CommentDAO commentDAO = new CommentDAO();
+			return commentDAO.allByIssueId(connection, issueId);	
+		} finally {
+			DBManager.closeConnection(connection);	
 		}
 	}
 

@@ -14,28 +14,19 @@ import org.training.issuetracker.db.beans.Build;
 import org.training.issuetracker.db.beans.Comment;
 import org.training.issuetracker.db.beans.Issue;
 import org.training.issuetracker.db.beans.Priority;
+import org.training.issuetracker.db.beans.Project;
 import org.training.issuetracker.db.beans.Status;
 import org.training.issuetracker.db.beans.Type;
-import org.training.issuetracker.db.beans.Project;
 import org.training.issuetracker.db.beans.User;
-import org.training.issuetracker.db.dao.interfaces.IAttachmentDAO;
-import org.training.issuetracker.db.dao.interfaces.IBuildDAO;
-import org.training.issuetracker.db.dao.interfaces.ICommentDAO;
-import org.training.issuetracker.db.dao.interfaces.IIssueDAO;
-import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
-import org.training.issuetracker.db.dao.interfaces.IProjectDAO;
-import org.training.issuetracker.db.dao.interfaces.IStatusDAO;
-import org.training.issuetracker.db.dao.interfaces.ITypeDAO;
-import org.training.issuetracker.db.dao.interfaces.IUserDAO;
-import org.training.issuetracker.db.dao.service.AttachmentDAO;
-import org.training.issuetracker.db.dao.service.BuildDAO;
-import org.training.issuetracker.db.dao.service.CommentDAO;
-import org.training.issuetracker.db.dao.service.IssueDAO;
-import org.training.issuetracker.db.dao.service.PriorityDAO;
-import org.training.issuetracker.db.dao.service.ProjectDAO;
-import org.training.issuetracker.db.dao.service.StatusDAO;
-import org.training.issuetracker.db.dao.service.TypeDAO;
-import org.training.issuetracker.db.dao.service.UserDAO;
+import org.training.issuetracker.db.service.AttachmentService;
+import org.training.issuetracker.db.service.BuildService;
+import org.training.issuetracker.db.service.CommentService;
+import org.training.issuetracker.db.service.IssueService;
+import org.training.issuetracker.db.service.PriorityService;
+import org.training.issuetracker.db.service.ProjectService;
+import org.training.issuetracker.db.service.StatusService;
+import org.training.issuetracker.db.service.TypeService;
+import org.training.issuetracker.db.service.UserService;
 
 /**
  * Servlet implementation class EditIssueServlet
@@ -60,45 +51,49 @@ public class EditIssueServlet extends HttpServlet {
 					forward(request, response);
 		} else {
 			try {
+				User user = (User) request.getSession().getAttribute("user");
+				
 				long issueId = Integer.parseInt(id);
-				IIssueDAO dao = new IssueDAO();
-				Issue issue = dao.getById(issueId);
+				
+				IssueService iService = new IssueService(user);
+				Issue issue = iService.getIssueById(issueId);
+				
 				if (issue == null) {
 					getServletContext().getRequestDispatcher("/dashboard").
 							forward(request, response);
 				} else {
 					request.setAttribute("issue", issue);
 					
-					IStatusDAO statusDAO = new StatusDAO();
-					List<Status> statuses = statusDAO.getAll();
+					StatusService sService = new StatusService(user);
+					List<Status> statuses = sService.getStatuses();
 					request.setAttribute("statuses", statuses);
 					
-					ITypeDAO typeDAO = new TypeDAO();
-					List<Type> types = typeDAO.getAll();
+					TypeService tService = new TypeService(user);
+					List<Type> types = tService.getTypes();
 					request.setAttribute("types", types);
 					
-					IPriorityDAO priorityDAO = new PriorityDAO();
-					List<Priority> priorities = priorityDAO.getAll();
+					PriorityService pService = new PriorityService(user);
+					List<Priority> priorities = pService.getPriorities();
 					request.setAttribute("priorities", priorities);
 
-					IProjectDAO projectDAO = new ProjectDAO();
-					List<Project> projects = projectDAO.getAll();
+					ProjectService prService = new ProjectService(user);
+					List<Project> projects = prService.getProjects();
 					request.setAttribute("projects", projects);
 					
-					IBuildDAO buildDAO = new BuildDAO();
-					List<Build> builds = buildDAO.getByProjectId(issue.getProject().getId());
+					BuildService bService = new BuildService(user);
+					List<Build> builds = bService.getBuildsByProjectId(issue.getProject().getId());
 					request.setAttribute("builds", builds);
 					
-					IUserDAO userDAO = new UserDAO();
-					List<User> users = userDAO.getAll();
+					UserService uService = new UserService(user);
+					List<User> users = uService.getUsers();
 					request.setAttribute("assignees", users);
 					
-					ICommentDAO commentDAO = new CommentDAO();
-					List<Comment> comments = commentDAO.getCommentsByIssueId(issueId);
+					CommentService cService = new CommentService(user);
+					List<Comment> comments = cService.getCommentsByIssueId(issueId);
 					request.setAttribute("comments", comments);
 					
-					IAttachmentDAO attachmentDAO = new AttachmentDAO();
-					List<Attachment> attachments = attachmentDAO.getListByIssueId(issueId);
+					AttachmentService aService = new AttachmentService(user);
+					List<Attachment> attachments = aService.getAttachmentsByIssueId(issueId);
 					request.setAttribute("attachments", attachments);
 					
 					getServletContext().getRequestDispatcher("/editIssue.jsp").
@@ -119,12 +114,14 @@ public class EditIssueServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
+			User user = (User) request.getSession().getAttribute("user");
+			
 			long id = Integer.parseInt(request.getParameter("id"));
-			IIssueDAO issueDAO = new IssueDAO();
-			Issue issue = issueDAO.getById(id);
+			Issue issue = new Issue();
+			issue.setId(id);
 			
 			Timestamp modifyDate = new Timestamp(System.currentTimeMillis());
-			User modifyBy = (User)request.getSession().getAttribute("user");
+			User modifyBy = user;
 			
 			issue.setModifyDate(modifyDate);
 			issue.setModifyBy(modifyBy);
@@ -161,11 +158,13 @@ public class EditIssueServlet extends HttpServlet {
 				issue.setAssignee(assignee);
 			}
 			
-			issueDAO.update(issue);
-			response.getWriter().println("Issue was changed successfully.");
-		} catch(Exception e) {
-			e.printStackTrace();
-			response.getWriter().println("Sorry, but current service is not available... Please try later.");
+			IssueService service = new IssueService(user);
+			service.update(issue);
+			
+			response.getWriter().println("Issue was updated successfully.");
+		} catch (Exception e) {
+			response.getWriter().
+				println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 

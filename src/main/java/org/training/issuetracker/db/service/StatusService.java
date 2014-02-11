@@ -2,6 +2,7 @@ package org.training.issuetracker.db.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.training.issuetracker.db.beans.Status;
 import org.training.issuetracker.db.beans.User;
@@ -17,9 +18,8 @@ public class StatusService {
 		Role role = Role.valueOf(user.getRole().getValue());
 		connection = DBManager.getConnection(role);
 	}
-	
 
-	public void add(Status status) throws Exception {
+	public void add(Status status) throws SQLException {
 		try {
 			StatusDAO statusDAO = new StatusDAO();
 			statusDAO.add(connection, status);	
@@ -28,7 +28,7 @@ public class StatusService {
 		}
 	}
 
-	public void update(Status status) throws Exception {
+	public void update(Status status) throws SQLException {
 		try {
 			StatusDAO statusDAO = new StatusDAO();
 			statusDAO.update(connection, status);	
@@ -37,5 +37,22 @@ public class StatusService {
 		}
 	}
 
-
+	public Status getStatusById(long statusId) throws SQLException {
+		try {
+			StatusDAO statusDAO = new StatusDAO();
+			return statusDAO.getById(connection, statusId);	
+		} finally {
+			DBManager.closeConnection(connection);
+		}
+		
+	}
+	
+	public List<Status> getStatuses() throws SQLException {
+		try {
+			StatusDAO statusDAO = new StatusDAO();
+			return statusDAO.all(connection);	
+		} finally {
+			DBManager.closeConnection(connection);
+		}
+	}
 }

@@ -3,23 +3,21 @@ package org.training.issuetracker.db.dao.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.Attachment;
 import org.training.issuetracker.db.beans.User;
-import org.training.issuetracker.db.dao.interfaces.IAttachmentDAO;
 import org.training.issuetracker.db.util.DBManager;
 
-public class AttachmentDAO implements IAttachmentDAO {
+public class AttachmentDAO  {
 
-	@Override
-	public List<Attachment> getListByIssueId(long issueId) throws Exception {
-		Connection connection = null;
+	public List<Attachment> allByIssueId(Connection connection, long issueId) 
+					throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("select attachments.id as aid, addedBy, firstName, lastName, addDate, filename from attachments, users where addedBy=users.id and issueId=?");
 			ps.setLong(1, issueId);
 			rs = ps.executeQuery();
@@ -45,18 +43,14 @@ public class AttachmentDAO implements IAttachmentDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 
-	@Override
-	public void add(Attachment attachment) throws Exception {
-		Connection connection = null;
+	public void add(Connection connection, Attachment attachment) 
+				throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("insert into attachments(addedBy, addDate, filename, issueId) values(?,?,?,?)");
-			
 			ps.setLong(1, attachment.getAddedBy().getId());
 			ps.setTimestamp(2, attachment.getAddDate());
 			ps.setString(3, attachment.getFilename());
@@ -65,7 +59,6 @@ public class AttachmentDAO implements IAttachmentDAO {
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 }

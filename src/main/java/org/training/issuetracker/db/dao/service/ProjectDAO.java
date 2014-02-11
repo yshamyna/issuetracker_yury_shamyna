@@ -3,6 +3,7 @@ package org.training.issuetracker.db.dao.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +14,10 @@ import org.training.issuetracker.db.util.DBManager;
 
 public class ProjectDAO {
 
-	public List<Project> getAll() throws Exception {
-		Connection connection = null;
+	public List<Project> all(Connection connection) throws SQLException {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			st = connection.createStatement();
 			st.execute("select id, name, managerId, description from projects");
 			rs = st.getResultSet();
@@ -30,23 +29,21 @@ public class ProjectDAO {
 				project.setId(rs.getInt("id"));
 				project.setName(rs.getString("name"));
 				project.setDescription(rs.getString("description"));
-				project.setManager(managerDAO.getById(connection, rs.getInt("managerId")));
+				project.setManager(managerDAO.getById(connection, 
+										rs.getInt("managerId")));
 				projects.add(project);
 			}
 			return projects;
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(st);
-			DBManager.closeConnection(connection);
 		}
 	}
 
-	public Project getById(long id) throws Exception {
-		Connection connection = null;
+	public Project getById(Connection connection, long id) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 	        ps = connection.prepareStatement("select name, description, managerId from projects where id=?");
 	        ps.setLong(1, id);
 	        rs = ps.executeQuery();
@@ -64,12 +61,11 @@ public class ProjectDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 		return null;
 	}
 
-	public long add(Connection connection, Project project) throws Exception {
+	public long add(Connection connection, Project project) throws SQLException {
 		PreparedStatement ps = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -93,10 +89,9 @@ public class ProjectDAO {
 		return -1;
 	}
 
-	public void update(Connection connection, Project project) throws Exception {
+	public void update(Connection connection, Project project) throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("update projects set name=?, description=?, managerId=? where id=?");
 			ps.setString(1, project.getName());
 			ps.setString(2, project.getDescription());

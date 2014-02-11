@@ -2,6 +2,7 @@ package org.training.issuetracker.db.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.dao.service.UserDAO;
@@ -32,6 +33,15 @@ public class UserService {
 			userDAO.update(connection, user);
 		} finally {
 			connection.close();
+		}
+	}
+	
+	public List<User> getUsers() throws SQLException {
+		try {
+			UserDAO userDAO = new UserDAO();
+			return userDAO.all(connection);	
+		} finally {
+			DBManager.closeConnection(connection);	
 		}
 	}
 }

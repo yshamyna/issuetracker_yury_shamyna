@@ -3,6 +3,7 @@ package org.training.issuetracker.db.dao.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import org.training.issuetracker.db.util.DBManager;
 public class BuildDAO {
 
 
-	public Build getById(Connection connection, long id) throws Exception {
+	public Build getById(Connection connection, long id) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -34,7 +35,7 @@ public class BuildDAO {
 		return null;
 	}
 
-	public void add(Connection connection, Build build) throws Exception {
+	public void add(Connection connection, Build build) throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("insert into builds(projectId, version, isCurrent) values(?, ?, ?)");
@@ -48,12 +49,10 @@ public class BuildDAO {
 
 	}
 
-	public List<Build> getByProjectId(long id) throws Exception {
-		Connection connection = null;
+	public List<Build> allByProjectId(Connection connection, long id) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 	        ps = connection.prepareStatement("select id, version, isCurrent from builds where projectId=?");
 	        ps.setLong(1, id);
 	        rs = ps.executeQuery();
@@ -71,12 +70,11 @@ public class BuildDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 
 	public void changeVersion(Connection connection, long oldBuildId, 
-			long newBuildId) throws Exception {
+			long newBuildId) throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("update builds set isCurrent=false where id=?");
@@ -90,7 +88,7 @@ public class BuildDAO {
 		
 	}
 	
-	public Build getCurrentBuild(Connection connection, long projectId) throws Exception {
+	public Build getCurrentBuild(Connection connection, long projectId) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {

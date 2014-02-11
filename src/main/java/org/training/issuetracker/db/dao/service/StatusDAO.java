@@ -3,6 +3,7 @@ package org.training.issuetracker.db.dao.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +13,10 @@ import org.training.issuetracker.db.util.DBManager;
 
 public class StatusDAO {
 
-	public List<Status> getAll() throws Exception {
-		Connection connection = null;
+	public List<Status> all(Connection connection) throws SQLException {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			st = connection.createStatement();
 			st.execute("select id, name from statuses");
 			rs = st.getResultSet();
@@ -33,16 +32,13 @@ public class StatusDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(st);
-			DBManager.closeConnection(connection);
 		}
 	}
 
-	public Status getById(long id) throws Exception {
-		Connection connection = null;
+	public Status getById(Connection connection, long id) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("select name from statuses where id=?");
 			ps.setLong(1, id);
 			rs = ps.executeQuery();
@@ -55,12 +51,11 @@ public class StatusDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 		return null;
 	}
 
-	public void add(Connection connection, Status status) throws Exception {
+	public void add(Connection connection, Status status) throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("insert into statuses(name) values(?)");
@@ -71,7 +66,7 @@ public class StatusDAO {
 		}
 	}
 	
-	public void update(Connection connection, Status status) throws Exception {
+	public void update(Connection connection, Status status) throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("update statuses set name=? where id=?");
