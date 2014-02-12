@@ -1,8 +1,7 @@
 package org.training.issuetracker.db.beans;
 
-import org.training.issuetracker.db.interfaces.Entity;
 
-public class Status implements Entity {
+public class Status {
 	private long id;
 	private String value;
 

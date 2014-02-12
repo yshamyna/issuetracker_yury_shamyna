@@ -1,8 +1,7 @@
 package org.training.issuetracker.db.beans;
 
-import org.training.issuetracker.db.interfaces.Entity;
 
-public class Manager implements Entity {
+public class Manager {
 	private long id;
 	private String firstName;
 	private String lastName;

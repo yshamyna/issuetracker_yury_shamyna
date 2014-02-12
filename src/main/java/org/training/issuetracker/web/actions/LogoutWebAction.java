@@ -6,16 +6,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.web.actions.interfaces.IWebAction;
+import org.training.issuetracker.web.actions.interfaces.WebAction;
 
-public class LogoutWebAction implements IWebAction {
+public class LogoutWebAction implements WebAction {
 
 	@Override
-	public String execute(HttpServletRequest request,
+	public void execute(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		request.getSession().removeAttribute("user");
 		response.sendRedirect("dashboard");
-		return null;
 	}
 
 }

@@ -2,9 +2,7 @@ package org.training.issuetracker.db.beans;
 
 import java.sql.Timestamp;
 
-import org.training.issuetracker.db.interfaces.Entity;
-
-public class Comment implements Entity {
+public class Comment {
 	private long id;
 	private User sender;
 	private long issueId;

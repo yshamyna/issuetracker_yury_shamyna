@@ -17,7 +17,7 @@ import org.training.issuetracker.web.actions.ShowResolutionsWebAction;
 import org.training.issuetracker.web.actions.ShowStatusesWebAction;
 import org.training.issuetracker.web.actions.ShowTypesWebAction;
 import org.training.issuetracker.web.actions.ShowUsersWebAction;
-import org.training.issuetracker.web.actions.interfaces.IWebAction;
+import org.training.issuetracker.web.actions.interfaces.WebAction;
 
 public class WebActionFactory {
 	private static enum Action {
@@ -26,9 +26,9 @@ public class WebActionFactory {
 		SHOW_PROJECTS, ADD_USER, ADD_ISSUE, CHANGE_PASSWORD, EDIT_PROFILE, SHOW_USERS;
 	}
 	
-	public static IWebAction getWebActionFromFactory(String action) {
+	public static WebAction getWebActionFromFactory(String action) {
 		Action actn = Action.valueOf(action.toUpperCase());
-		IWebAction webAction = null;
+		WebAction webAction = null;
 		switch (actn) {
 			case LOGIN: webAction = new LoginWebAction(); break;
 			case LOGOUT: webAction = new LogoutWebAction(); break;

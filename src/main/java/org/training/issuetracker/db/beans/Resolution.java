@@ -1,8 +1,7 @@
 package org.training.issuetracker.db.beans;
 
-import org.training.issuetracker.db.interfaces.Entity;
 
-public class Resolution implements Entity {
+public class Resolution {
 	private long id;
 	private String value;
 	

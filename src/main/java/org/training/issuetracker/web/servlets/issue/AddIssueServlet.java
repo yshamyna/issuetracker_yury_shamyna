@@ -87,7 +87,7 @@ public class AddIssueServlet extends HttpServlet {
 			Timestamp createDate = new Timestamp(System.currentTimeMillis());
 			Timestamp modifyDate = new Timestamp(System.currentTimeMillis());
 			
-			issue.setCreatedBy(user);
+			issue.setCreateBy(user);
 			issue.setCreateDate(createDate);
 			issue.setModifyDate(modifyDate);
 			issue.setModifyBy(user);

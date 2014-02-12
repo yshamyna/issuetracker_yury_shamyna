@@ -3,12 +3,10 @@ package org.training.issuetracker.db.beans;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-import org.training.issuetracker.db.interfaces.Entity;
-
-public class Issue implements Entity {
+public class Issue {
 	private long id;
 	private Timestamp createDate;
-	private User createdBy;
+	private User createBy;
 	private Timestamp modifyDate;
 	private User modifyBy;
 	private String summary;
@@ -41,12 +39,12 @@ public class Issue implements Entity {
 		this.createDate = createDate;
 	}
 
-	public User getCreatedBy() {
-		return createdBy;
+	public User getCreateBy() {
+		return createBy;
 	}
 
-	public void setCreatedBy(User createdBy) {
-		this.createdBy = createdBy;
+	public void setCreateBy(User createdBy) {
+		this.createBy = createdBy;
 	}
 
 	public Timestamp getModifyDate() {

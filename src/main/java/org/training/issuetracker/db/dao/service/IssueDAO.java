@@ -37,7 +37,7 @@ public class IssueDAO {
 				
 				UserDAO userDAO = new UserDAO();
 				issue.setAssignee(userDAO.getById(connection, rs.getInt("assignee")));
-				issue.setCreatedBy(userDAO.getById(connection, rs.getInt("createBy")));
+				issue.setCreateBy(userDAO.getById(connection, rs.getInt("createBy")));
 				issue.setModifyBy(userDAO.getById(connection, rs.getInt("modifyBy")));
 				
 				StatusDAO statusDAO = new StatusDAO();
@@ -72,7 +72,7 @@ public class IssueDAO {
 		try {
 			ps = connection.prepareStatement("insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			ps.setTimestamp(1, issue.getCreateDate());
-			ps.setLong(2, issue.getCreatedBy().getId());
+			ps.setLong(2, issue.getCreateBy().getId());
 			ps.setTimestamp(3, issue.getModifyDate());
 			ps.setLong(4, issue.getModifyBy().getId());
 			ps.setString(5, issue.getSummary());
@@ -122,7 +122,7 @@ public class IssueDAO {
 				issue.setSummary(rs.getString("summary"));
 				issue.setDescription(rs.getString("description"));
 				issue.setAssignee(uDAO.getById(connection, rs.getInt("assignee")));
-				issue.setCreatedBy(uDAO.getById(connection, rs.getInt("createBy")));
+				issue.setCreateBy(uDAO.getById(connection, rs.getInt("createBy")));
 				issue.setModifyBy(uDAO.getById(connection, rs.getInt("modifyBy")));
 				issue.setStatus(sDAO.getById(connection, rs.getInt("statusId")));
 				issue.setType(tDAO.getById(connection, rs.getInt("typeId")));
@@ -215,7 +215,7 @@ public class IssueDAO {
 				issue.setSummary(rs.getString("summary"));
 				issue.setDescription(rs.getString("description"));
 				issue.setAssignee(uDAO.getById(connection, rs.getInt("assignee")));
-				issue.setCreatedBy(uDAO.getById(connection, rs.getInt("createBy")));
+				issue.setCreateBy(uDAO.getById(connection, rs.getInt("createBy")));
 				issue.setModifyBy(uDAO.getById(connection, rs.getInt("modifyBy")));
 				issue.setStatus(sDAO.getById(connection, rs.getInt("statusId")));
 				issue.setType(tDAO.getById(connection, rs.getInt("typeId")));
@@ -262,7 +262,7 @@ public class IssueDAO {
 				issue.setSummary(rs.getString("summary"));
 				issue.setDescription(rs.getString("description"));
 				issue.setAssignee(uDAO.getById(connection, rs.getInt("assignee")));
-				issue.setCreatedBy(uDAO.getById(connection, rs.getInt("createBy")));
+				issue.setCreateBy(uDAO.getById(connection, rs.getInt("createBy")));
 				issue.setModifyBy(uDAO.getById(connection, rs.getInt("modifyBy")));
 				issue.setStatus(sDAO.getById(connection, rs.getInt("statusId")));
 				issue.setType(tDAO.getById(connection, rs.getInt("typeId")));

@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.UserService;
-import org.training.issuetracker.web.actions.interfaces.IWebAction;
+import org.training.issuetracker.web.actions.interfaces.WebAction;
 
-public class LoginWebAction implements IWebAction {
+public class LoginWebAction implements WebAction {
 
 	@Override
-	public String execute(HttpServletRequest request,
+	public void execute(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
@@ -22,7 +22,7 @@ public class LoginWebAction implements IWebAction {
 			User user = service.getUser(email, password);
 			if (user == null) {
 				response.getWriter().println("Email or password is incorrect.");
-				return null;
+				return;
 			} 
 			request.getSession().setAttribute("user", user);
 			response.sendRedirect("dashboard");
@@ -30,7 +30,6 @@ public class LoginWebAction implements IWebAction {
 			response.getWriter().
 				println("Sorry, but current service is not available... Please try later.");
 		}
-		return null;
 	}
 
 }
