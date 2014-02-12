@@ -25,7 +25,7 @@ public class PriorityDAO {
 			while (rs.next()) {
 				priority = new Priority();
 				priority.setId(rs.getInt("id"));
-				priority.setValue(rs.getString("name"));
+				priority.setName(rs.getString("name"));
 				priotities.add(priority);
 			}
 			return priotities;
@@ -45,7 +45,7 @@ public class PriorityDAO {
 			if (rs.next()) {
 				Priority priority = new Priority();
 				priority.setId(id);
-				priority.setValue(rs.getString("name"));
+				priority.setName(rs.getString("name"));
 				return priority;
 			}
 		} finally {
@@ -59,7 +59,7 @@ public class PriorityDAO {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("insert into priorities(name) values(?)");
-			ps.setString(1, priority.getValue());
+			ps.setString(1, priority.getName());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
@@ -71,7 +71,7 @@ public class PriorityDAO {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("update priorities set name=? where id=?");
-			ps.setString(1, priotity.getValue());
+			ps.setString(1, priotity.getName());
 			ps.setLong(2, priotity.getId());
 			ps.executeUpdate();
 		} finally {

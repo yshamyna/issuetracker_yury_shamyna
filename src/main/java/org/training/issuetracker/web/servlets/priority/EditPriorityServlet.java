@@ -66,7 +66,7 @@ public class EditPriorityServlet extends HttpServlet {
 			
 			Priority priority  = new Priority();
 			priority.setId(Long.parseLong(request.getParameter("id")));
-			priority.setValue(request.getParameter("name"));
+			priority.setName(request.getParameter("name"));
 			
 			PriorityService service = new PriorityService(user);
 			service.update(priority);

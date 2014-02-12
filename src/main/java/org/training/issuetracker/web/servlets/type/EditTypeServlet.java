@@ -67,7 +67,7 @@ public class EditTypeServlet extends HttpServlet {
 			
 			Type type = new Type();
 			type.setId(Long.parseLong(request.getParameter("id")));
-			type.setValue(request.getParameter("name"));
+			type.setName(request.getParameter("name"));
 			
 			TypeService service = new TypeService(user);
 			service.update(type);

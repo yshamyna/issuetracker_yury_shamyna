@@ -69,7 +69,7 @@ public class EditResolutionServlet extends HttpServlet {
 			
 			Resolution resolution = new Resolution();
 			resolution.setId(Long.parseLong(request.getParameter("id")));
-			resolution.setValue(request.getParameter("name"));
+			resolution.setName(request.getParameter("name"));
 			
 			ResolutionService service = new ResolutionService(user);
 			service.update(resolution);

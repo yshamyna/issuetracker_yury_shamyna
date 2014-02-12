@@ -25,7 +25,7 @@ public class TypeDAO {
 			while (rs.next()) {
 				type = new Type();
 				type.setId(rs.getInt("id"));
-				type.setValue(rs.getString("name"));
+				type.setName(rs.getString("name"));
 				types.add(type);
 			}
 			return types;
@@ -45,7 +45,7 @@ public class TypeDAO {
 			if (rs.next()) {
 				Type type = new Type();
 				type.setId(id);
-				type.setValue(rs.getString("name"));
+				type.setName(rs.getString("name"));
 				return type;
 			}
 		} finally {
@@ -59,7 +59,7 @@ public class TypeDAO {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("insert into types(name) values(?)");
-			ps.setString(1, type.getValue());
+			ps.setString(1, type.getName());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
@@ -71,7 +71,7 @@ public class TypeDAO {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("update types set name=? where id=?");
-			ps.setString(1, type.getValue());
+			ps.setString(1, type.getName());
 			ps.setLong(2, type.getId());
 			ps.executeUpdate();
 		} finally {

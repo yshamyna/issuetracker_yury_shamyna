@@ -25,7 +25,7 @@ public class StatusDAO {
 			while (rs.next()) {
 				status = new Status();
 				status.setId(rs.getInt("id"));
-				status.setValue(rs.getString("name"));
+				status.setName(rs.getString("name"));
 				statuses.add(status);
 			}
 			return statuses;
@@ -45,7 +45,7 @@ public class StatusDAO {
 			if (rs.next()) {
 				Status status = new Status();
 				status.setId(id);
-				status.setValue(rs.getString("name"));
+				status.setName(rs.getString("name"));
 				return status;
 			}
 		} finally {
@@ -59,7 +59,7 @@ public class StatusDAO {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("insert into statuses(name) values(?)");
-			ps.setString(1, status.getValue());
+			ps.setString(1, status.getName());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
@@ -70,7 +70,7 @@ public class StatusDAO {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("update statuses set name=? where id=?");
-			ps.setString(1, status.getValue());
+			ps.setString(1, status.getName());
 			ps.setLong(2, status.getId());
 			ps.executeUpdate();
 		} finally {

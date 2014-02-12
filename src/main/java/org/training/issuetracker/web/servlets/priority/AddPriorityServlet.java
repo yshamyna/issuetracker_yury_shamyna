@@ -41,7 +41,7 @@ public class AddPriorityServlet extends HttpServlet {
 			User user = (User) request.getSession().getAttribute("user");
 			
 			Priority priority  = new Priority();
-			priority.setValue(request.getParameter("name"));
+			priority.setName(request.getParameter("name"));
 			
 			PriorityService service = new PriorityService(user);
 			service.add(priority);

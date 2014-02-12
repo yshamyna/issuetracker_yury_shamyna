@@ -41,7 +41,7 @@ public class AddResolutionServlet extends HttpServlet {
 			User user = (User) request.getSession().getAttribute("user");
 			
 			Resolution resolution = new Resolution();
-			resolution.setValue(request.getParameter("name"));
+			resolution.setName(request.getParameter("name"));
 			
 			ResolutionService service = new ResolutionService(user);
 			service.add(resolution);

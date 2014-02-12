@@ -41,7 +41,7 @@ public class AddTypeServlet extends HttpServlet {
 			User user = (User) request.getSession().getAttribute("user");
 			
 			Type type = new Type();
-			type.setValue(request.getParameter("name"));
+			type.setName(request.getParameter("name"));
 			
 			TypeService service = new TypeService(user);
 			service.add(type);

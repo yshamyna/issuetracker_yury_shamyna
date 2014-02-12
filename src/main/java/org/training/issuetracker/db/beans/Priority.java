@@ -3,7 +3,7 @@ package org.training.issuetracker.db.beans;
 
 public class Priority {
 	private long id;
-	private String value;
+	private String name;
 	
 	public Priority() {
 		super();
@@ -17,11 +17,11 @@ public class Priority {
 		this.id = id;
 	}
 
-	public String getValue() {
-		return value;
+	public String getName() {
+		return name;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setName(String name) {
+		this.name = name;
 	}
 }

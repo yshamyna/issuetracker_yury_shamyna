@@ -25,7 +25,7 @@ public class ResolutionDAO {
 			while (rs.next()) {
 				resolution = new Resolution();
 				resolution.setId(rs.getInt("id"));
-				resolution.setValue(rs.getString("name"));
+				resolution.setName(rs.getString("name"));
 				resolutions.add(resolution);
 			}
 			return resolutions;
@@ -45,7 +45,7 @@ public class ResolutionDAO {
 			if (rs.next()) {
 				Resolution resolution = new Resolution();
 				resolution.setId(id);
-				resolution.setValue(rs.getString("name"));
+				resolution.setName(rs.getString("name"));
 				return resolution;
 			}
 		} finally {
@@ -60,7 +60,7 @@ public class ResolutionDAO {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("insert into resolutions(name) values(?)");
-			ps.setString(1, resolution.getValue());
+			ps.setString(1, resolution.getName());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
@@ -72,7 +72,7 @@ public class ResolutionDAO {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("update resolutions set name=? where id=?");
-			ps.setString(1, resolution.getValue());
+			ps.setString(1, resolution.getName());
 			ps.setLong(2, resolution.getId());
 			ps.executeUpdate();
 		} finally {

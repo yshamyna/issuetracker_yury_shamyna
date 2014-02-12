@@ -67,7 +67,7 @@ public class EditStatusServlet extends HttpServlet {
 			
 			Status status = new Status();
 			status.setId(Long.parseLong(request.getParameter("id")));
-			status.setValue(request.getParameter("name"));	
+			status.setName(request.getParameter("name"));	
 			
 			StatusService service = new StatusService(user);
 			service.update(status);

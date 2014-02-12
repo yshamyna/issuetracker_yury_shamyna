@@ -41,7 +41,7 @@ public class AddStatusServlet extends HttpServlet {
 			User user = (User) request.getSession().getAttribute("user");
 			
 			Status status = new Status();
-			status.setValue(request.getParameter("name"));	
+			status.setName(request.getParameter("name"));	
 			
 			StatusService service = new StatusService(user);
 			service.add(status);
