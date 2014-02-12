@@ -44,4 +44,31 @@ public class UserService {
 			DBManager.closeConnection(connection);	
 		}
 	}
+	
+	public User getUserById(long userId) throws SQLException {
+		try {
+			UserDAO userDAO = new UserDAO();
+			return userDAO.getById(connection, userId);
+		} finally {
+			DBManager.closeConnection(connection);
+		}
+	}
+	
+	public void changePassword(User user, String password) throws SQLException {
+		try {
+			UserDAO userDAO = new UserDAO();
+			userDAO.updatePassword(connection, user, password);
+		} finally {
+			DBManager.closeConnection(connection);
+		}
+	}
+	
+	public User getUser(String email, String password) throws SQLException {
+		try {
+			UserDAO userDAO = new UserDAO();
+			return userDAO.getByEmailAndPassword(connection, email, password);
+		} finally {
+			DBManager.closeConnection(connection);
+		}
+	}
 }

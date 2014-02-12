@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.Type;
-import org.training.issuetracker.db.dao.interfaces.ITypeDAO;
-import org.training.issuetracker.db.dao.service.TypeDAO;
+import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.service.TypeService;
 
 /**
  * Servlet implementation class EditTypeServlet
@@ -29,19 +29,31 @@ public class EditTypeServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String id = request.getParameter("id");
-		if (id != null) {
+		if (id == null) {
+			getServletContext().getRequestDispatcher("/types").
+					forward(request, response);
+		} else {
 			try {
+				User user = (User) request.getSession().getAttribute("user");
+				
 				long typeId = Integer.parseInt(id);
-				ITypeDAO typeDAO = new TypeDAO();
-				Type type = typeDAO.getById(typeId);
-				request.setAttribute("type", type);
-			} catch (RuntimeException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				getServletContext().getRequestDispatcher("/editType.jsp").
-						forward(request, response);
+				
+				TypeService service = new TypeService(user);
+				Type type = service.getTypeById(typeId);
+				
+				if (type == null) {
+					getServletContext().getRequestDispatcher("/types").
+							forward(request, response);
+				} else {
+					request.setAttribute("type", type);
+					getServletContext().getRequestDispatcher("/editType.jsp").
+							forward(request, response);	
+				}
+			} catch(NumberFormatException e) {
+				getServletContext().getRequestDispatcher("/types").
+					forward(request, response);
+			} catch(Exception e) {
+				response.getWriter().println("Sorry, but current service is not available... Please try later.");
 			}
 		}
 	}
@@ -51,19 +63,19 @@ public class EditTypeServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			String id = request.getParameter("id");
-			String name = request.getParameter("entityName");
+			User user = (User) request.getSession().getAttribute("user");
+			
 			Type type = new Type();
-			type.setId(Integer.parseInt(id));
-			type.setValue(name);	
-			ITypeDAO typeDAO = new TypeDAO();
-			typeDAO.updateName(type);
-			//request.setAttribute("errMsg", "Issue type was updated successfully.");
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			//doGet(request, response);
+			type.setId(Long.parseLong(request.getParameter("id")));
+			type.setValue(request.getParameter("name"));
+			
+			TypeService service = new TypeService(user);
+			service.update(type);
+			
 			response.getWriter().println("Issue type was updated successfully.");
+		} catch (Exception e) {
+			response.getWriter().
+				println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 

@@ -13,12 +13,10 @@ import org.training.issuetracker.db.util.DBManager;
 
 public class ManagerDAO {
 
-	public List<Manager> getAll() throws Exception {
-		Connection connection = null;
+	public List<Manager> all(Connection connection) throws SQLException {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			st = connection.createStatement();
 			st.execute("select id, firstName, lastName from managers");
 			rs = st.getResultSet();
@@ -35,7 +33,6 @@ public class ManagerDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(st);
-			DBManager.closeConnection(connection);
 		}
 	}
 

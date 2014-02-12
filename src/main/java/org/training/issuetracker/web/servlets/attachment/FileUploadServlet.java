@@ -1,4 +1,4 @@
-package org.training.issuetracker.web.servlets;
+package org.training.issuetracker.web.servlets.attachment;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,29 +13,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.training.issuetracker.db.beans.Attachment;
 import org.training.issuetracker.db.beans.User;
-import org.training.issuetracker.db.dao.service.AttachmentDAO;
+import org.training.issuetracker.db.service.AttachmentService;
 
-/**
- * Servlet implementation class FileUploadServlet
- */
 public class FileUploadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public FileUploadServlet() {
         super();
     }
     
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		File tmpDir;
 		File destinationDir;
@@ -49,7 +39,6 @@ public class FileUploadServlet extends HttpServlet {
         	destinationDir.mkdirs();
         }
 
-		PrintWriter out = response.getWriter();
         response.setContentType("text/html");
 
         DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
@@ -76,25 +65,24 @@ public class FileUploadServlet extends HttpServlet {
                 }
             }
 
-            AttachmentDAO aDAO = new AttachmentDAO();
             Attachment attachment = new Attachment();
             attachment.setFilename(filename);
             User addedBy = (User) request.getSession().getAttribute("user");
             attachment.setAddedBy(addedBy);
             attachment.setAddDate(new Timestamp(System.currentTimeMillis()));
-            attachment.setIssueId(Integer.parseInt(request.getParameter("issue")));
+            attachment.setIssueId(Long.parseLong(request.getParameter("issue")));
             
-            aDAO.add(attachment);
+            AttachmentService service = new AttachmentService(addedBy);
+            service.add(attachment);
             
+            PrintWriter out = response.getWriter();
             out.println("File upload successfully.");
             out.println("<a href=\"/issuetracker/issues/edit?id=" 
             				+ request.getParameter("issue") 
             				+ "\">Back</a>");
             out.close();
-        } catch (FileUploadException ex) {
-            log("Error encountered while parsing the request", ex);
-        } catch (Exception ex) {
-            log("Error encountered while uploading file", ex);
+        } catch (Exception e) {
+            response.getWriter().println("Sorry, but current service is not available... Please try later.");
         }
 	}
 

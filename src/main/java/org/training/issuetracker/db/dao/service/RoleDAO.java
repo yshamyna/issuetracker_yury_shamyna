@@ -13,12 +13,10 @@ import org.training.issuetracker.db.util.DBManager;
 
 public class RoleDAO {
 
-	public List<UserRole> getAll() throws Exception {
-		Connection connection = null;
+	public List<UserRole> all(Connection connection) throws SQLException {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			st = connection.createStatement();
 			st.execute("select id, name from roles");
 			rs = st.getResultSet();
@@ -34,7 +32,6 @@ public class RoleDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(st);
-			DBManager.closeConnection(connection);
 		}
 	}
 
@@ -57,10 +54,4 @@ public class RoleDAO {
 		}
 		return null;
 	}
-
-	public void add(UserRole role) throws Exception {
-		// TODO Auto-generated method stub
-
-	}
-
 }

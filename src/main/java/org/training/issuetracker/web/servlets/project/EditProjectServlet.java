@@ -11,12 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.Build;
 import org.training.issuetracker.db.beans.Manager;
 import org.training.issuetracker.db.beans.Project;
-import org.training.issuetracker.db.dao.interfaces.IBuildDAO;
-import org.training.issuetracker.db.dao.interfaces.IManagerDAO;
-import org.training.issuetracker.db.dao.interfaces.IProjectDAO;
-import org.training.issuetracker.db.dao.service.BuildDAO;
-import org.training.issuetracker.db.dao.service.ManagerDAO;
-import org.training.issuetracker.db.dao.service.ProjectDAO;
+import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.service.BuildService;
+import org.training.issuetracker.db.service.ManagerService;
+import org.training.issuetracker.db.service.ProjectService;
 
 /**
  * Servlet implementation class EditProjectServlet
@@ -41,21 +39,25 @@ public class EditProjectServlet extends HttpServlet {
 					forward(request, response);
 		} else {
 			try {
+				User user = (User) request.getSession().getAttribute("user");
+				
 				long projectId = Integer.parseInt(id);
-				IProjectDAO dao = new ProjectDAO();
-				Project project = dao.getById(projectId);
+				
+				ProjectService pService = new ProjectService(user);
+				Project project = pService.getProjectById(projectId);
+				
 				if (project == null) {
 					getServletContext().getRequestDispatcher("/projects").
 							forward(request, response);
 				} else {
 					request.setAttribute("project", project);
 					
-					IBuildDAO buildDAO = new BuildDAO();
-					List<Build> builds = buildDAO.getByProjectId(projectId);
+					BuildService bService = new BuildService(user);
+					List<Build> builds = bService.getBuildsByProjectId(projectId);
 					request.setAttribute("builds", builds);
 
-					IManagerDAO managerDAO = new ManagerDAO();
-					List<Manager> managers = managerDAO.getAll();
+					ManagerService mService = new ManagerService(user);
+					List<Manager> managers = mService.getManagers();
 					request.setAttribute("managers", managers);
 					
 					getServletContext().getRequestDispatcher("/editProject.jsp").
@@ -75,27 +77,29 @@ public class EditProjectServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
+			User user = (User) request.getSession().getAttribute("user");
+			
+			ProjectService service = new ProjectService(user);
+
 			Project project = new Project();
 			project.setId(Integer.parseInt(request.getParameter("id")));
 			project.setName(request.getParameter("name"));
 			project.setDescription(request.getParameter("description"));
+			
 			Manager manager = new Manager();
 			manager.setId(Integer.parseInt(request.getParameter("managerId")));
 			project.setManager(manager);
 			
-			IProjectDAO projectDAO = new ProjectDAO();
-			projectDAO.update(project);
-			
 			Build build = new Build();
 			build.setId(Integer.parseInt(request.getParameter("buildId")));
 			build.setProjectId(project.getId());
-			IBuildDAO buildDAO = new BuildDAO();
-			buildDAO.changeVersion(build);
+			
+			service.update(project, build);
 			
 			response.getWriter().println("Project was updated successfully.");
 		} catch (Exception e) {
-			response.getWriter().println("Sorry, but current service is not available... Please try later.");
-			e.printStackTrace();
+			response.getWriter().
+				println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 

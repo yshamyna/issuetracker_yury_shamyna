@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.Priority;
-import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
-import org.training.issuetracker.db.dao.service.PriorityDAO;
+import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.service.PriorityService;
 
 /**
  * Servlet implementation class EditPriorityServlet
@@ -34,14 +34,17 @@ public class EditPriorityServlet extends HttpServlet {
 					forward(request, response);
 		} else {
 			try {
-				long entityId = Integer.parseInt(id);
-				IPriorityDAO dao = new PriorityDAO();
-				Priority entity = dao.getById(entityId);
-				if (entity == null) {
+				User user = (User) request.getSession().getAttribute("user");
+				
+				long priorityId = Integer.parseInt(id);
+				
+				PriorityService service = new PriorityService(user);
+				Priority priority = service.getPriorityById(priorityId);
+				if (priority == null) {
 					getServletContext().getRequestDispatcher("/priorities").
 							forward(request, response);
 				} else {
-					request.setAttribute("priority", entity);
+					request.setAttribute("priority", priority);
 					getServletContext().getRequestDispatcher("/editPriority.jsp").
 							forward(request, response);	
 				}
@@ -59,19 +62,19 @@ public class EditPriorityServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			String id = request.getParameter("id");
-			String name = request.getParameter("entityName");
+			User user = (User) request.getSession().getAttribute("user");
 			
 			Priority priority  = new Priority();
-			priority.setId(Integer.parseInt(id));
-			priority.setValue(name);	
+			priority.setId(Long.parseLong(request.getParameter("id")));
+			priority.setValue(request.getParameter("name"));
 			
-			IPriorityDAO priorityDAO = new PriorityDAO();
-			priorityDAO.update(priority);
+			PriorityService service = new PriorityService(user);
+			service.update(priority);
 			
 			response.getWriter().println("Issue priority was updated successfully.");
 		} catch (Exception e) {
-			response.getWriter().println("Sorry, but current service is not available... Please try later.");
+			response.getWriter().
+				println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 

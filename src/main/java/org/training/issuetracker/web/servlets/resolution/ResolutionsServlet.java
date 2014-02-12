@@ -1,27 +1,27 @@
 package org.training.issuetracker.web.servlets.resolution;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.h2.jdbc.JdbcSQLException;
 import org.training.issuetracker.db.beans.Resolution;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.ResolutionService;
 
 /**
- * Servlet implementation class AddResolutionServlet
+ * Servlet implementation class ResolutionReaderServlet
  */
-public class AddResolutionServlet extends HttpServlet {
+public class ResolutionsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AddResolutionServlet() {
+    public ResolutionsServlet() {
         super();
     }
 
@@ -29,31 +29,30 @@ public class AddResolutionServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		getServletContext().getRequestDispatcher("/addResolution.jsp").
-					forward(request, response);
+		execute(request, response);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		execute(request, response);
+	}
+
+	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
 		try {
 			User user = (User) request.getSession().getAttribute("user");
 			
-			Resolution resolution = new Resolution();
-			resolution.setValue(request.getParameter("name"));
-			
 			ResolutionService service = new ResolutionService(user);
-			service.add(resolution);
+			List<Resolution> resolutions = service.getResolutions();
 			
-			response.getWriter().println("Issue resolution was added successfully.");
-		} catch (JdbcSQLException e) {
-			response.getWriter().println("Already exists value '" 
-					+ request.getParameter("name") + "'");
-		} catch (Exception e) {
+			request.setAttribute("resolutions", resolutions);
+			
+			getServletContext().getRequestDispatcher("/resolutions.jsp").
+				forward(request, response);
+		}  catch (Exception e) {
 			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
-		}
+				println("Sorry, but current page is not available... Please try later.");
+		} 
 	}
-
 }

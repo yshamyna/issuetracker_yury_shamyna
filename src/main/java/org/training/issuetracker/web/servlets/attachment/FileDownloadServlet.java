@@ -1,4 +1,4 @@
-package org.training.issuetracker.web.servlets;
+package org.training.issuetracker.web.servlets.attachment;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,15 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Servlet implementation class FileDownloadServlet
- */
 public class FileDownloadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public FileDownloadServlet() {
         super();
     }
@@ -30,13 +24,11 @@ public class FileDownloadServlet extends HttpServlet {
 		doPost(req, resp);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ServletContext context = getServletContext();
         String filename = context.getRealPath("/issues") 
-        		+ "\\" + request.getParameter("issue") + "\\" + request.getParameter("filename");
+        		+ "\\" + request.getParameter("issue") 
+        		+ "\\" + request.getParameter("filename");
 
         String mimeType = context.getMimeType(filename);
         if (mimeType == null) {

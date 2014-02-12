@@ -1,6 +1,5 @@
 package org.training.issuetracker.db.dao.service;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,59 +19,6 @@ public class IssueDAO {
 			"SELECT id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId from issues";
 	private static final String GET_ALL_ISSUES_BY_ASSIGNEE_SQL = 
 			"SELECT id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, resolutionId from issues where assignee=?";
-	
-	public List<Issue> getAll() throws Exception {
-		Connection connection = null;
-		Statement st = null;
-		ResultSet rs = null;
-		try {
-			connection = DBManager.getConnection();
-			st = connection.createStatement();
-			st.execute(GET_ALL_ISSUES_SQL);
-			rs = st.getResultSet();
-			List<Issue> issues = new ArrayList<Issue>();
-			Issue issue = null;
-			while (rs.next()) {
-				issue = new Issue();
-				
-				issue.setId(rs.getLong("id"));
-				issue.setCreateDate(rs.getTimestamp("createDate"));
-				issue.setModifyDate(rs.getTimestamp("modifyDate"));
-				issue.setSummary(rs.getString("summary"));
-				issue.setDescription(rs.getString("description"));
-				
-				UserDAO userDAO = new UserDAO();
-				issue.setAssignee(userDAO.getById(rs.getInt("assignee")));
-				issue.setCreatedBy(userDAO.getById(rs.getInt("createBy")));
-				issue.setModifyBy(userDAO.getById(rs.getInt("modifyBy")));
-				
-				StatusDAO statusDAO = new StatusDAO();
-				issue.setStatus(statusDAO.getById(rs.getInt("statusId")));
-				
-				TypeDAO typeDAO = new TypeDAO();
-				issue.setType(typeDAO.getById(rs.getInt("typeId")));
-				
-				PriorityDAO priorityDAO = new PriorityDAO();
-				issue.setPriority(priorityDAO.getById(rs.getInt("priorityId")));
-				
-				ProjectDAO projectDAO = new ProjectDAO();
-				issue.setProject(projectDAO.getById(rs.getInt("projectId")));
-				
-				BuildDAO buildDAO = new BuildDAO();
-				issue.setBuildFound(buildDAO.getById(rs.getInt("buildId")));
-				
-				ResolutionDAO resolutionDAO = new ResolutionDAO();
-				issue.setResolution(resolutionDAO.getById(rs.getInt("resolutionId")));
-				
-				issues.add(issue);
-			}
-			return issues;
-		} finally {
-			DBManager.closeResultSets(rs);
-			DBManager.closeStatements(st);
-			DBManager.closeConnection(connection);
-		} 
-	}
 
 	public Issue getById(Connection connection, long id) throws SQLException {
 		PreparedStatement ps = null;
@@ -148,15 +94,23 @@ public class IssueDAO {
 		}
 	}
 
-	public List<Issue> getAllByUserId(long id) throws Exception {
-		Connection connection = null;
+	public List<Issue> allByUserId(Connection connection, long userId) 
+				throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement(GET_ALL_ISSUES_BY_ASSIGNEE_SQL);
-			ps.setLong(1, id);
+			ps.setLong(1, userId);
 			rs = ps.executeQuery();
+			
+			UserDAO uDAO = new UserDAO();
+			StatusDAO sDAO = new StatusDAO();
+			TypeDAO tDAO = new TypeDAO();
+			PriorityDAO pDAO = new PriorityDAO();
+			ProjectDAO prDAO = new ProjectDAO();
+			BuildDAO bDAO = new BuildDAO();
+			ResolutionDAO rDAO = new ResolutionDAO();
+			
 			List<Issue> issues = new ArrayList<Issue>();
 			Issue issue = null;
 			while (rs.next()) {
@@ -167,29 +121,15 @@ public class IssueDAO {
 				issue.setModifyDate(rs.getTimestamp("modifyDate"));
 				issue.setSummary(rs.getString("summary"));
 				issue.setDescription(rs.getString("description"));
-				
-				UserDAO userDAO = new UserDAO();
-				issue.setAssignee(userDAO.getById(id));
-				issue.setCreatedBy(userDAO.getById(rs.getInt("createBy")));
-				issue.setModifyBy(userDAO.getById(rs.getInt("modifyBy")));
-				
-				StatusDAO statusDAO = new StatusDAO();
-				issue.setStatus(statusDAO.getById(rs.getInt("statusId")));
-				
-				TypeDAO typeDAO = new TypeDAO();
-				issue.setType(typeDAO.getById(rs.getInt("typeId")));
-				
-				PriorityDAO priorityDAO = new PriorityDAO();
-				issue.setPriority(priorityDAO.getById(rs.getInt("priorityId")));
-				
-				ProjectDAO projectDAO = new ProjectDAO();
-				issue.setProject(projectDAO.getById(rs.getInt("projectId")));
-				
-				BuildDAO buildDAO = new BuildDAO();
-				issue.setBuildFound(buildDAO.getById(rs.getInt("buildId")));
-				
-				ResolutionDAO resolutionDAO = new ResolutionDAO();
-				issue.setResolution(resolutionDAO.getById(rs.getInt("resolutionId")));
+				issue.setAssignee(uDAO.getById(connection, rs.getInt("assignee")));
+				issue.setCreatedBy(uDAO.getById(connection, rs.getInt("createBy")));
+				issue.setModifyBy(uDAO.getById(connection, rs.getInt("modifyBy")));
+				issue.setStatus(sDAO.getById(connection, rs.getInt("statusId")));
+				issue.setType(tDAO.getById(connection, rs.getInt("typeId")));
+				issue.setPriority(pDAO.getById(connection, rs.getInt("priorityId")));
+				issue.setProject(prDAO.getById(connection, rs.getInt("projectId")));
+				issue.setBuildFound(bDAO.getById(connection, rs.getInt("buildId")));
+				issue.setResolution(rDAO.getById(connection, rs.getInt("resolutionId")));
 				
 				issues.add(issue);
 			}
@@ -197,7 +137,6 @@ public class IssueDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		} 
 	}
 
@@ -227,19 +166,43 @@ public class IssueDAO {
 		}
 	}
 
-	public List<Issue> getNRecordsFromPageY(User user, long recordsPerPage, long pageNumber)
-			throws Exception {
-		Connection connection = null;
-		CallableStatement cs = null;
+	public List<Issue> getNRecordsFromPageM(Connection connection, 
+			User user, long pageNumber, long recordsPerPage)
+								throws SQLException {
+		Statement st = null;
+		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
-			cs = connection.prepareCall("{call getNIssuesFromPageY(?, ?, ?)}");
+			st = connection.createStatement();
+			st.execute("select count(*) as cnt from issues where assignee=?");
+			rs = st.getResultSet();
+			long recordsNumber = 0;
+			if (rs.next()) {
+				recordsNumber = rs.getLong("cnt");
+			}
 			
-			cs.setLong(1, user.getId());
-			cs.setLong(2, pageNumber);
-			cs.setLong(3, recordsPerPage);
-			rs = cs.executeQuery();
+			long offset = (pageNumber - 1) * recordsPerPage;
+			if (offset < 0) {
+				offset = 0;
+			}
+			if (offset >= recordsNumber) {
+				offset = ((long) Math.ceil((double)recordsNumber 
+								/ recordsPerPage) - 1) * recordsPerPage;
+			}
+			
+			ps = connection.prepareStatement("select id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, resolutionId from issues where assignee=? order by id desc limit ? offset ?");
+			ps.setLong(1, user.getId());
+			ps.setLong(2, recordsPerPage);
+			ps.setLong(3, offset);
+			rs = ps.executeQuery();
+			
+			UserDAO uDAO = new UserDAO();
+			StatusDAO sDAO = new StatusDAO();
+			TypeDAO tDAO = new TypeDAO();
+			PriorityDAO pDAO = new PriorityDAO();
+			ProjectDAO prDAO = new ProjectDAO();
+			BuildDAO bDAO = new BuildDAO();
+			ResolutionDAO rDAO = new ResolutionDAO();
 			
 			List<Issue> issues = new ArrayList<Issue>();
 			Issue issue = null;
@@ -251,55 +214,45 @@ public class IssueDAO {
 				issue.setModifyDate(rs.getTimestamp("modifyDate"));
 				issue.setSummary(rs.getString("summary"));
 				issue.setDescription(rs.getString("description"));
-				
-				UserDAO userDAO = new UserDAO();
-				//issue.setAssignee(userDAO.getById(id));
-				issue.setAssignee(userDAO.getById(user.getId()));
-				issue.setCreatedBy(userDAO.getById(rs.getInt("createBy")));
-				issue.setModifyBy(userDAO.getById(rs.getInt("modifyBy")));
-				
-				StatusDAO statusDAO = new StatusDAO();
-				issue.setStatus(statusDAO.getById(rs.getInt("statusId")));
-				
-				TypeDAO typeDAO = new TypeDAO();
-				issue.setType(typeDAO.getById(rs.getInt("typeId")));
-				
-				PriorityDAO priorityDAO = new PriorityDAO();
-				issue.setPriority(priorityDAO.getById(rs.getInt("priorityId")));
-				
-				ProjectDAO projectDAO = new ProjectDAO();
-				issue.setProject(projectDAO.getById(rs.getInt("projectId")));
-				
-				BuildDAO buildDAO = new BuildDAO();
-				issue.setBuildFound(buildDAO.getById(rs.getInt("buildId")));
-				
-				ResolutionDAO resolutionDAO = new ResolutionDAO();
-				issue.setResolution(resolutionDAO.getById(rs.getInt("resolutionId")));
+				issue.setAssignee(uDAO.getById(connection, rs.getInt("assignee")));
+				issue.setCreatedBy(uDAO.getById(connection, rs.getInt("createBy")));
+				issue.setModifyBy(uDAO.getById(connection, rs.getInt("modifyBy")));
+				issue.setStatus(sDAO.getById(connection, rs.getInt("statusId")));
+				issue.setType(tDAO.getById(connection, rs.getInt("typeId")));
+				issue.setPriority(pDAO.getById(connection, rs.getInt("priorityId")));
+				issue.setProject(prDAO.getById(connection, rs.getInt("projectId")));
+				issue.setBuildFound(bDAO.getById(connection, rs.getInt("buildId")));
+				issue.setResolution(rDAO.getById(connection, rs.getInt("resolutionId")));
 				
 				issues.add(issue);
 			}
-			
 			return issues;
 		} finally {
 			DBManager.closeResultSets(rs);
-			DBManager.closeStatements(cs);
-			DBManager.closeConnection(connection);
+			DBManager.closeStatements(ps, st);
 		}
 	}
 
-	public List<Issue> getLastNRecords(long n) throws Exception {
-		Connection connection = null;
+	public List<Issue> getLastNRecords(Connection connection, long n) 
+					throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("SELECT id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId from issues order by id desc limit ?");
 			ps.setLong(1, n);
 			rs = ps.executeQuery();
-//			List<Issue> issues = new ArrayList<Issue>();
-//			Issue issue = null;
+			
+			UserDAO uDAO = new UserDAO();
+			StatusDAO sDAO = new StatusDAO();
+			TypeDAO tDAO = new TypeDAO();
+			PriorityDAO pDAO = new PriorityDAO();
+			ProjectDAO prDAO = new ProjectDAO();
+			BuildDAO bDAO = new BuildDAO();
+			ResolutionDAO rDAO = new ResolutionDAO();
+			
 			List<Issue> issues = new ArrayList<Issue>();
 			Issue issue = null;
+			
 			while (rs.next()) {
 				issue = new Issue();
 				
@@ -308,29 +261,15 @@ public class IssueDAO {
 				issue.setModifyDate(rs.getTimestamp("modifyDate"));
 				issue.setSummary(rs.getString("summary"));
 				issue.setDescription(rs.getString("description"));
-				
-				IUserDAO userDAO = new UserDAO();
-				issue.setAssignee(userDAO.getById(rs.getInt("assignee")));
-				issue.setCreatedBy(userDAO.getById(rs.getInt("createBy")));
-				issue.setModifyBy(userDAO.getById(rs.getInt("modifyBy")));
-				
-				IStatusDAO statusDAO = new StatusDAO();
-				issue.setStatus(statusDAO.getById(rs.getInt("statusId")));
-				
-				ITypeDAO typeDAO = new TypeDAO();
-				issue.setType(typeDAO.getById(rs.getInt("typeId")));
-				
-				IPriorityDAO priorityDAO = new PriorityDAO();
-				issue.setPriority(priorityDAO.getById(rs.getInt("priorityId")));
-				
-				IProjectDAO projectDAO = new ProjectDAO();
-				issue.setProject(projectDAO.getById(rs.getInt("projectId")));
-				
-				IBuildDAO buildDAO = new BuildDAO();
-				issue.setBuildFound(buildDAO.getById(rs.getInt("buildId")));
-				
-				IResolutionDAO resolutionDAO = new ResolutionDAO();
-				issue.setResolution(resolutionDAO.getById(rs.getInt("resolutionId")));
+				issue.setAssignee(uDAO.getById(connection, rs.getInt("assignee")));
+				issue.setCreatedBy(uDAO.getById(connection, rs.getInt("createBy")));
+				issue.setModifyBy(uDAO.getById(connection, rs.getInt("modifyBy")));
+				issue.setStatus(sDAO.getById(connection, rs.getInt("statusId")));
+				issue.setType(tDAO.getById(connection, rs.getInt("typeId")));
+				issue.setPriority(pDAO.getById(connection, rs.getInt("priorityId")));
+				issue.setProject(prDAO.getById(connection, rs.getInt("projectId")));
+				issue.setBuildFound(bDAO.getById(connection, rs.getInt("buildId")));
+				issue.setResolution(rDAO.getById(connection, rs.getInt("resolutionId")));
 				
 				issues.add(issue);
 			}
@@ -338,33 +277,33 @@ public class IssueDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		} 
 	}
 
-	public long getQuantityPages(User user, long recordsPerPage) throws Exception {
-		Connection connection = null;
+	public long getQuantityPages(Connection connection, long userId, long recordsPerPage) 
+			throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("select count(*) as cnt from issues where assignee=?");
-			ps.setLong(1, user.getId());
+			ps.setLong(1, userId);
 			rs = ps.executeQuery();
+			
 			long count = 0;
 			if (rs.next()) {
 				count = rs.getLong("cnt");
 			}
+			
 			long div = count / recordsPerPage;
 			long mod = count % recordsPerPage;
 			if (mod != 0) {
 				div++;
 			}
+			
 			return div;
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 }

@@ -8,8 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.User;
-import org.training.issuetracker.db.dao.interfaces.IUserDAO;
-import org.training.issuetracker.db.dao.service.UserDAO;
+import org.training.issuetracker.db.service.UserService;
 
 /**
  * Servlet implementation class ChangePasswordServlet
@@ -28,8 +27,6 @@ public class ChangePasswordServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		User user = (User) request.getSession().getAttribute("user");
-		request.setAttribute("user", user);
 		getServletContext().getRequestDispatcher("/changePassword.jsp").
 			forward(request, response);
 	}
@@ -40,10 +37,12 @@ public class ChangePasswordServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			User user = (User) request.getSession().getAttribute("user");
+			
 			String password = request.getParameter("newPassword");
-			user.setPassword(password);
-			IUserDAO userDAO = new UserDAO();
-			userDAO.changePassword(user);
+			
+			UserService service = new UserService(user);
+			service.changePassword(user, password);
+			
 			response.getWriter().println("Password was changed successfully.");
 		} catch(Exception e) {
 			response.getWriter().println("Sorry, but current service is not available... Please try later.");

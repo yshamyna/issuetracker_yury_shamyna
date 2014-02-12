@@ -1,4 +1,4 @@
-package org.training.issuetracker.web.servlets.status;
+package org.training.issuetracker.web.servlets.priority;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,20 +8,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.Status;
-import org.training.issuetracker.db.dao.interfaces.IStatusDAO;
-import org.training.issuetracker.db.dao.service.StatusDAO;
+import org.training.issuetracker.db.beans.Priority;
+import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.service.PriorityService;
 
 /**
- * Servlet implementation class StatusServlet
+ * Servlet implementation class PriorityReaderServlet
  */
-public class StatusServlet extends HttpServlet {
+public class PrioritiesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public StatusServlet() {
+    public PrioritiesServlet() {
         super();
     }
 
@@ -41,15 +41,19 @@ public class StatusServlet extends HttpServlet {
 	
 	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IStatusDAO statusDAO = new StatusDAO();
-			List<Status> statuses = statusDAO.getAll();
-			request.setAttribute("statuses", statuses);
-		}  catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			getServletContext().getRequestDispatcher("/statuses.jsp").
+			User user = (User) request.getSession().getAttribute("user");
+			
+			PriorityService service = new PriorityService(user);
+			List<Priority> priorities = service.getPriorities();
+			
+			request.setAttribute("priorities", priorities);
+			
+			getServletContext().getRequestDispatcher("/priorities.jsp").
 				forward(request, response);
-		}
+		}  catch (Exception e) {
+			response.getWriter().
+				println("Sorry, but current page is not available... Please try later.");
+		} 
 	}
 
 }

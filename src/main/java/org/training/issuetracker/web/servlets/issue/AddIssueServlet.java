@@ -42,7 +42,7 @@ public class AddIssueServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().getAttribute("user");
 			
 			StatusService sService = new StatusService(user);
 			List<Status> statuses = sService.getStatuses();

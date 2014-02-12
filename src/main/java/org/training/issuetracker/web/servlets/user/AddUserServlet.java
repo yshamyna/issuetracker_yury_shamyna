@@ -11,10 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.h2.jdbc.JdbcSQLException;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.beans.UserRole;
-import org.training.issuetracker.db.dao.interfaces.IRoleDAO;
-import org.training.issuetracker.db.dao.interfaces.IUserDAO;
-import org.training.issuetracker.db.dao.service.RoleDAO;
-import org.training.issuetracker.db.dao.service.UserDAO;
+import org.training.issuetracker.db.service.RoleService;
+import org.training.issuetracker.db.service.UserService;
 
 /**
  * Servlet implementation class AddUserServlet
@@ -34,9 +32,12 @@ public class AddUserServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IRoleDAO roleDAO = new RoleDAO();
-			List<UserRole> roles = roleDAO.getAll();
+			User user = (User) request.getSession().getAttribute("user");
+			
+			RoleService service = new RoleService(user);
+			List<UserRole> roles = service.getRoles();
 			request.setAttribute("roles", roles);
+			
 			getServletContext().getRequestDispatcher("/addUser.jsp").
 					forward(request, response);	
 		} catch (Exception e) {
@@ -49,24 +50,27 @@ public class AddUserServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			User user = new User();
-			user.setFirstName(request.getParameter("firstName"));
-			user.setLastName(request.getParameter("lastName"));
-			user.setEmailAddress(request.getParameter("email"));
-			user.setPassword(request.getParameter("password"));
+			User user = (User) request.getSession().getAttribute("user");
+			
+			User u = new User();
+			u.setFirstName(request.getParameter("firstName"));
+			u.setLastName(request.getParameter("lastName"));
+			u.setEmailAddress(request.getParameter("email"));
+			
 			UserRole role = new UserRole();
-			role.setId(Integer.parseInt(request.getParameter("roles")));
-			user.setFirstName(request.getParameter("firstName"));
-			user.setRole(role);
-			IUserDAO userDAO = new UserDAO();
-			userDAO.add(user);
+			role.setId(Integer.parseInt(request.getParameter("roleId")));
+			u.setRole(role);
+			
+			UserService service = new UserService(user);
+			service.add(user);
+			
+			response.getWriter().println("User was added successfully.");
 		} catch (JdbcSQLException e) {
-			request.setAttribute("errMsg", "Already exists user with e-mail '" 
-							+ request.getParameter("email") + "'");
+			response.getWriter().println("Already exists user with e-mail '" 
+					+ request.getParameter("email") + "'");
 		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			doGet(request, response);		
+			response.getWriter().
+				println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 

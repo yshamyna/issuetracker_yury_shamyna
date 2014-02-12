@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.Resolution;
-import org.training.issuetracker.db.dao.interfaces.IResolutionDAO;
-import org.training.issuetracker.db.dao.service.ResolutionDAO;
+import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.service.ResolutionService;
 
 /**
  * Servlet implementation class EditResolutionServlet
@@ -35,9 +35,13 @@ public class EditResolutionServlet extends HttpServlet {
 					forward(request, response);
 		} else {
 			try {
+				User user = (User) request.getSession().getAttribute("user");
+				
 				long resolutionId = Integer.parseInt(id);
-				IResolutionDAO dao = new ResolutionDAO();
-				Resolution resolution = dao.getById(resolutionId);
+				
+				ResolutionService service = new ResolutionService(user);
+				Resolution resolution = service.getResolutionById(resolutionId);
+				
 				if (resolution == null) {
 					getServletContext().getRequestDispatcher("/resolutions").
 							forward(request, response);
@@ -61,19 +65,19 @@ public class EditResolutionServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		try {
-			String id = request.getParameter("id");
-			String name = request.getParameter("entityName");
+			User user = (User) request.getSession().getAttribute("user");
 			
 			Resolution resolution = new Resolution();
-			resolution.setId(Integer.parseInt(id));
-			resolution.setValue(name);	
+			resolution.setId(Long.parseLong(request.getParameter("id")));
+			resolution.setValue(request.getParameter("name"));
 			
-			IResolutionDAO resolutionDAO = new ResolutionDAO();
-			resolutionDAO.updateName(resolution);
+			ResolutionService service = new ResolutionService(user);
+			service.update(resolution);
 			
 			response.getWriter().println("Issue resolution was updated successfully.");
 		} catch (Exception e) {
-			response.getWriter().println("Sorry, but current service is not available... Please try later.");
+			response.getWriter().
+				println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 

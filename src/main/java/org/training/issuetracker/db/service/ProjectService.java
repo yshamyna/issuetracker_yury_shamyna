@@ -69,5 +69,25 @@ public class ProjectService {
 			DBManager.closeConnection(connection);	
 		}
 	}
+	
+	public List<Project> getProjects(long pageNumber, long recordsPerPage) 
+								throws SQLException {
+		try {
+			ProjectDAO projectDAO = new ProjectDAO();
+			return projectDAO.getNRecordsFromPageM(connection, 
+									pageNumber, recordsPerPage);	
+		} finally {
+			DBManager.closeConnection(connection);	
+		}
+	}
+	
+	public long getQuantityPages(long recordsPerPage) throws SQLException {
+		try {
+			ProjectDAO projectDAO = new ProjectDAO();
+			return projectDAO.getQuantityPages(connection, recordsPerPage);	
+		} finally {
+			DBManager.closeConnection(connection);	
+		}
+	}
 
 }

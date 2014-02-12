@@ -1,4 +1,4 @@
-package org.training.issuetracker.web.servlets.resolution;
+package org.training.issuetracker.web.servlets.type;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,20 +8,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.Resolution;
-import org.training.issuetracker.db.dao.interfaces.IResolutionDAO;
-import org.training.issuetracker.db.dao.service.ResolutionDAO;
+import org.training.issuetracker.db.beans.Type;
+import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.service.TypeService;
 
 /**
- * Servlet implementation class ResolutionReaderServlet
+ * Servlet implementation class TypeServlet
  */
-public class ResolutionReaderServlet extends HttpServlet {
+public class TypesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ResolutionReaderServlet() {
+    public TypesServlet() {
         super();
     }
 
@@ -39,16 +39,20 @@ public class ResolutionReaderServlet extends HttpServlet {
 		execute(request, response);
 	}
 
-	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
+	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IResolutionDAO resolutionDAO = new ResolutionDAO();
-			List<Resolution> resolutions = resolutionDAO.getAll();
-			request.setAttribute("resolutions", resolutions);
-		}  catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			getServletContext().getRequestDispatcher("/resolutions.jsp").
+			User user = (User) request.getSession().getAttribute("user");
+			
+			TypeService service = new TypeService(user);
+			List<Type> types = service.getTypes();
+			
+			request.setAttribute("types", types);
+			
+			getServletContext().getRequestDispatcher("/types.jsp").
 				forward(request, response);
-		}
+		}  catch (Exception e) {
+			response.getWriter().
+				println("Sorry, but current page is not available... Please try later.");
+		} 
 	}
 }

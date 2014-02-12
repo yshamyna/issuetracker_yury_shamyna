@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.h2.jdbc.JdbcSQLException;
 import org.training.issuetracker.db.beans.Type;
-import org.training.issuetracker.db.dao.interfaces.ITypeDAO;
-import org.training.issuetracker.db.dao.service.TypeDAO;
+import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.service.TypeService;
 
 /**
  * Servlet implementation class AddTypeServlet
@@ -38,17 +38,21 @@ public class AddTypeServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			Type  type = new Type();
-			type.setValue(request.getParameter("entityName"));
-			ITypeDAO typeDAO = new TypeDAO();
-			typeDAO.add(type);
+			User user = (User) request.getSession().getAttribute("user");
+			
+			Type type = new Type();
+			type.setValue(request.getParameter("name"));
+			
+			TypeService service = new TypeService(user);
+			service.add(type);
+			
+			response.getWriter().println("Issue type was added successfully.");
 		} catch (JdbcSQLException e) {
-			request.setAttribute("errMsg", "Already exists value '" 
-							+ request.getParameter("entityName") + "'");
+			response.getWriter().println("Already exists value '" 
+					+ request.getParameter("name") + "'");
 		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			doGet(request, response);	
+			response.getWriter().
+				println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 

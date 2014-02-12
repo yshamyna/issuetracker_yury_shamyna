@@ -1,4 +1,4 @@
-package org.training.issuetracker.web.servlets.priority;
+package org.training.issuetracker.web.servlets.status;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,20 +8,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.issuetracker.db.beans.Priority;
-import org.training.issuetracker.db.dao.interfaces.IPriorityDAO;
-import org.training.issuetracker.db.dao.service.PriorityDAO;
+import org.training.issuetracker.db.beans.Status;
+import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.service.StatusService;
 
 /**
- * Servlet implementation class PriorityReaderServlet
+ * Servlet implementation class StatusServlet
  */
-public class PriorityReaderServlet extends HttpServlet {
+public class StatusesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public PriorityReaderServlet() {
+    public StatusesServlet() {
         super();
     }
 
@@ -41,15 +41,19 @@ public class PriorityReaderServlet extends HttpServlet {
 	
 	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IPriorityDAO priorityDAO = new PriorityDAO();
-			List<Priority> priorities = priorityDAO.getAll();
-			request.setAttribute("priorities", priorities);
-		}  catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			getServletContext().getRequestDispatcher("/priorities.jsp").
+			User user = (User) request.getSession().getAttribute("user");
+			
+			StatusService service = new StatusService(user);
+			List<Status> statuses = service.getStatuses();
+			
+			request.setAttribute("statuses", statuses);
+			
+			getServletContext().getRequestDispatcher("/statuses.jsp").
 				forward(request, response);
-		}
+		}  catch (Exception e) {
+			response.getWriter().
+				println("Sorry, but current page is not available... Please try later.");
+		} 
 	}
 
 }

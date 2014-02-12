@@ -9,44 +9,49 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.User;
-import org.training.issuetracker.db.dao.interfaces.IUserDAO;
-import org.training.issuetracker.db.dao.service.UserDAO;
+import org.training.issuetracker.db.service.UserService;
 
 /**
  * Servlet implementation class UserReaderServlet
  */
-public class UserReaderServlet extends HttpServlet {
+public class UsersServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public UserReaderServlet() {
+    public UsersServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
-			IUserDAO userDAO = new UserDAO();
-			List<User> users = userDAO.getAll();
-			request.setAttribute("users", users);
-		}  catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			getServletContext().getRequestDispatcher("/users.jsp").
-				forward(request, response);
-		}
+		execute(request, response);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		execute(request, response);
 	}
 
+	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		try {
+			User user = (User) request.getSession().getAttribute("user");
+			
+			UserService service = new UserService(user);
+			List<User> users = service.getUsers();
+			
+			request.setAttribute("users", users);
+			
+			getServletContext().getRequestDispatcher("/users.jsp").
+				forward(request, response);
+		}  catch (Exception e) {
+			response.getWriter().
+				println("Sorry, but current page is not available... Please try later.");
+		} 
+	}
 }

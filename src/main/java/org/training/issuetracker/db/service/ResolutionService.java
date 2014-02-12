@@ -2,6 +2,7 @@ package org.training.issuetracker.db.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.training.issuetracker.db.beans.Resolution;
 import org.training.issuetracker.db.beans.User;
@@ -18,7 +19,7 @@ public class ResolutionService {
 		connection = DBManager.getConnection(role);
 	}
 
-	public void add(Resolution resolution) throws Exception {
+	public void add(Resolution resolution) throws SQLException {
 		try {
 			ResolutionDAO resolutionDAO = new ResolutionDAO();
 			resolutionDAO.add(connection, resolution);
@@ -27,12 +28,30 @@ public class ResolutionService {
 		}
 	}
 
-	public void update(Resolution resolution) throws Exception {
+	public void update(Resolution resolution) throws SQLException {
 		try {
 			ResolutionDAO resolutionDAO = new ResolutionDAO();
 			resolutionDAO.update(connection, resolution);
 		} finally {
 			DBManager.closeConnection(connection);
+		}
+	}
+	
+	public Resolution getResolutionById(long resolutionId) throws SQLException {
+		try {
+			ResolutionDAO resolutionDAO = new ResolutionDAO();
+			return resolutionDAO.getById(connection, resolutionId);	
+		} finally {
+			DBManager.closeConnection(connection);	
+		}
+	}
+	
+	public List<Resolution> getResolutions() throws SQLException {
+		try {
+			ResolutionDAO resolutionDAO = new ResolutionDAO();
+			return resolutionDAO.all(connection);	
+		} finally {
+			DBManager.closeConnection(connection);	
 		}
 	}
 }

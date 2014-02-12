@@ -13,13 +13,13 @@ import org.training.issuetracker.web.actions.interfaces.IWebAction;
 /**
  * Servlet implementation class MainController
  */
-public class MainController extends HttpServlet {
+public class RedirectController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public MainController() {
+    public RedirectController() {
         super();
     }
 

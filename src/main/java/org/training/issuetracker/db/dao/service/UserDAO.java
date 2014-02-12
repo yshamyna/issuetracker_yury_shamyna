@@ -84,14 +84,12 @@ public class UserDAO {
 		}
 	}
 
-	public User getByEmailAndPassword(String email, String password)
-			throws Exception {
-		Connection connection = null;
+	public User getByEmailAndPassword(Connection connection, 
+			String email, String password) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		User user = null;
 		try {
-			connection = DBManager.getConnection();
 	        ps = connection.prepareStatement("select users.id, firstName, lastName, name as role, roleId from users, roles where email=? and password=? and roleId=roles.id");
 	        ps.setString(1, email);
 	        ps.setString(2, password);
@@ -111,23 +109,20 @@ public class UserDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 		return user;
 	}
 
-	public void changePassword(User user) throws Exception {
-		Connection connection = null;
+	public void updatePassword(Connection connection, User user, 
+			String password) throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			connection = DBManager.getConnection();
 			ps = connection.prepareStatement("update users set password=? where id=?");
 			ps.setString(1, user.getPassword());
 			ps.setLong(2, user.getId());
 			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
-			DBManager.closeConnection(connection);
 		}
 	}
 

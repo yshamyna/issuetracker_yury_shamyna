@@ -11,51 +11,42 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.Comment;
 import org.training.issuetracker.db.beans.User;
-import org.training.issuetracker.db.dao.service.CommentDAO;
+import org.training.issuetracker.db.service.CommentService;
 
-/**
- * Servlet implementation class AddCommentServlet
- */
 public class AddCommentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public AddCommentServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			String text = request.getParameter("comment");
-			String issueId = request.getParameter("issueId");
 			User user = (User) request.getSession().getAttribute("user");
+			
 			Timestamp createDate = new Timestamp(System.currentTimeMillis());
 			String S = new SimpleDateFormat("MM/dd/yyyy").format(createDate);
 			
 			Comment comment = new Comment();
-			comment.setComment(text);
+			comment.setComment(request.getParameter("comment"));
 			comment.setSender(user);
 			comment.setCreateDate(createDate);
-			comment.setIssueId(Integer.parseInt(issueId));
+			comment.setIssueId(Long.parseLong(request.getParameter("issueId")));
 			
-			CommentDAO commentDAO = new CommentDAO();
-			commentDAO.addComment(comment);
+			CommentService service = new CommentService(user);
+			service.add(comment);
 			
-			// {"builds":[{"id":1, "version":"1.2"},{"id":2, "version":"1.2"}]}
+			// Convert comment to JSON data.
 			String jsonData = "{\"data\":{\"addedBy\":\"" 
-								+ user.getFirstName() + " " + user.getLastName() + "\", "
+								+ user.getFirstName() + " " 
+								+ user.getLastName() + "\", "
 								+ "\"createDate\":\"" + S + "\", " 
-								+  "\"comment\":\"" + text + "\"}}";
+								+  "\"comment\":\"" 
+								+ request.getParameter("comment") + "\"}}";
+			
 			response.getWriter().println(jsonData);
-//			getServletContext().getRequestDispatcher("/issues/edit?id=" + issueId).
-//				forward(request, response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			response.getWriter().println("");
 		}
 	}
 

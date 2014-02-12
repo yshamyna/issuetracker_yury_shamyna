@@ -103,14 +103,12 @@ public class ProjectDAO {
 		}
 	}
 
-	public List<Project> getNRecordsFromPageY(long recordsPerPage,
-			long pageNumber) throws Exception {
-		Connection connection = null;
+	public List<Project> getNRecordsFromPageM(Connection connection, 
+			long pageNumber, long recordsPerPage) throws SQLException {
 		PreparedStatement ps = null;
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			st = connection.createStatement();
 			rs = st.executeQuery("select count(*) as cnt from projects");
 			long recordsNumber = 0;
@@ -123,7 +121,8 @@ public class ProjectDAO {
 				offset = 0;
 			}
 			if (offset >= recordsNumber) {
-				offset = ((long) java.lang.Math.ceil((double)recordsNumber / recordsPerPage) - 1) * recordsPerPage;
+				offset = ((long) Math.ceil((double)recordsNumber 
+								/ recordsPerPage) - 1) * recordsPerPage;
 			}
 			
 			ps = connection.prepareStatement("select projects.id as pid, name, description, managerId, firstName, lastName from projects, managers where managerId=managers.id limit ? offset ?");
@@ -151,32 +150,32 @@ public class ProjectDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(ps, st);
-			DBManager.closeConnection(connection);
 		}
 	}
 
-	public long getQuantityPages(long recordsPerPage) throws Exception {
-		Connection connection = null;
+	public long getQuantityPages(Connection connection, 
+					long recordsPerPage) throws SQLException {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			st = connection.createStatement();
 			rs = st.executeQuery("select count(*) as cnt from projects");
+			
 			long count = 0;
 			if (rs.next()) {
 				count = rs.getLong("cnt");
 			}
+			
 			long div = count / recordsPerPage;
 			long mod = count % recordsPerPage;
 			if (mod != 0) {
 				div++;
 			}
+			
 			return div;
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(st);
-			DBManager.closeConnection(connection);
 		}
 	}
 }

@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.Status;
-import org.training.issuetracker.db.dao.interfaces.IStatusDAO;
-import org.training.issuetracker.db.dao.service.StatusDAO;
+import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.service.StatusService;
 
 /**
  * Servlet implementation class EditStatusServlet
@@ -30,13 +30,17 @@ public class EditStatusServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String id = request.getParameter("id");
 		if (id == null) {
-			getServletContext().getRequestDispatcher("/resolutions").
+			getServletContext().getRequestDispatcher("/statuses").
 					forward(request, response);
 		} else {
 			try {
+				User user = (User) request.getSession().getAttribute("user");
+				
 				long statusId = Integer.parseInt(id);
-				IStatusDAO dao = new StatusDAO();
-				Status status = dao.getById(statusId);
+				
+				StatusService service = new StatusService(user);
+				Status status = service.getStatusById(statusId);
+				
 				if (status == null) {
 					getServletContext().getRequestDispatcher("/statuses").
 							forward(request, response);
@@ -59,19 +63,19 @@ public class EditStatusServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			String id = request.getParameter("id");
-			String name = request.getParameter("entityName");
+			User user = (User) request.getSession().getAttribute("user");
 			
 			Status status = new Status();
-			status.setId(Integer.parseInt(id));
-			status.setValue(name);	
+			status.setId(Long.parseLong(request.getParameter("id")));
+			status.setValue(request.getParameter("name"));	
 			
-			IStatusDAO statusDAO = new StatusDAO();
-			statusDAO.updateName(status);
+			StatusService service = new StatusService(user);
+			service.update(status);
 			
 			response.getWriter().println("Issue status was updated successfully.");
 		} catch (Exception e) {
-			response.getWriter().println("Sorry, but current service is not available... Please try later.");
+			response.getWriter().
+				println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 

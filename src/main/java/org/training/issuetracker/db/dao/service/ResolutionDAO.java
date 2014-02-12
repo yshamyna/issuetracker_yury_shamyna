@@ -13,12 +13,10 @@ import org.training.issuetracker.db.util.DBManager;
 
 public class ResolutionDAO {
 
-	public List<Resolution> getAll() throws Exception {
-		Connection connection = null;
+	public List<Resolution> all(Connection connection) throws SQLException {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			connection = DBManager.getConnection();
 			st = connection.createStatement();
 			st.execute("select id, name from resolutions");
 			rs = st.getResultSet();
@@ -34,7 +32,6 @@ public class ResolutionDAO {
 		} finally {
 			DBManager.closeResultSets(rs);
 			DBManager.closeStatements(st);
-			DBManager.closeConnection(connection);
 		}
 	}
 
@@ -59,7 +56,7 @@ public class ResolutionDAO {
 	}
 
 	public void add(Connection connection, Resolution resolution) 
-			throws Exception {
+			throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("insert into resolutions(name) values(?)");
@@ -70,7 +67,8 @@ public class ResolutionDAO {
 		}
 	}
 
-	public void update(Connection connection, Resolution resolution) throws Exception {
+	public void update(Connection connection, Resolution resolution) 
+			throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("update resolutions set name=? where id=?");

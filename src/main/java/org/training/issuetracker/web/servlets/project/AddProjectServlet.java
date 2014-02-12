@@ -12,12 +12,9 @@ import org.h2.jdbc.JdbcSQLException;
 import org.training.issuetracker.db.beans.Build;
 import org.training.issuetracker.db.beans.Manager;
 import org.training.issuetracker.db.beans.Project;
-import org.training.issuetracker.db.dao.interfaces.IBuildDAO;
-import org.training.issuetracker.db.dao.interfaces.IManagerDAO;
-import org.training.issuetracker.db.dao.interfaces.IProjectDAO;
-import org.training.issuetracker.db.dao.service.BuildDAO;
-import org.training.issuetracker.db.dao.service.ManagerDAO;
-import org.training.issuetracker.db.dao.service.ProjectDAO;
+import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.service.ManagerService;
+import org.training.issuetracker.db.service.ProjectService;
 
 /**
  * Servlet implementation class AddProjectServlet
@@ -37,11 +34,15 @@ public class AddProjectServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IManagerDAO managerDAO = new ManagerDAO();
-			List<Manager> managers = managerDAO.getAll();
+			User user = (User) request.getSession().getAttribute("user");
+			
+			ManagerService service = new ManagerService(user);
+			List<Manager> managers = service.getManagers();
+			
 			request.setAttribute("managers", managers);
+			
 			getServletContext().getRequestDispatcher("/addProject.jsp").
-			forward(request, response);	
+				forward(request, response);	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -52,28 +53,31 @@ public class AddProjectServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
+			User user = (User) request.getSession().getAttribute("user");
+			
+			ProjectService service = new ProjectService(user);
+
 			Project project = new Project();
-			project.setName(request.getParameter("projectName"));
-			project.setDescription(request.getParameter("projectDescription"));
+			project.setName(request.getParameter("name"));
+			project.setDescription(request.getParameter("description"));
+			
 			Manager manager = new Manager();
-			manager.setId(Integer.parseInt(request.getParameter("managers")));
+			manager.setId(Integer.parseInt(request.getParameter("managerId")));
 			project.setManager(manager);
-			IProjectDAO projectDAO = new ProjectDAO();
-			long projectId = projectDAO.add(project);
 			
 			Build build = new Build();
-			build.setVersion(request.getParameter("projectVersion"));
 			build.setCurrent(true);
-			build.setProjectId(projectId);
-			IBuildDAO buildDAO = new BuildDAO();
-			buildDAO.add(build);
+			build.setVersion(request.getParameter("version"));
+			
+			service.add(project, build);
+			
+			response.getWriter().println("Project was added successfully.");
 		} catch (JdbcSQLException e) {
-			request.setAttribute("errMsg", "Already exists project with name '" 
-							+ request.getParameter("projectName") + "'");
+			response.getWriter().println("Already exists project with name '" 
+					+ request.getParameter("name") + "'");
 		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			doGet(request, response);	
+			response.getWriter().
+				println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 

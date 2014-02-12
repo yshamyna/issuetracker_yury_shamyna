@@ -10,10 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.beans.UserRole;
-import org.training.issuetracker.db.dao.interfaces.IRoleDAO;
-import org.training.issuetracker.db.dao.interfaces.IUserDAO;
-import org.training.issuetracker.db.dao.service.RoleDAO;
-import org.training.issuetracker.db.dao.service.UserDAO;
+import org.training.issuetracker.db.service.RoleService;
+import org.training.issuetracker.db.service.UserService;
 
 /**
  * Servlet implementation class EditUserServlet
@@ -26,7 +24,6 @@ public class EditUserServlet extends HttpServlet {
      */
     public EditUserServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -39,17 +36,22 @@ public class EditUserServlet extends HttpServlet {
 					forward(request, response);
 		} else {
 			try {
+				User user = (User) request.getSession().getAttribute("user");
+				
 				long userId = Integer.parseInt(id);
-				IUserDAO dao = new UserDAO();
-				User user = dao.getById(userId);
-				if (user == null) {
+				UserService uService = new UserService(user);
+				User usr = uService.getUserById(userId);
+				
+				if (usr == null) {
 					getServletContext().getRequestDispatcher("/users").
 							forward(request, response);
 				} else {
-					request.setAttribute("usr", user);
-					IRoleDAO roleDAO = new RoleDAO();
-					List<UserRole> roles = roleDAO.getAll();
+					request.setAttribute("usr", usr);
+					
+					RoleService rService = new RoleService(user);
+					List<UserRole> roles = rService.getRoles();
 					request.setAttribute("roles", roles);
+					
 					getServletContext().getRequestDispatcher("/editUser.jsp").
 							forward(request, response);	
 				}
@@ -67,23 +69,25 @@ public class EditUserServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			long id = Integer.parseInt(request.getParameter("id"));
-			String firstName = request.getParameter("fName");
-			String lastName = request.getParameter("lName");
-			String email = request.getParameter("email");
-			User user = new User();
-			user.setId(id);
-			user.setFirstName(firstName);
-			user.setLastName(lastName);
-			user.setEmailAddress(email);
+			User user = (User) request.getSession().getAttribute("user");
+			
+			User u = new User();
+			u.setId(Long.parseLong(request.getParameter("id")));
+			u.setFirstName(request.getParameter("firstName"));
+			u.setLastName(request.getParameter("lastName"));
+			u.setEmailAddress(request.getParameter("email"));
+			
 			UserRole role = new UserRole();
 			role.setId(Integer.parseInt(request.getParameter("roleId")));
-			user.setRole(role);
-			IUserDAO userDAO = new UserDAO();
-			userDAO.update(user);
-			response.getWriter().println("User data was changed successfully.");
-		} catch(Exception e) {
-			response.getWriter().println("Sorry, but current service is not available... Please try later.");
+			u.setRole(role);
+			
+			UserService service = new UserService(user);
+			service.update(user);
+			
+			response.getWriter().println("User data was updated successfully.");
+		} catch (Exception e) {
+			response.getWriter().
+				println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 
