@@ -1,0 +1,10 @@
+div.pagination nth-child(1) {
+	width: 100%;
+	background-color:rgb(210, 210, 210);
+}
+
+div.pagination nth-child(2) {
+	width: 100%;
+	background-color:rgb(210, 210, 210);
+	height:26px;
+}

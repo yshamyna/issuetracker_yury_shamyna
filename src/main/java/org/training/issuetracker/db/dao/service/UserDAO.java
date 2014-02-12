@@ -90,20 +90,21 @@ public class UserDAO {
 		ResultSet rs = null;
 		User user = null;
 		try {
-	        ps = connection.prepareStatement("select users.id, firstName, lastName, name as role, roleId from users, roles where email=? and password=? and roleId=roles.id");
+	        ps = connection.prepareStatement("select users.id as uid, firstName, lastName, name as role, roleId from users, roles where email=? and password=? and roleId=roles.id");
 	        ps.setString(1, email);
 	        ps.setString(2, password);
 	        rs = ps.executeQuery();
 	        if (rs.next()) {
 	        	user = new User();
-	        	user.setId(rs.getLong("id"));
+	        	user.setId(rs.getLong("uid"));
 	        	user.setEmailAddress(email);
 	        	user.setPassword(password);
 	        	user.setFirstName(rs.getString("firstName"));
 	        	user.setLastName(rs.getString("lastName"));
+	        	
 	        	UserRole role = new UserRole();
 	        	role.setId(rs.getLong("roleId"));
-	        	role.setValue(rs.getString("role"));
+	        	role.setName(rs.getString("role"));
 	        	user.setRole(role);
 	        }
 		} finally {

@@ -1,14 +1,14 @@
 <div style="position:relative;width:100%;height:150px;background-color:rgb(25, 28, 36);font-family:arial;color:white;font-size:10pt;">
-	<form onsubmit="return submitForm(this);" method="post" action="/issuetracker/controller?action=login">
+	<form onsubmit="return login(this);" method="post" action="/issuetracker/controller?action=login"> 
 		<span style="position:absolute;right:50%;top:10px;margin-right:100px;">E-mail:</span> 
-		<input id="emailTxtField" style="position:absolute;left:50%;top:5px;margin-left:-100px;width:200px;" type="text" name="email"/>
+		<input id="emailTxtField" style="position:absolute;left:50%;top:5px;margin-left:-100px;width:200px;" type="text" name="E-mail"/>
 		<span style="position:absolute;right:50%;top:35px;margin-right:100px;">Password:</span>
-		<input id="passTxtField" style="position:absolute;left:50%;top:30px;margin-left:-100px;width:200px;" type="password" name="password"/>
+		<input id="passTxtField" style="position:absolute;left:50%;top:30px;margin-left:-100px;width:200px;" type="password" name="Password"/>
 		<div style="text-align:center;position:absolute;top:53px;width:100%">
-			<span id="errMsg" style="font-size:8pt;color:red;margin:auto;"></span>
+			<span id="msg" style="font-size:8pt;color:red;margin:auto;"></span>
 		</div>
-		<input style="position:absolute;left:50%;top:70px;margin-left:-100px;width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;border-radius:3px;height:30px;font-size:12pt;font-weight:bold;" type="submit" value="Login">
-	</form>
+		<input id="loginBtn" style="position:absolute;left:50%;top:70px;margin-left:-100px;width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;border-radius:3px;height:30px;font-size:12pt;font-weight:bold;" type="submit" value="Login">
+	 </form>
 	<form method="post" action="search-issue">
 		<input style="position:absolute;left:5px;bottom:7px;border:1px solid rgb(117,247,130);color:#000;background-color:rgb(153,249,163);height:30px;font-size:10pt;font-weight:bold;" type="button" value="Search issue" />
 	</form>

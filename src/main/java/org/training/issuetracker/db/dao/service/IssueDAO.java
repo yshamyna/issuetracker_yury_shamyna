@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,13 +168,12 @@ public class IssueDAO {
 	public List<Issue> getNRecordsFromPageM(Connection connection, 
 			User user, long pageNumber, long recordsPerPage)
 								throws SQLException {
-		Statement st = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			st = connection.createStatement();
-			st.execute("select count(*) as cnt from issues where assignee=?");
-			rs = st.getResultSet();
+			ps = connection.prepareStatement("select count(*) as cnt from issues where assignee=?");
+			ps.setLong(1, user.getId());
+			rs = ps.executeQuery();
 			long recordsNumber = 0;
 			if (rs.next()) {
 				recordsNumber = rs.getLong("cnt");
@@ -214,7 +212,7 @@ public class IssueDAO {
 				issue.setModifyDate(rs.getTimestamp("modifyDate"));
 				issue.setSummary(rs.getString("summary"));
 				issue.setDescription(rs.getString("description"));
-				issue.setAssignee(uDAO.getById(connection, rs.getInt("assignee")));
+				issue.setAssignee(user);
 				issue.setCreateBy(uDAO.getById(connection, rs.getInt("createBy")));
 				issue.setModifyBy(uDAO.getById(connection, rs.getInt("modifyBy")));
 				issue.setStatus(sDAO.getById(connection, rs.getInt("statusId")));
@@ -229,7 +227,7 @@ public class IssueDAO {
 			return issues;
 		} finally {
 			DBManager.closeResultSets(rs);
-			DBManager.closeStatements(ps, st);
+			DBManager.closeStatements(ps);
 		}
 	}
 

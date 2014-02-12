@@ -15,7 +15,12 @@ public class BuildService {
 	private Connection connection;
 	public BuildService(User user) 
 			throws ClassNotFoundException, SQLException {
-		Role role = Role.valueOf(user.getRole().getValue());
+		Role role;
+		if (user == null) {
+			role = Role.GUEST;
+		} else {
+			role = Role.valueOf(user.getRole().getName().toUpperCase());	
+		}
 		connection = DBManager.getConnection(role);
 	}
 

@@ -57,6 +57,7 @@ public class IssuesServlet extends HttpServlet {
 				}
 				issues = service.getIssues(user, pageNumber, 10);
 				
+				service = new IssueService(user);
 				long maxPage = service.getQuantityPages(user.getId(), 10);
 				
 				pageNumber = pageNumber > maxPage ? maxPage : pageNumber;
@@ -70,6 +71,7 @@ public class IssuesServlet extends HttpServlet {
 			getServletContext().getRequestDispatcher("/dashboard.jsp").
 					forward(request, response);	
 		} catch (Exception e) {
+			e.printStackTrace();
 			response.getWriter().
 				println("Sorry, but current service is not available... Please try later.");
 		}

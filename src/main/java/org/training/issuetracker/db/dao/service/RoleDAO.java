@@ -25,7 +25,7 @@ public class RoleDAO {
 			while (rs.next()) {
 				role = new UserRole();
 				role.setId(rs.getInt("id"));
-				role.setValue(rs.getString("name"));
+				role.setName(rs.getString("name"));
 				roles.add(role);
 			}
 			return roles;
@@ -45,7 +45,7 @@ public class RoleDAO {
 			if (rs.next()) {
 				UserRole role = new UserRole();
 				role.setId(id);
-				role.setValue(rs.getString("name"));
+				role.setName(rs.getString("name"));
 				return role;
 			}
 		} finally {

@@ -8,59 +8,49 @@
 		<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
 		<link rel=stylesheet href="/issuetracker/css/table.css" type="text/css">
 		<link rel=stylesheet href="/issuetracker/css/content.css" type="text/css">
+		<link rel=stylesheet href="/issuetracker/css/pagination.css" type="text/css">
+		<script type="text/javascript" src="/issuetracker/js/util.js"></script>
 		<script type="text/javascript">
-			function userNotExistsError(errMsg) {
-				var span = document.getElementById("errMsg");
-				span.innerHTML = errMsg;
-			}
-			
-			function submitForm(form) {
-				var errMsg = '';
-				if (!form.elements['emailTxtField'].value.trim()) {
-					errMsg = 'E-mail is empty. ';
-				}
-				if (!form.elements['passTxtField'].value.trim()) {
-					errMsg += 'Password is empty.';
-				}
-				if (errMsg) {
-					var span = document.getElementById('errMsg');
-					span.innerHTML = errMsg;
+			function login() {
+				var msg = checkInputs();
+				if (msg) {
+					printMessage(msg);
 					return false;
 				}
-			}
+				return true;
+			} 
 			
-			function back(page) {
-				if (page === 1) {
-					return false;
-				}
+			var back = function back() {
+				var page = "${page}";
 				page--;
 				var paginationForm = document.getElementById("pagination-form");
 				paginationForm.setAttribute("action", "/issuetracker/dashboard?page=" + page);
-			}
-			
-			function next(page) {
+			};
+
+			var next = function next() {
+				var page = "${page}";
 				page++;
 				var paginationForm = document.getElementById("pagination-form");
 				paginationForm.setAttribute("action", "/issuetracker/dashboard?page=" + page);
-			}
+			};
 		</script>
 	</head>
-		<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
+		<body>
 		<c:choose>
-			<c:when test="${user.role.value eq 'administrator'}">
+			<c:when test="${user.role.name eq 'administrator'}">
 				<%@ include file="/includes/administratorMenu.html" %>
 			</c:when>
-			<c:when test="${user.role.value eq 'user'}">
+			<c:when test="${user.role.name eq 'user'}">
 				<%@ include file="/includes/userMenu.html" %>
 			</c:when>
 			<c:otherwise>
 				<%@ include file="/includes/guestMenu.html" %>
 			</c:otherwise>
 		</c:choose>
-		<c:if test="${not empty errMsg}">
-			<script type="text/javascript"> 
-				userNotExistsError("${errMsg}");
-			</script> 
+		<c:if test="${not empty msg}">
+			<script type="text/javascript">
+				printMessage('${msg}');
+			</script>
 		</c:if>
 		<div class="content">
 			<table class="table">
@@ -78,10 +68,10 @@
 					<c:forEach var="issue" items="${issues}">
 	 					<tr>
 							<td><a href="/issuetracker/issues/edit?id=${issue.id}">${issue.id}</a></td>
-							<td>${issue.priority.value}</td>
+							<td>${issue.priority.name}</td>
 							<td>${issue.assignee.firstName} ${issue.assignee.lastName}</td>
-							<td>${issue.type.value}</td>
-							<td>${issue.status.value}</td>
+							<td>${issue.type.name}</td>
+							<td>${issue.status.name}</td>
 							<td>${issue.summary}</td>
 						</tr>				
 					</c:forEach>
@@ -91,21 +81,21 @@
 		<c:choose>
 			<c:when test="${not empty user}">
 				<form id="pagination-form" method="post" action="">
-					<div>
-						<div style="width:100%;background-color:rgb(210, 210, 210);">
+					<div class="pagination">
+						<div>
 							Page: ${page}/${maxPage}
 						</div>
-						<div style="width:100%; height:26px;background-color:rgb(210, 210, 210);text-align:center;">
+						<div>
 							<c:choose>
 								<c:when test="${page eq 1}">
-									<input type="submit" value="Next" onclick="next(${page})">		
+									<input id="nextPageBtn" type="submit" value="Next">		
 								</c:when>
 								<c:when test="${page eq maxPage}">
-									<input type="submit" value="Previous" onclick="back(${page})">
+									<input id="prevPageBtn" type="submit" value="Previous">
 								</c:when>
 								<c:otherwise>
-									<input type="submit" value="Previous" onclick="back(${page})">
-									<input type="submit" value="Next" onclick="next(${page})">
+									<input id="prevPageBtn" type="submit" value="Previous">
+									<input id="nextPageBtn" type="submit" value="Next">
 								</c:otherwise>
 							</c:choose>
 						</div>	
@@ -114,5 +104,16 @@
 			</c:when>
 		</c:choose>
 		<script type="text/javascript" src="/issuetracker/js/sort.js"></script>
+		<script type="text/javascript">
+			var nextPageBtn = document.getElementById("nextPageBtn");
+			if (nextPageBtn != null) {
+				nextPageBtn.onclick = next;
+			}
+	
+			var prevPageBtn = document.getElementById("prevPageBtn");
+			if (prevPageBtn != null) {
+				prevPageBtn.onclick = back;
+			}
+		</script>
 	</body>
 </html>
