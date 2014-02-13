@@ -7,109 +7,56 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>Edit project</title>
 	<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
-	<script>
-		function getXmlHttp(){
-	  		var xmlhttp;
-	  		try {
-	    		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-	  		} catch (e) {
-	    		try {
-	      			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-	    		} catch (E) {
-	      			xmlhttp = false;
-	    		}
-	  		}
-	  		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-	    		xmlhttp = new XMLHttpRequest();
-	  		}
-	  		return xmlhttp;
-		}
-		
-		function update(id, url, data) {
-			if (!isCorrectData()) return;
-			var req = getXmlHttp();
-			req.onreadystatechange = function() { 
-	        	if (req.readyState == 4 && req.status == 200) {
-	        		var msg = req.responseText;
-	        		printMessage(msg);
-	            }
-	     	};
-			req.open("post", url, true);
-			req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-			var body = "";
-			for (var i = 0; i < data.length; i++) {
-				var parameterName = data[i].getParameter();
-				var parameterValue = data[i].getElement().value;
-				body += parameterName + "=" + parameterValue + "&";
+	<link rel=stylesheet href="/issuetracker/css/editProject.css" type="text/css">
+	<script src="/issuetracker/js/util.js"></script>
+	<script type="text/javascript">
+		function update() {
+			var msg = checkInputs();
+			var textarea = document.getElementById("description");
+			if (!textarea.value.trim()) {
+				msg += textarea.name + ' is empty';
 			}
-			body += "id=" + id;
-			req.send(body);
-		}
-		
-		function printMessage(errMsg) {
-			var span = document.getElementById("msg");
-			span.innerHTML = errMsg;
-		}
-		
-		function isCorrectData() {
-			var msg = checkTextFields();
 			if (msg) {
 				printMessage(msg);
 				return false;
+			} else {
+				var req = getXmlHttp();
+				
+				req.onreadystatechange = function() { 
+		        	if (req.readyState == 4 && req.status == 200) {
+		        		var msg = req.responseText;
+		        		printMessage(msg);
+		            }
+		     	};
+		     
+		     	var name = document.getElementById("name").value;
+		     	var description = document.getElementById("description").value;
+		     	var sel = document.getElementById("manager");
+		     	var manager = sel.options[sel.selectedIndex].value;
+		     	var sel = document.getElementById("build");
+		     	var build = sel.options[sel.selectedIndex].value;
+		     	
+		     	req.open("post", "/issuetracker/projects/edit", true);
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				var body = "id=${project.id}&name=" + name
+					+ "&description=" + description + "&managerId=" + manager
+					+ "&buildId=" + build;
+				req.send(body);
 			}
-			return true;
-		}
-		
-		function checkTextFields() {
-			var inputs = document.getElementsByTagName("input");
-			var msg = "";
-			for (var i = 0; i < inputs.length; i++) {
-				if (!inputs[i].value.trim()) {
-					msg += inputs[i].name + " is empty. ";
-				}
-			}
-			var textareas = document.getElementsByTagName("textarea");
-			for (var i = 0; i < textareas.length; i++) {
-				if (!textareas[i].value.trim()) {
-					msg += textareas[i].name + " is empty. ";
-				}
-			}
-			return msg;
-		}
-		
-		function Element(parameter, element) {
-			this.parameter = parameter;
-			this.element = element;
-			
-			this.getParameter = function() {
-				return this.parameter;
-			};
-			this.getElement = function() {
-				return this.element;
-			};
-		}
-		
-		function onclick() {
-			var name = new Element("name", document.getElementById("name"));
-			var description = new Element("description", document.getElementById("description"));
-			var build = new Element("buildId", document.getElementById("build"));
-			var manager = new Element("managerId", document.getElementById("manager"));
-			var data = [name, description, build, manager];
-			update("${project.id}", "/issuetracker/projects/edit", data);
 		}
 	</script>
 </head>
-<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
+<body>
 	<%@ include file="/includes/administratorMenu.html" %>
-	<div style="position:relative;width:100%;height:250px;background-color:rgb(25, 28, 36);font-family:arial;color:white;font-size:10pt;margin-top:1px;">
-			<span style="position:absolute;right:50%;top:10px;margin-right:100px;">Name:</span> 
-			<input id="name" style="position:absolute;left:50%;top:5px;margin-left:-100px;width:200px;" type="text" name="Name" value="${project.name}"/>
+	<div class="container">
+			<span class="name-label" style="">Name:</span> 
+			<input id="name" class="project-name" type="text" name="Project name" value="${project.name}"/>
 			
-			<span style="position:absolute;right:50%;top:35px;margin-right:100px;">Description:</span>
-			<textarea id="description" style="position:absolute;left:50%;top:30px;margin-left:-100px;width:200px;max-height:100px;width:200px;height:100px;" name="Description">${project.description}</textarea>
+			<span class="description-label">Description:</span>
+			<textarea id="description" class="project-description" name="Project description">${project.description}</textarea>
 			
-			<span style="position:absolute;right:50%;top:145px;margin-right:100px;">Build:</span>
-			<select id="build" style="position:absolute;left:50%;top:140px;margin-left:-100px;width:200px;" name="Build">
+			<span class="build-label">Build:</span>
+			<select id="build" class="project-build" name="Build">
 				<c:forEach var="build" items="${builds}">
 					<c:choose>
 						<c:when test="${build.isCurrent eq true}">
@@ -121,10 +68,10 @@
 					</c:choose>
 				</c:forEach>
 			</select> 
-			<a href="/issuetracker/builds/add?id=${project.id}" style="position:absolute;right:50%;top:145px;margin-right:-150px;color:rgb(153,249,163);">Add</a>
+			<a href="/issuetracker/builds/add?id=${project.id}" class="add-build">Add</a>
 			
-			<span style="position:absolute;right:50%;top:170px;margin-right:100px;">Manager:</span>
-			<select id="manager" style="position:absolute;left:50%;top:165px;margin-left:-100px;width:204px;" name="Manager"/>
+			<span class="manager-label">Manager:</span>
+			<select id="manager" class="project-manager" name="Manager"/>
 				<c:forEach var="manager" items="${managers}">
 					<c:choose>
 						<c:when test="${manager.id eq project.manager.id}">
@@ -136,15 +83,15 @@
 					</c:choose>
 				</c:forEach>
 			</select>
-			<div style="text-align:center;position:absolute;top:250px;width:100%">
-				<span id="msg" style="font-size:10pt;color:red;margin:auto;"></span>
+			<div class="message-container">
+				<span id="msg" class="message"></span>
 			</div>
-			<input id="submitBtn" style="position:absolute;left:50%;top:210px;margin-left:-100px;width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;border-radius:3px;height:30px;font-size:12pt;font-weight:bold;" type="button" value="Edit">
+			<input id="sbtBtn" class="submitBtn" type="button" value="Update">
 		</div>
 	
 	<script type="text/javascript">
-		var submit = document.getElementById("submitBtn");
-		submit.onclick = onclick;
+		var submitBtn = document.getElementById("sbtBtn");
+		submitBtn.onclick = update;
 	</script>
 </body>
 </html>

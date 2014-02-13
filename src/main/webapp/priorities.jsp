@@ -6,16 +6,16 @@
 	<head>
 		<title>Priorities</title>
 		<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
+		<link rel=stylesheet href="/issuetracker/css/priorities.css" type="text/css">
 	</head>
-	<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
+	<body>
 		<%@ include file="/includes/administratorMenu.html" %>
-		<div style="padding-left:5px;padding-right:5px;background-color:rgb(243, 245, 245);padding-top:5px;font-family:arial;">
-			<table border="1" style="width:100%;border-collapse:collapse;border: 2px solid black;">
-				<caption>Priorities</caption>
-				<th style="border: 2px solid black;">name</th>
+		<div class="container">
+			<table class="info" border="1">
+				<th class="border">name</th>
 				<c:forEach var="priority" items="${priorities}">
- 					<tr style="border: 2px solid black;">
-						<td style="border: 2px solid black;"><a href="/issuetracker/priorities/edit?id=${priority.id}">${priority.value}</a></td>
+ 					<tr class="border">
+						<td class="border"><a href="/issuetracker/priorities/edit?id=${priority.id}">${priority.name}</a></td>
 					</tr>				
 				</c:forEach>
 			</table>

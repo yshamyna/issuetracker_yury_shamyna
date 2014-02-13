@@ -6,16 +6,16 @@
 	<head>
 		<title>Resolutions</title>
 		<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
+		<link rel=stylesheet href="/issuetracker/css/resolutions.css" type="text/css">
 	</head>
-	<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
+	<body>
 		<%@ include file="/includes/administratorMenu.html" %>
-		<div style="padding-left:5px;padding-right:5px;background-color:rgb(243, 245, 245);padding-top:5px;font-family:arial;">
-			<table border="1" style="width:100%;border-collapse:collapse;border: 2px solid black;">
-				<caption>Resolutions</caption>
-				<th style="border: 2px solid black;">name</th>
+		<div class="container">
+			<table class="info" border="1">
+				<th class="border">name</th>
 				<c:forEach var="resolution" items="${resolutions}">
- 					<tr style="border: 2px solid black;">
-						<td style="border: 2px solid black;"><a href="/issuetracker/resolutions/edit?id=${resolution.id}">${resolution.value}</a></td>
+ 					<tr class="border">
+						<td class="border"><a href="/issuetracker/resolutions/edit?id=${resolution.id}">${resolution.name}</a></td>
 					</tr>				
 				</c:forEach>
 			</table>

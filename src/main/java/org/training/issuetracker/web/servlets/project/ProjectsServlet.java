@@ -52,6 +52,7 @@ public class ProjectsServlet extends HttpServlet {
 			ProjectService service = new ProjectService(user);
 			List<Project> projects = service.getProjects(pageNumber, 10);
 			
+			service = new ProjectService(user);
 			long maxPage = service.getQuantityPages(10);
 			pageNumber = pageNumber > maxPage ? maxPage : pageNumber;
 			pageNumber = pageNumber < 1 ? 1 : pageNumber;

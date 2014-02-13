@@ -6,6 +6,7 @@
 	<head>
 		<title>Projects</title>
 		<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
+		<link rel=stylesheet href="/issuetracker/css/projects.css" type="text/css">
 		<script>
 			function back(page) {
 				if (page === 1) {
@@ -23,19 +24,19 @@
 			}
 		</script>
 	</head>
-	<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
+	<body>
 		<%@ include file="/includes/administratorMenu.html" %>
-		<div style="padding-left:5px;padding-right:5px;background-color:rgb(243, 245, 245);padding-top:5px;font-family:arial;">
-			<table border="1" style="width:100%;border-collapse:collapse;border: 2px solid black;">
+		<div class="container">
+			<table class="info">
 				<caption>Projects</caption>
-				<th style="border: 2px solid black;">name</th>
-				<th style="border: 2px solid black;">manager</th>
-				<th style="border: 2px solid black;">description</th>
+				<th class="border">name</th>
+				<th class="border">manager</th>
+				<th class="border">description</th>
 				<c:forEach var="project" items="${projects}">
- 					<tr style="border: 2px solid black;">
-						<td style="border: 2px solid black;width:200px;"><a href="/issuetracker/projects/edit?id=${project.id}">${project.name}</a></td>
-						<td style="border: 2px solid black;width:200px;">${project.manager.firstName} ${project.manager.lastName}</td>
-						<td style="border: 2px solid black;">${project.description}</td>
+ 					<tr class="border">
+						<td class="ceil"><a href="/issuetracker/projects/edit?id=${project.id}">${project.name}</a></td>
+						<td class="ceil">${project.manager.firstName} ${project.manager.lastName}</td>
+						<td class="border">${project.description}</td>
 					</tr>				
 				</c:forEach>
 			</table>
@@ -53,6 +54,7 @@
 						<c:when test="${page eq maxPage}">
 							<input type="submit" value="Previous" onclick="back(${page})">
 						</c:when>
+						<c:when test="${page eq maxPage && page eq 1}"></c:when>
 						<c:otherwise>
 							<input type="submit" value="Previous" onclick="back(${page})">
 							<input type="submit" value="Next" onclick="next(${page})">
