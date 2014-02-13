@@ -57,36 +57,33 @@
 		}
 	</script>
 </head>
-<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
+<body>
 	<%@ include file="/includes/administratorMenu.html" %>
-	<form onsubmit="return submitForm(this);" method="post" action="/issuetracker/users/add">
-		<div style="position:relative;width:100%;height:230px;background-color:rgb(25, 28, 36);font-family:arial;color:white;font-size:10pt;margin-top:1px">
-			<span style="position:absolute;right:50%;top:10px;margin-right:100px;">First name:</span> 
-			<input style="position:absolute;left:50%;top:5px;margin-left:-100px;width:200px;" type="text" name="firstName"/>
-			<span style="position:absolute;right:50%;top:35px;margin-right:100px;">Last name:</span>
-			<input style="position:absolute;left:50%;top:30px;margin-left:-100px;width:200px;" type="text" name="lastName"/>
-			<span style="position:absolute;right:50%;top:60px;margin-right:100px;">E-mail:</span>
-			<input style="position:absolute;left:50%;top:55px;margin-left:-100px;width:200px;" type="text" name="email"/>
-			<span style="position:absolute;right:50%;top:85px;margin-right:100px;">Role:</span>
-			<select style="position:absolute;left:50%;top:80px;margin-left:-100px;width:204px;" name="roles"/>
-				<c:forEach var="role" items="${roles}">
-					<option value="${role.id}">${role.value}</option>
-				</c:forEach>
-			</select>
-			<span style="position:absolute;right:50%;top:108px;margin-right:100px;">Password:</span>
-			<input style="position:absolute;left:50%;top:103px;margin-left:-100px;width:200px;" type="password" name="password"/>
-			<span style="position:absolute;right:50%;top:133px;margin-right:100px;">Password confirmation:</span>
-			<input style="position:absolute;left:50%;top:128px;margin-left:-100px;width:200px;" type="password" name="passwordConfirmation"/>
-			<div style="text-align:center;position:absolute;top:156px;width:100%">
-				<span id="errMsg" style="font-size:10pt;color:red;margin:auto;"></span>
-			</div>
-			<input style="position:absolute;left:50%;top:190px;margin-left:-100px;width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;border-radius:3px;height:30px;font-size:12pt;font-weight:bold;" type="submit" value="Add">
+	<div class="container">
+		<span class="first-name-label">First name:</span> 
+		<input class="user-first-name" type="text" name="First name"/>
+		<span class="last-name-label">Last name:</span>
+		<input class="user-last-name" type="text" name="Last name"/>
+		<span class="email-label">E-mail:</span>
+		<input class="user-email" type="text" name="email"/>
+		<span class="role-label">Role:</span>
+		<select class="user-role" name="Role"/>
+			<c:forEach var="role" items="${roles}">
+				<c:if test="${role.name not eq 'guest'}">
+				</c:if>
+				<option value="${role.id}">${role.name}</option>
+			</c:forEach>
+		</select>
+		<span class="password-label">Password:</span>
+		<input class="user-password"type="password" name="Password"/>
+		<span class="password-confirmation-label">Password confirmation:</span>
+		<input class="user-password-confirmation"type="password" name="Password confirmation"/>
+		<div class="message-container">
+			<span class="container" id="msg"></span>
 		</div>
-	</form>
-	<c:if test="${not empty errMsg}">
-		<script type="text/javascript"> 
-			dataExistsError("${errMsg}");
-		</script> 
-	</c:if>
+		<input id="sbtBtn" class="submitBtn" type="submit" value="Add">
+	</div>
+	<script type="text/javascript">
+	</script>
 </body>
 </html>

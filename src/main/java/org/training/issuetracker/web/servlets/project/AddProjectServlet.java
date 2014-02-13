@@ -16,22 +16,13 @@ import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.ManagerService;
 import org.training.issuetracker.db.service.ProjectService;
 
-/**
- * Servlet implementation class AddProjectServlet
- */
 public class AddProjectServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public AddProjectServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			User user = (User) request.getSession().getAttribute("user");
@@ -48,9 +39,6 @@ public class AddProjectServlet extends HttpServlet {
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			User user = (User) request.getSession().getAttribute("user");

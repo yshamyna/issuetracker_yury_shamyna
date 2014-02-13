@@ -7,60 +7,64 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>Add project</title>
 	<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
+	<link rel=stylesheet href="/issuetracker/css/addProject.css" type="text/css">
+	<script src="/issuetracker/js/util.js"></script>
 	<script type="text/javascript">
-		function submitForm(form) {
-			var errMsg = '';
-			if (!form.elements['projectName'].value.trim()) {
-				errMsg = 'Project name is empty.';
-			}
-			if (!form.elements['projectDescription'].value.trim()) {
-				errMsg += ' Project description is empty.';
-			}
-			if (form.elements['managers'].selectedIndex == -1) {
-				errMsg += ' Project manager is not selected.';
-			}
-			if (!form.elements['projectVersion'].value.trim()) {
-				errMsg += ' Project build is empty.';
-			}
-			if (errMsg) {
-				var span = document.getElementById('errMsg');
-				span.innerHTML = errMsg;
+		function add() {
+			var msg = checkInputs();
+			if (msg) {
+				printMessage(msg);
 				return false;
-			} 
-		}
-					
-		function dataExistsError(errMsg) {
-			var span = document.getElementById("errMsg");
-			span.innerHTML = errMsg;
+			} else {
+				var req = getXmlHttp();
+				
+				req.onreadystatechange = function() { 
+		        	if (req.readyState == 4 && req.status == 200) {
+		        		var msg = req.responseText;
+		        		printMessage(msg);
+		            }
+		     	};
+		     
+		     	req.open("post", "/issuetracker/projects/add", true);
+		     	
+		     	var name = document.getElementById("name").value;
+		     	var description = document.getElementById("description").value;
+		     	var sel = document.getElementById("manager");
+		     	var manager = sel.options[sel.selectedIndex].value;
+		     	var version = document.getElementById("build").value;
+		     	
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				var body = "name=" + name + "&description=" + description
+				 + "&version=" + version + "&managerId=" + manager;
+				
+				req.send(body);
+			}
 		}
 	</script>
 </head>
-<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
+<body style="">
 	<%@ include file="/includes/administratorMenu.html" %>
-	<form onsubmit="return submitForm(this);" method="post" action="/issuetracker/projects/add">
-		<div style="position:relative;width:100%;height:170px;background-color:rgb(25, 28, 36);font-family:arial;color:white;font-size:10pt;margin-top:1px;">
-			<span style="position:absolute;right:50%;top:10px;margin-right:100px;">Name:</span> 
-			<input style="position:absolute;left:50%;top:5px;margin-left:-100px;width:200px;" type="text" name="projectName"/>
-			<span style="position:absolute;right:50%;top:35px;margin-right:100px;">Description:</span>
-			<input style="position:absolute;left:50%;top:30px;margin-left:-100px;width:200px;" type="text" name="projectDescription"/>
-			<span style="position:absolute;right:50%;top:60px;margin-right:100px;">Build:</span> 
-			<input style="position:absolute;left:50%;top:55px;margin-left:-100px;width:200px;" type="text" name="projectVersion"/>
-			<span style="position:absolute;right:50%;top:83px;margin-right:100px;">Manager:</span>
-			<select style="position:absolute;left:50%;top:80px;margin-left:-100px;width:204px;" name="managers"/>
-				<c:forEach var="manager" items="${managers}">
-					<option value="${manager.id}">${manager.firstName} ${manager.lastName}</option>
-				</c:forEach>
-			</select>
-			<div style="text-align:center;position:absolute;top:105px;width:100%">
-				<span id="errMsg" style="font-size:10pt;color:red;margin:auto;"></span>
-			</div>
-			<input style="position:absolute;left:50%;top:125px;margin-left:-100px;width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;border-radius:3px;height:30px;font-size:12pt;font-weight:bold;" type="submit" value="Add">
+	<div class="container">
+		<span class="name-label">Name:</span> 
+		<input class="project-name" id="name" type="text" name="Project name"/>
+		<span class="description-label">Description:</span>
+		<input class="project-description" id="description" type="text" name="Project description"/>
+		<span class="build-label">Build:</span> 
+		<input class="project-build" id="build" type="text" name="Project build"/>
+		<span class="manager-label">Manager:</span>
+		<select id="manager" class="project-manager" name="Project manager"/>
+			<c:forEach var="manager" items="${managers}">
+				<option value="${manager.id}">${manager.firstName} ${manager.lastName}</option>
+			</c:forEach>
+		</select>
+		<div class="message-container">
+			<span class="message" id="msg" style=""></span>
 		</div>
-	</form>
-	<c:if test="${not empty errMsg}">
-		<script type="text/javascript"> 
-			dataExistsError("${errMsg}");
-		</script> 
-	</c:if>
+		<input id="sbtBtn" class="submitBtn" type="submit" value="Add">
+	</div>
+	<script type="text/javascript">
+		var submit = document.getElementById("sbtBtn");
+		submit.onclick = add;
+	</script>
 </body>
 </html>

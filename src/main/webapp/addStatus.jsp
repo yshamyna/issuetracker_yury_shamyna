@@ -1,23 +1,50 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>Add status</title>
 	<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
-	<script src="/issuetracker/js/addEntity.js"></script>
+	<link rel=stylesheet href="/issuetracker/css/addStatus.css" type="text/css">
+	<script src="/issuetracker/js/util.js"></script>
+	<script type="text/javascript">
+		function add() {
+			var msg = checkInputs();
+			if (msg) {
+				printMessage(msg);
+				return false;
+			} else {
+				var req = getXmlHttp();
+				
+				req.onreadystatechange = function() { 
+		        	if (req.readyState == 4 && req.status == 200) {
+		        		var msg = req.responseText;
+		        		printMessage(msg);
+		            }
+		     	};
+		     
+		     	req.open("post", "/issuetracker/statuses/add", true);
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				var body = "name=" + document.getElementById("status").value;
+				req.send(body);
+			}
+		}
+	</script>
 </head>
-<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
+<body>
 	<%@ include file="/includes/administratorMenu.html" %>
-	<form onsubmit="return submitForm(this, 'Status');" method="post" action="/issuetracker/statuses/add">
-		<%@ include file="/includes/addEntityMenu.html" %>
-	</form>
-	<c:if test="${not empty errMsg}">
-		<script type="text/javascript"> 
-			dataExistsError("${errMsg}");
-		</script> 
-	</c:if>
+	<div class="container">
+		<span class="statusLabel">Name:</span> 
+		<input class="statusName" id="status" type="text" name="Name"/>
+		<div class="message-container">
+			<span id="msg" class="message"></span>
+		</div>
+		<input id="sbtBtn" class="submitBtn" type="submit" value="Add">
+	</div>
+	<script type="text/javascript">
+		var submitBtn = document.getElementById("sbtBtn");
+		submitBtn.onclick = add;
+	</script>
 </body>
 </html>
