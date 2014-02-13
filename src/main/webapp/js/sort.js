@@ -1,7 +1,6 @@
-var img_dir = "/issuetracker/img/"; // папка с картинками
-var sort_case_sensitive = false; // вид сортировки (регистрозависимый или нет)
+var img_dir = "/issuetracker/img/"; 
+var sort_case_sensitive = false; 
 
-// ф-ция, определяющая алгоритм сортировки
 function _sort(a, b) {
     var a = a[0];
     var b = b[0];
@@ -12,12 +11,10 @@ function _sort(a, b) {
     else return sort_sensitive(a, b);
 }
 
-// ф-ция сортировки чисел
 function sort_numbers(a, b) {
     return a - b;
 }
 
-// ф-ция регистронезависимой сортировки
 function sort_insensitive(a, b) {
     var anew = a.toLowerCase();
     var bnew = b.toLowerCase();
@@ -26,14 +23,12 @@ function sort_insensitive(a, b) {
     return 0;
 }
 
-// ф-ция регистрозависимой сортировки
 function sort_sensitive(a, b) {
     if (a < b) return -1;
     if (a > b) return 1;
     return 0;
 }
 
-// вспомогательная ф-ция, выдирающая из дочерних узлов весь текст
 function getConcatenedTextContent(node) {
     var _result = "";
     if (node == null) {
@@ -68,7 +63,6 @@ function getConcatenedTextContent(node) {
     return _result;
 }
 
-// суть скрипта
 function sort(e) {
     var el = window.event ? window.event.srcElement : e.currentTarget;
     while (el.tagName.toLowerCase() != "td") el = el.parentNode;
@@ -113,7 +107,6 @@ function sort(e) {
     }
 }
 
-// ф-ция инициализации всего процесса
 function init(e) {
     if (!document.getElementsByTagName) return;
 
@@ -122,7 +115,6 @@ function init(e) {
         for (var i = 0; (node = thead.getElementsByTagName("td").item(i)); i++) {
             if (node.addEventListener) node.addEventListener("click", sort, false);
             else if (node.attachEvent) node.attachEvent("onclick", sort);
-            node.title = "Нажмите на заголовок, чтобы отсортировать колонку";
         }
         thead.parentNode.up = 0;
         
@@ -141,7 +133,6 @@ function init(e) {
     }
 }
 
-// запускаем ф-цию init() при возникновении события load
 var root = window.addEventListener || window.attachEvent ? window : document.addEventListener ? document : null;
 if (root){
     if (root.addEventListener) root.addEventListener("load", init, false);

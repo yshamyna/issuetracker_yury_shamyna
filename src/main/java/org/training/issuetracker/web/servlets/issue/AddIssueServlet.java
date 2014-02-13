@@ -71,7 +71,8 @@ public class AddIssueServlet extends HttpServlet {
 			getServletContext().getRequestDispatcher("/addIssue.jsp").
 				forward(request, response);	
 		} catch (Exception e) {
-			e.printStackTrace();
+			response.getWriter().
+					println("Sorry, but current service is not available... Please try later.");
 		}
 	}
 

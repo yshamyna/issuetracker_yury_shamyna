@@ -46,6 +46,7 @@ public class BuildsServlet extends HttpServlet {
 				response.getWriter().println("");
 			}
 		}
+		response.getWriter().println("");
 	}
 
 }

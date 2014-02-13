@@ -7,27 +7,11 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>Add user</title>
 	<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
+	<link rel=stylesheet href="/issuetracker/css/addUser.css" type="text/css">
+	<script src="/issuetracker/js/util.js"></script>
 	<script type="text/javascript">
 		function submitForm(form) {
-			var errMsg = '';
-			if (!form.elements['firstName'].value.trim()) {
-				errMsg = 'First name is empty.';
-			}
-			if (!form.elements['lastName'].value.trim()) {
-				errMsg += ' Last name is empty.';
-			}
-			if (!form.elements['email'].value.trim()) {
-				errMsg += ' E-mail is empty.';
-			}
-			if (form.elements['roles'].selectedIndex == -1) {
-				errMsg += ' Role is not selected.';
-			}
-			if (!form.elements['password'].value.trim()) {
-				errMsg += ' Password is empty.';
-			}
-			if (!form.elements['passwordConfirmation'].value.trim()) {
-				errMsg += ' Password confirmation is empty.';
-			}
+			
 			if (errMsg) {
 				var span = document.getElementById('errMsg');
 				span.innerHTML = errMsg;
@@ -36,8 +20,7 @@
 				var regExpPass = /[\da-zA-Z@%$,.:;!?]{5,32}/;
 				var isCorrectly = regExpPass.test(form.elements['password'].value);
 				if (!isCorrectly) {
-					var span = document.getElementById('errMsg');
-					span.innerHTML = 'The password must be at least five characters long and can contain letters of the english alphabet in upper and lower case, numbers, punctuation marks and symbols @% $.';
+					printMessage("The password must be at least five characters long and can contain letters of the english alphabet in upper and lower case, numbers, punctuation marks and symbols @% $.")
 					return false;
 				} else {
 					var pass = form.elements['password'].value;
@@ -51,9 +34,51 @@
 			}
 		}
 					
-		function dataExistsError(errMsg) {
-			var span = document.getElementById("errMsg");
-			span.innerHTML = errMsg;
+		
+		
+		function add() {
+			var msg = checkInputs();
+			if (msg) {
+				printMessage(msg);
+				return false;
+			} else {
+				var password = document.getElementById("password").value;
+				var passConfirm = document.
+							getElementById("passwordConfirmation").value;
+				var regExpPass = /[\da-zA-Z@%$,.:;!?]{5,32}/;
+				var isCorrectly = regExpPass.test(password);
+				if (!isCorrectly) {
+					printMessage("The password must be at least five characters long and can contain letters of the english alphabet in upper and lower case, numbers, punctuation marks and symbols @% $.")
+					return false;
+				} 
+				if (password !== passConfirm) {
+					printMessage("The password does not equals password confirmation.");
+					return false;
+				}
+				
+				var req = getXmlHttp();
+				
+				req.onreadystatechange = function() { 
+		        	if (req.readyState == 4 && req.status == 200) {
+		        		var msg = req.responseText;
+		        		printMessage(msg);
+		            }
+		     	};
+		     
+		     	req.open("post", "/issuetracker/users/add", true);
+		     	
+		     	var firstName = document.getElementById("firstName").value;
+		     	var lastName = document.getElementById("lastName").value;
+		     	var email = document.getElementById("email").value;
+		     	var sel = document.getElementById("role");
+		     	var role = sel.options[sel.selectedIndex].value;
+		     	
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				var body = "firstName=" + firstName + "&lastName=" + lastName  
+				+ "&email=" + email + "&roleId=" + role + "&password=" + password;
+				
+				req.send(body);
+			}
 		}
 	</script>
 </head>
@@ -61,29 +86,31 @@
 	<%@ include file="/includes/administratorMenu.html" %>
 	<div class="container">
 		<span class="first-name-label">First name:</span> 
-		<input class="user-first-name" type="text" name="First name"/>
+		<input id="firstName" class="user-first-name" type="text" name="First name"/>
 		<span class="last-name-label">Last name:</span>
-		<input class="user-last-name" type="text" name="Last name"/>
+		<input id="lastName" class="user-last-name" type="text" name="Last name"/>
 		<span class="email-label">E-mail:</span>
-		<input class="user-email" type="text" name="email"/>
+		<input id="email" class="user-email" type="text" name="E-mail"/>
 		<span class="role-label">Role:</span>
-		<select class="user-role" name="Role"/>
+		<select id="role" class="user-role" name="Role"/>
 			<c:forEach var="role" items="${roles}">
-				<c:if test="${role.name not eq 'guest'}">
+				<c:if test="${role.name != 'guest'}">
+					<option value="${role.id}">${role.name}</option>
 				</c:if>
-				<option value="${role.id}">${role.name}</option>
 			</c:forEach>
 		</select>
 		<span class="password-label">Password:</span>
-		<input class="user-password"type="password" name="Password"/>
+		<input id="password" class="user-password"type="password" name="Password"/>
 		<span class="password-confirmation-label">Password confirmation:</span>
-		<input class="user-password-confirmation"type="password" name="Password confirmation"/>
+		<input id="passwordConfirmation" class="user-password-confirmation"type="password" name="Password confirmation"/>
 		<div class="message-container">
 			<span class="container" id="msg"></span>
 		</div>
 		<input id="sbtBtn" class="submitBtn" type="submit" value="Add">
 	</div>
 	<script type="text/javascript">
+		var submit = document.getElementById("sbtBtn");
+		submit.onclick = add;
 	</script>
 </body>
 </html>

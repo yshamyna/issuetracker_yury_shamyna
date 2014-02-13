@@ -26,24 +26,6 @@ function checkInputs() {
 	return msg;
 }
 
-function checkInputsWithTextareas() {
-	var inputs = document.getElementsByTagName("input");
-	var msg = "";
-	for (var i = 0; i < inputs.length; i++) {
-		if (!inputs[i].value.trim()) {
-			msg += inputs[i].name + " is empty. ";
-		}
-	}
-	
-	var textareas = document.getElementsByTagName("textarea");
-	for (var i = 0; i < textareas.length; i++) {
-		if (!textareas[i].value.trim()) {
-			msg += textareas[i].name + " is empty. ";
-		}
-	}
-	return msg;
-}
-
 function removeChilds(node) {
 	while(node.childNodes[0]){
 		node.removeChild(node.childNodes[0]);

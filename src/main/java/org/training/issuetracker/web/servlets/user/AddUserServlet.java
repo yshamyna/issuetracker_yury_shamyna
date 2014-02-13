@@ -14,22 +14,13 @@ import org.training.issuetracker.db.beans.UserRole;
 import org.training.issuetracker.db.service.RoleService;
 import org.training.issuetracker.db.service.UserService;
 
-/**
- * Servlet implementation class AddUserServlet
- */
 public class AddUserServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public AddUserServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			User user = (User) request.getSession().getAttribute("user");
@@ -45,9 +36,6 @@ public class AddUserServlet extends HttpServlet {
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			User user = (User) request.getSession().getAttribute("user");
@@ -62,13 +50,14 @@ public class AddUserServlet extends HttpServlet {
 			u.setRole(role);
 			
 			UserService service = new UserService(user);
-			service.add(user);
+			service.add(u);
 			
 			response.getWriter().println("User was added successfully.");
 		} catch (JdbcSQLException e) {
 			response.getWriter().println("Already exists user with e-mail '" 
 					+ request.getParameter("email") + "'");
 		} catch (Exception e) {
+			e.printStackTrace();
 			response.getWriter().
 				println("Sorry, but current service is not available... Please try later.");
 		}
