@@ -119,7 +119,7 @@ public class UserDAO {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("update users set password=? where id=?");
-			ps.setString(1, user.getPassword());
+			ps.setString(1, password);
 			ps.setLong(2, user.getId());
 			ps.executeUpdate();
 		} finally {
@@ -127,7 +127,7 @@ public class UserDAO {
 		}
 	}
 
-	public void update(Connection connection, User user) throws Exception {
+	public void update(Connection connection, User user) throws SQLException {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement("update users set firstName=?, lastName=?, email=?, roleId=? where id=?");

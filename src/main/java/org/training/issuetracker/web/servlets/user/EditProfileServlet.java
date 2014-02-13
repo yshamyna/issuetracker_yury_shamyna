@@ -10,36 +10,24 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.UserService;
 
-/**
- * Servlet implementation class EditProfileServlet
- */
 public class EditProfileServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public EditProfileServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		getServletContext().getRequestDispatcher("/editProfile.jsp").
 			forward(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			User user = (User) request.getSession().getAttribute("user");
 			
-			String firstName = request.getParameter("fName");
-			String lastName = request.getParameter("lName");
+			String firstName = request.getParameter("firstName");
+			String lastName = request.getParameter("lastName");
 			String email = request.getParameter("email");
 			
 			user.setFirstName(firstName);

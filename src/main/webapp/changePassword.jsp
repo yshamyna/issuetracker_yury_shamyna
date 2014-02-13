@@ -7,140 +7,71 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Change password</title>
 		<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
-		<script>
-		function getXmlHttp(){
-	  		var xmlhttp;
-	  		try {
-	    		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-	  		} catch (e) {
-	    		try {
-	      			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-	    		} catch (E) {
-	      			xmlhttp = false;
-	    		}
-	  		}
-	  		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-	    		xmlhttp = new XMLHttpRequest();
-	  		}
-	  		return xmlhttp;
-		}
-		
-		function checkPassword(pass, passConfirm) {
-			var regExpPass = /[\da-zA-Z@%$,.:;!?]{5,32}/;
-			if (!regExpPass.test(pass)) {
-				printMessage("The password must be at least five characters long and can contain letters of the english alphabet in upper and lower case, numbers, punctuation marks and symbols @% $.");
-				return false;
-			} else {
-				if (pass !== passConfirm) {
-					printMessage("The password does not equals password confirmation.");
+		<link rel=stylesheet href="/issuetracker/css/changePassword.css" type="text/css">
+		<script src="/issuetracker/js/util.js"></script>
+		<script type="text/javascript">
+			function checkPassword(pass, passConfirm) {
+				var regExpPass = /[\da-zA-Z@%$,.:;!?]{5,32}/;
+				if (!regExpPass.test(pass)) {
+					printMessage("The password must be at least five characters long and can contain letters of the english alphabet in upper and lower case, numbers, punctuation marks and symbols @% $.");
 					return false;
+				} else {
+					if (pass !== passConfirm) {
+						printMessage("The password does not equals password confirmation.");
+						return false;
+					}
 				}
+				return true;
 			}
-			return true;
-		}
 		
-		function change(id, url, data) {
-			if (!isCorrectData()) return;
-			var pass = document.getElementById("pass").value;
-			var passConfirm = document.getElementById("passConfirm").value;
-			if (!checkPassword(pass, passConfirm)) return;
-			
-			var req = getXmlHttp();
-			req.onreadystatechange = function() { 
-	        	if (req.readyState == 4 && req.status == 200) {
-	        		var msg = req.responseText;
-	        		printMessage(msg);
-	            }
-	     	};
-			req.open("post", url, true);
-			req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-			var body = "";
-			for (var i = 0; i < data.length; i++) {
-				var parameterName = data[i].getParameter();
-				var parameterValue = data[i].getElement().value;
-				body += parameterName + "=" + parameterValue + "&";
+			function change() {
+				var msg = checkInputs();
+				if (msg) {
+					printMessage(msg);
+					return false;
+				} 
+				var pass = document.getElementById("pass").value;
+				var passConfirm = document.getElementById("passConfirm").value;
+				if (!checkPassword(pass, passConfirm)) return;
+				
+				var req = getXmlHttp();
+				req.onreadystatechange = function() { 
+		        	if (req.readyState == 4 && req.status == 200) {
+		        		var msg = req.responseText;
+		        		printMessage(msg);
+		            }
+		     	};
+				req.open("post", "/issuetracker/profile/change-password", true);
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				req.send("password=" + pass);
 			}
-			body += "id=" + id;
-			req.send(body);
-		}
-		
-		function printMessage(errMsg) {
-			var span = document.getElementById("msg");
-			span.innerHTML = errMsg;
-		}
-		
-		function isCorrectData() {
-			var msg = checkTextFields();
-			if (msg) {
-				printMessage(msg);
-				return false;
-			}
-			return true;
-		}
-		
-		function checkTextFields() {
-			var inputs = document.getElementsByTagName("input");
-			var msg = "";
-			for (var i = 0; i < inputs.length; i++) {
-				if (!inputs[i].value.trim()) {
-					msg += inputs[i].name + " is empty. ";
-				}
-			}
-			var textareas = document.getElementsByTagName("textarea");
-			for (var i = 0; i < textareas.length; i++) {
-				if (!textareas[i].value.trim()) {
-					msg += textareas[i].name + " is empty. ";
-				}
-			}
-			return msg;
-		}
-		
-		function Element(parameter, element) {
-			this.parameter = parameter;
-			this.element = element;
-			
-			this.getParameter = function() {
-				return this.parameter;
-			};
-			this.getElement = function() {
-				return this.element;
-			};
-		}
-		
-		function onclick() {
-			var newPassword = new Element("newPassword", document.getElementById("pass"));
-			var passwordConfirmation = new Element("passwordConfirmation", document.getElementById("passConfirm"));
-			var data = [newPassword, passwordConfirmation];
-			change("${user.id}", "/issuetracker/profile/change-password", data);
-		}
 	</script>
 	</head>
-<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
+<body>
 	<c:choose>
-		<c:when test="${user.role.value eq 'administrator'}">
+		<c:when test="${user.role.name eq 'administrator'}">
 			<%@ include file="/includes/administratorMenu.html" %>
 		</c:when>
-		<c:when test="${user.role.value eq 'user'}">
+		<c:when test="${user.role.name eq 'user'}">
 			<%@ include file="/includes/userMenu.html" %>
 		</c:when>
 	</c:choose>
 	
-	<div style="position:relative;width:100%;height:230px;background-color:rgb(25, 28, 36);font-family:arial;color:white;font-size:10pt;margin-top:1px">
-		<span style="position:absolute;right:50%;top:10px;margin-right:100px;">New password:</span> 
-		<input id="pass" style="position:absolute;left:50%;top:5px;margin-left:-100px;width:200px;" type="password" name="New password"/>
+	<div class="container">
+		<span class="password-label">New password:</span> 
+		<input id="pass" class="user-password" type="password" name="New password"/>
 		
-		<span style="position:absolute;right:50%;top:35px;margin-right:100px;">Password confirmation:</span>
-		<input id="passConfirm" style="position:absolute;left:50%;top:30px;margin-left:-100px;width:200px;" type="password" name="Password confirmation"/>
+		<span class="password-confirmation-label">Password confirmation:</span>
+		<input id="passConfirm" class="user-password-confirmation" type="password" name="Password confirmation"/>
 		
-		<div style="text-align:center;position:absolute;top:70px;width:100%">
-			<span id="msg" style="font-size:10pt;color:red;margin:auto;"></span>
+		<div class="message-container">
+			<span id="msg" class="message"></span>
 		</div>
-		<input id="submitBtn" style="position:absolute;left:50%;top:94px;margin-left:-100px;width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;border-radius:3px;height:30px;font-size:12pt;font-weight:bold;" type="submit" value="Ok">
+		<input id="sbtBtn" class="submitBtn" type="button" value="Change password">
 	</div>
-	
 	<script type="text/javascript">
-		var submit = document.getElementById("submitBtn");
-		submit.onclick = onclick;
+		var submit = document.getElementById("sbtBtn");
+		submit.onclick = change;
 	</script>
 </body>
 </html>

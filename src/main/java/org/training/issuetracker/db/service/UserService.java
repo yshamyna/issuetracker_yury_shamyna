@@ -32,7 +32,7 @@ public class UserService {
 		}
 	}
 
-	public void update(User user) throws Exception {
+	public void update(User user) throws SQLException {
 		try {
 			UserDAO userDAO = new UserDAO();
 			userDAO.update(connection, user);

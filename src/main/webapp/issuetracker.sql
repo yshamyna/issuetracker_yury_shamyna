@@ -27,8 +27,8 @@ create table managers(
 );
 create table users(
     id int primary key auto_increment, 
-    firstName varchar(20) not null, 
-    lastName varchar(20) not null, 
+    firstName varchar(30) not null, 
+    lastName varchar(30) not null, 
     email varchar(50) not null, 
     roleId int not null references roles(id), 
     password varchar(32)
@@ -282,8 +282,8 @@ create user administrator password 'Issue_tracker_administrator';
 create user user password 'Issue_tracker_user';
 create user guest password 'Issue_tracker_guest';
 
-grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers,comments to user;
+grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers, comments, attachments to user;
 grant update on issues, users to user;
 grant insert on comments,attachments to user;
-grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers to guest;
-grant all on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers,comments,attachments to administrator;
+grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers, comments, attachments to guest;
+grant all on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers, comments, attachments to administrator;

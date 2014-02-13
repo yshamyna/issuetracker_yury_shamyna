@@ -49,45 +49,45 @@
 <body>
 	<%@ include file="/includes/administratorMenu.html" %>
 	<div class="container">
-			<span class="name-label" style="">Name:</span> 
-			<input id="name" class="project-name" type="text" name="Project name" value="${project.name}"/>
-			
-			<span class="description-label">Description:</span>
-			<textarea id="description" class="project-description" name="Project description">${project.description}</textarea>
-			
-			<span class="build-label">Build:</span>
-			<select id="build" class="project-build" name="Build">
-				<c:forEach var="build" items="${builds}">
-					<c:choose>
-						<c:when test="${build.isCurrent eq true}">
-							<option value="${build.id}" selected>${build.version}</option>
-						</c:when>
-						<c:otherwise>
-							<option value="${build.id}">${build.version}</option>		
-						</c:otherwise>
-					</c:choose>
-				</c:forEach>
-			</select> 
-			<a href="/issuetracker/builds/add?id=${project.id}" class="add-build">Add</a>
-			
-			<span class="manager-label">Manager:</span>
-			<select id="manager" class="project-manager" name="Manager"/>
-				<c:forEach var="manager" items="${managers}">
-					<c:choose>
-						<c:when test="${manager.id eq project.manager.id}">
-							<option value="${manager.id}" selected>${manager.firstName} ${manager.lastName}</option>
-						</c:when>
-						<c:otherwise>
-							<option value="${manager.id}">${manager.firstName} ${manager.lastName}</option>		
-						</c:otherwise>
-					</c:choose>
-				</c:forEach>
-			</select>
-			<div class="message-container">
-				<span id="msg" class="message"></span>
-			</div>
-			<input id="sbtBtn" class="submitBtn" type="button" value="Update">
+		<span class="name-label" style="">Name:</span> 
+		<input id="name" class="project-name" type="text" name="Project name" value="${project.name}"/>
+		
+		<span class="description-label">Description:</span>
+		<textarea id="description" class="project-description" name="Project description">${project.description}</textarea>
+		
+		<span class="build-label">Build:</span>
+		<select id="build" class="project-build" name="Build">
+			<c:forEach var="build" items="${builds}">
+				<c:choose>
+					<c:when test="${build.isCurrent eq true}">
+						<option value="${build.id}" selected>${build.version}</option>
+					</c:when>
+					<c:otherwise>
+						<option value="${build.id}">${build.version}</option>		
+					</c:otherwise>
+				</c:choose>
+			</c:forEach>
+		</select> 
+		<a href="/issuetracker/builds/add?id=${project.id}" class="add-build">Add</a>
+		
+		<span class="manager-label">Manager:</span>
+		<select id="manager" class="project-manager" name="Manager"/>
+			<c:forEach var="manager" items="${managers}">
+				<c:choose>
+					<c:when test="${manager.id eq project.manager.id}">
+						<option value="${manager.id}" selected>${manager.firstName} ${manager.lastName}</option>
+					</c:when>
+					<c:otherwise>
+						<option value="${manager.id}">${manager.firstName} ${manager.lastName}</option>		
+					</c:otherwise>
+				</c:choose>
+			</c:forEach>
+		</select>
+		<div class="message-container">
+			<span id="msg" class="message"></span>
 		</div>
+		<input id="sbtBtn" class="submitBtn" type="button" value="Update">
+	</div>
 	
 	<script type="text/javascript">
 		var submitBtn = document.getElementById("sbtBtn");

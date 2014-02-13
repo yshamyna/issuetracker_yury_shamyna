@@ -35,7 +35,7 @@
 </head>
 <body>
 	<%@ include file="/includes/administratorMenu.html" %>
-	<div class="container">
+	<div id="ctnr" class="container">
 		<span class="version-label">Version:</span> 
 		<input class="build-version" id="version" type="text" name="Version"/>
 		<div class="message-container">
@@ -52,7 +52,7 @@
 		back.setAttribute("class", "back");
 		back.innerHTML = "Back";
 		
-		var addMenu = document.getElementById("add-menu");
+		var addMenu = document.getElementById("ctnr");
 		addMenu.appendChild(back);
 	</script>
 </body>

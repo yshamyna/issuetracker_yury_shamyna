@@ -1,12 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>Edit issue</title>
 	<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
+	<link rel=stylesheet href="/issuetracker/css/editIssue.css" type="text/css">
 	<script>
 		function getXmlHttp(){
 	  		var xmlhttp;
@@ -181,87 +183,140 @@
 		}
 	</script>
 </head>
-<body style="margin:0;padding:0;background-color:rgb(243, 245, 245);">
+<body>
 	<c:choose>
-		<c:when test="${user.role.value eq 'administrator'}">
+		<c:when test="${user.role.name eq 'administrator'}">
 			<%@ include file="/includes/administratorMenu.html" %>
 		</c:when>
-		<c:when test="${user.role.value eq 'user'}">
+		<c:when test="${user.role.name eq 'user'}">
 			<%@ include file="/includes/userMenu.html" %>
 		</c:when>
 		<c:otherwise>
 			<%@ include file="/includes/guestMenu.html" %>
 		</c:otherwise>
 	</c:choose>
-	
-	
+	<div class="section-delimiter">Edit section</div>
 	<c:choose>
 		<c:when test="${empty user}">
-			<div style="position:relative;width:100%;height:400px;background-color:rgb(25, 28, 36);font-family:arial;color:white;font-size:10pt;margin-top:1px;">
-				<span style="position:absolute;right:50%;top:10px;margin-right:100px;">Create date:</span> 
-				<input style="position:absolute;left:50%;top:5px;margin-left:-100px;width:200px;" type="text" value="${issue.createDate}" readonly/>
-			
-				<span style="position:absolute;right:50%;top:35px;margin-right:100px;">Create by:</span> 
-				<input style="position:absolute;left:50%;top:30px;margin-left:-100px;width:200px;" type="text" value="${issue.createdBy.firstName} ${issue.createdBy.lastName}" readonly/>
-				
-				<span style="position:absolute;right:50%;top:60px;margin-right:100px;">Modify date:</span> 
-				<input style="position:absolute;left:50%;top:55px;margin-left:-100px;width:200px;" type="text" value="${issue.modifyDate}" readonly/>
-				
-				<span style="position:absolute;right:50%;top:85px;margin-right:100px;">Modify by:</span> 
-				<input style="position:absolute;left:50%;top:80px;margin-left:-100px;width:200px;" type="text" value="${issue.modifyBy.firstName} ${issue.modifyBy.lastName}" readonly/>
-				
-				<span style="position:absolute;right:50%;top:110px;margin-right:100px;">Summary:</span> 
-				<input style="position:absolute;left:50%;top:105px;margin-left:-100px;width:200px;" type="text" value="${issue.summary}" readonly/>
-		
-				<span style="position:absolute;right:50%;top:135px;margin-right:100px;">Description:</span>
-				<textarea style="position:absolute;left:50%;top:130px;margin-left:-100px;max-width:200px;max-height:50px;width:200px;height:50px;" readonly>${issue.description}</textarea>
-				
-				<span style="position:absolute;right:50%;top:190px;margin-right:100px;">Status:</span> 
-				<input style="position:absolute;left:50%;top:185px;margin-left:-100px;width:200px;" type="text" value="${issue.status.value}" readonly/>
-				
-				<span style="position:absolute;right:50%;top:212px;margin-right:100px;">Type:</span> 
-				<input style="position:absolute;left:50%;top:207px;margin-left:-100px;width:200px;" type="text" value="${issue.type.value}" readonly/>
-				
-				<span style="position:absolute;right:50%;top:234px;margin-right:100px;">Priority:</span> 
-				<input style="position:absolute;left:50%;top:229px;margin-left:-100px;width:200px;" type="text" value="${issue.priority.value}" readonly/>
-				
-				<span style="position:absolute;right:50%;top:256px;margin-right:100px;">Project:</span> 
-				<input style="position:absolute;left:50%;top:251px;margin-left:-100px;width:200px;" type="text" value="${issue.project.name}" readonly/>
-				
-				<span style="position:absolute;right:50%;top:278px;margin-right:100px;">Build found:</span> 
-				<input style="position:absolute;left:50%;top:273px;margin-left:-100px;width:200px;" type="text" value="${issue.buildFound.version}" readonly/>
-				
-				<span style="position:absolute;right:50%;top:300px;margin-right:100px;">Assignee:</span> 
-				<input style="position:absolute;left:50%;top:295px;margin-left:-100px;width:200px;" type="text" value="${issue.assignee.firstName} ${issue.assignee.lastName}" readonly/>
-			</div>
-		</c:when>
-		<c:otherwise>
-			<span style="margin-top:20px;font-family:arial; font-size:16pt;color:gray;">Edit section</span>
-			<div style="width:700px; height:250px;font-family:arial;font-size:10pt; padding-left:5px;padding-top:5px;">
-				<div style="height:50px">
-					<div style="float:left;width:220px;">
-						<span>Create by: </span><br/>
-						<input type="text"  style="width:200px;" name="Create by" value="${issue.createdBy.firstName} ${issue.createdBy.lastName}" readonly/>
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<span>Create by:</span><br/> 
+						<input class="ceil" type="text" value="${issue.createBy.firstName} ${issue.createBy.lastName}" readonly/>
 					</div>
-					
-					<div style="float:left;width:220px;">
+					<div class="col">
+						<span>Status:</span><br/> 
+						<input class="ceil" type="text" value="${issue.status.name}" readonly/>
+					</div>
+					<div class="col">
+						<span>Project:</span><br/> 
+						<input class="ceil" type="text" value="${issue.project.name}" readonly/>
+					</div>					
+				</div>
+				<div class="row">
+					<div class="col">
+						<span>Create date:</span><br/> 
+						<input class="ceil" type="text" value="${issue.createDate}" readonly/>
+					</div>
+					<div class="col">
+						<span>Type:</span><br/> 
+						<input class="ceil" type="text" value="${issue.type.name}" readonly/>
+					</div>
+					<div class="col">
+						<span>Build found:</span><br/> 
+						<input class="ceil" type="text" value="${issue.buildFound.version}" readonly/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<span>Modify by:</span><br/> 
+						<input class="ceil" type="text" value="${issue.modifyBy.firstName} ${issue.modifyBy.lastName}" readonly/>
+					</div>
+					<div class="col">
+						<span>Priority:</span><br/> 
+						<input class="ceil" type="text" value="${issue.priority.name}" readonly/>
+					</div>
+					<div class="col">
+						<span class="guest-summary-label">Summary:</span><br/> 
+						<textarea class="ceil" readonly>${issue.summary}</textarea>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<span>Modify date:</span><br/>
+						<input class="ceil" type="text" value="${issue.modifyDate}" readonly/>
+					</div>
+					<div class="col">
+						<span>Assignee:</span><br/> 
+						<input class="ceil" type="text" value="${issue.assignee.firstName} ${issue.assignee.lastName}" readonly/>
+					</div>
+					<div class="col">
+						<span>Description:</span><br/>
+						<textarea class="ceil" readonly>${issue.description}</textarea>
+					</div>
+				</div>
+			</div>
+			<div class="section-delimiter">Comment section</div>
+				<c:choose>
+					<c:when test="${fn:length(comments) == 0}">
+						<div class="message-container">
+							<span id="msg" class="message">Comments not found</span>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<div class="comment-storage">
+							<c:forEach var="comment" items="${comments}">
+								<div class="comment-block">
+									<span>Added by: ${comment.sender.firstName} ${comment.sender.lastName}</span><br/>
+									<span>Add date: ${comment.createDate}</span><br/>
+									<span>Comment: ${comment.comment}</span>
+								</div>	
+							</c:forEach>
+						</div><br/>
+					</c:otherwise>
+				</c:choose>
+			<div class="section-delimiter">Attachment section</div>
+				<c:choose>
+					<c:when test="${fn:length(attachments) == 0}">
+						<div class="message-container">
+							<span id="msg" class="message">Attachments not found</span>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<c:forEach var="attachment" items="${attachments}">
+							<div class="attachment-block">
+								<span>Added by: ${attachment.addedBy.firstName} ${attachment.addedBy.lastName}</span><br/>
+								<span>Add date: ${attachment.addDate}</span><br/>
+								<span>File: ${attachment.filename}</span>
+							</div>	
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
+			</c:when>
+		<c:otherwise>
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<span>Create by:</span><br/>
+						<input type="text" name="Create by" value="${issue.createBy.firstName} ${issue.createBy.lastName}" readonly/>
+					</div>
+					<div class="col">
 						<span>Status: </span><br/>
 						<select id="status" style="width:200px;" name="status">
 							<c:forEach var="status" items="${statuses}">
 								<c:choose>
 									<c:when test="${status.id eq issue.status.id}">
-										<option value="${status.id}" selected>${status.value}</option>
+										<option value="${status.id}" selected>${status.name}</option>
 									</c:when>
 									<c:otherwise>
-										<option value="${status.id}">${status.value}</option>		
+										<option value="${status.id}">${status.name}</option>		
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
 						</select>
 					</div>
-					
-					<div style="float:left;width:220px; ">
-						<span>Project: </span><br/>
+					<div class="col">
+						<span>Project:</span><br/>
 						<select id="select-projects" name="project" onchange="changeProject();" style="width:200px;">
 							<c:forEach var="project" items="${projects}">
 								<c:choose>
@@ -276,31 +331,27 @@
 						</select>
 					</div>
 				</div>
-				
-				
-				<div style="height:50px;">
-					<div style="float:left; width:220px;">
-						<span>Create date: </span><br/>
+				<div class="row">
+					<div class="col">
+						<span>Create date:</span><br/>
 						<input type="text" style="width:200px;" name="Create date" value="${issue.createDate}" readonly/>
 					</div>
-					
-					<div style="float:left; width:220px;">
+					<div class="col">
 						<span>Type:</span><br/>
 						<select id="type" name="type" style="width:200px;">
 							<c:forEach var="type" items="${types}">
 								<c:choose>
 									<c:when test="${type.id eq issue.type.id}">
-										<option value="${type.id}" selected>${type.value}</option>
+										<option value="${type.id}" selected>${type.name}</option>
 									</c:when>
 									<c:otherwise>
-										<option value="${type.id}">${type.value}</option>	
+										<option value="${type.id}">${type.name}</option>	
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
 						</select>
 					</div>
-					
-					<div style="float:left; width:220px;">
+					<div class="col">
 						<span>Build found: </span><br/>
 						<select id="select-builds" name="build" style="width:200px;">
 							<c:forEach var="build" items="${builds}">
@@ -316,45 +367,38 @@
 						</select>
 					</div>
 				</div>
-				
-				
-				<div style="height:50px;">
-					<div style="float:left; width:220px;">
+				<div class="row">
+					<div class="col">
 						<span>Modify by: </span><br/>
 						<input type="text" style="width:200px;" name="Modify by" 
 										value="${issue.modifyBy.firstName} ${issue.modifyBy.lastName}" readonly/>
 					</div>
-					
-					<div style="float:left; width:220px;">
+					<div class="col">
 						<span>Priority: </span><br/>
 						<select id="priority" name= "priority" style="width:200px;">
 							<c:forEach var="priority" items="${priorities}">
 								<c:choose>
 									<c:when test="${priority.id eq issue.priority.id}">
-										<option value="${priority.id}" selected>${priority.value}</option>
+										<option value="${priority.id}" selected>${priority.name}</option>
 									</c:when>
 									<c:otherwise>
-										<option value="${priority.id}">${priority.value}</option>	
+										<option value="${priority.id}">${priority.name}</option>	
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
 						</select>
 					</div>
-					
-					<div style="float:left; width:220px;">
+					<div class="col">
 						<span>Summary:</span><br/>
 						<textarea style="width:200px;" name="Summary">${issue.summary}</textarea>
 					</div>
 				</div>
-				
-				
-				<div style="height:50px;">
-					<div style="float:left; width:220px;">
+				<div class="row">
+					<div class="col">
 						<span>Modify date:</span><br/>
 						<input type="text" style="width:200px;" name="Modify date" value="${issue.modifyDate}" readonly/>
 					</div>
-					
-					<div style="float:left; width:220px;">
+					<div class="col">
 						<span>Assignee:</span><br/>
 						<select id="assignee" name="assignee" style="width:200px;">
 							<option value="-1" selected></option>
@@ -370,44 +414,58 @@
 							</c:forEach>
 						</select>
 					</div>
-					
-					<div style="float:left; width:220px;">
+					<div class="col">
 						<span>Description:</span><br/>
 						<textarea style="width:200px;" name="Description">${issue.description}</textarea>
 					</div>
 				</div>
-				
 				<span id="msg" style="font-size:10pt;color:red;"></span><br/><br/>
-				<input id="submitBtn" style="width:204px;border:1px solid #3079ed;color:#fff;background-color: #4d90fe;height:30px;font-size:12pt;font-weight:bold;" type="button" value="Edit">
+				<input id="sbtBtn" class="submitBtn" type="button" value="Edit">
 			</div>
-			<div style="padding-top:20px;font-family:arial; font-size:16pt;color:gray;">Comment section</div>
-			<div id="commentsStorage" style="overflow-y:auto;overflow-x:hidden;margin-top:20px;width:100%; height:200px;background-color:rgb(25,28,36)">
-				<c:forEach var="comment" items="${comments}">
-					<div style="background-color:rgb(206, 227, 253);width:100%;margin-top:2px;padding-left:2px;">
-						<span>Added by: ${comment.sender.firstName} ${comment.sender.lastName}</span><br/>
-						<span>Add date: ${comment.createDate}</span><br/>
-						<span>Comment: ${comment.comment}</span>
-					</div>	
-				</c:forEach>
-			</div><br/>
-				<textarea id="comment" name="comment"></textarea><br/>
-				<input id="addCommentBtn" type="button" value="Add comment"><br/>
+			<div class="section-delimiter">Comment section</div>
+			<c:choose>
+				<c:when test="${fn:length(comments) == 0}">
+					<div class="message-container">
+						<span id="msg" class="message">Comments not found</span>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div class="comment-storage">
+						<c:forEach var="comment" items="${comments}">
+							<div class="comment-block">
+								<span>Added by: ${comment.sender.firstName} ${comment.sender.lastName}</span><br/>
+								<span>Add date: ${comment.createDate}</span><br/>
+								<span>Comment: ${comment.comment}</span>
+							</div>	
+						</c:forEach>
+					</div><br/>
+				</c:otherwise>
+			</c:choose>
+			<textarea id="comment" name="comment"></textarea><br/>
+			<input id="addCommentBtn" type="button" value="Add comment"><br/>
 			<script type="text/javascript">
-				var submit = document.getElementById("submitBtn");
+				var submit = document.getElementById("sbtBtn");
 				submit.onclick = onClick;
 				var addCommentBtn = document.getElementById("addCommentBtn");
 				addCommentBtn.onclick = add;
 			</script>
-			<span style="margin-top:20px;font-family:arial; font-size:16pt;color:gray;">Attachment section</span>
-			<div>
-				<c:forEach var="attachment" items="${attachments}">
-					<div style="background-color:rgb(206, 227, 253);width:100%;margin-top:2px;padding-left:2px;">
-						<span>Added by: ${attachment.addedBy.firstName} ${attachment.addedBy.lastName}</span><br/>
-						<span>Add date: ${attachment.addDate}</span><br/>
-						<span>File: <a href="/issuetracker/download?issue=${issue.id}&filename=${attachment.filename}">${attachment.filename}</a></span>
-					</div>	
-				</c:forEach>
-			</div>
+			<div class="section-delimiter">Attachment section</div>
+			<c:choose>
+				<c:when test="${fn:length(attachments) == 0}">
+					<div class="message-container">
+						<span id="msg" class="message">Attachments not found</span>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<c:forEach var="attachment" items="${attachments}">
+						<div class="attachment-block">
+							<span>Added by: ${attachment.addedBy.firstName} ${attachment.addedBy.lastName}</span><br/>
+							<span>Add date: ${attachment.addDate}</span><br/>
+							<span>File: <a href="/issuetracker/download?issue=${issue.id}&filename=${attachment.filename}">${attachment.filename}</a></span>
+						</div>	
+					</c:forEach>
+				</c:otherwise>
+			</c:choose>
 			<form action="/issuetracker/upload?issue=${issue.id}" enctype="multipart/form-data" method="POST">
     			<input type="file" name="file"><br>
     			<input type="Submit" value="Upload File"><br>
