@@ -21,7 +21,7 @@ public class DBManager {
         		break;
         	case USER: 
         		connection = DriverManager.
-        		getConnection("jdbc:h2:issuetracker", "guest", 
+        		getConnection("jdbc:h2:issuetracker", "user", 
         				"Issue_tracker_user");
         		break;
         	case ADMINISTRATOR:

@@ -1,20 +1,26 @@
-package org.training.issuetracker.web.actions;
+package org.training.issuetracker.web.servlets;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.UserService;
-import org.training.issuetracker.web.actions.interfaces.WebAction;
 
-public class LoginWebAction implements WebAction {
+public class Login extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public Login() {
+        super();
+    }
 
-	@Override
-	public void execute(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.getRequestDispatcher("/dashboard.jsp").forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String email = request.getParameter("E-mail");
 		String password = request.getParameter("Password");
 		try {
@@ -30,6 +36,7 @@ public class LoginWebAction implements WebAction {
 			response.sendRedirect("dashboard");
 			return;
 		} catch (Exception e) {
+			e.printStackTrace();
 			response.getWriter().
 				println("Sorry, but current service is not available... Please try later.");
 		}

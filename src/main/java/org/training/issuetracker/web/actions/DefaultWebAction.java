@@ -8,12 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.web.actions.interfaces.WebAction;
 
-public class LogoutWebAction implements WebAction {
+public class DefaultWebAction implements WebAction {
 
 	@Override
-	public void execute(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		request.getSession().removeAttribute("user");
+	public void execute(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		response.sendRedirect("dashboard");
 	}
 
