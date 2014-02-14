@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.Type;
+import org.training.issuetracker.db.dao.service.constants.FieldsConstans;
+import org.training.issuetracker.db.dao.service.constants.QueriesConstants;
 import org.training.issuetracker.db.util.DBManager;
 
 public class TypeDAO {
@@ -18,14 +20,14 @@ public class TypeDAO {
 		ResultSet rs = null;
 		try {
 			st = connection.createStatement();
-			st.execute("select id, name from types");
+			st.execute(QueriesConstants.TYPE_SELECT_ALL);
 			rs = st.getResultSet();
 			List<Type> types = new ArrayList<Type>();
 			Type type = null;
 			while (rs.next()) {
 				type = new Type();
-				type.setId(rs.getInt("id"));
-				type.setName(rs.getString("name"));
+				type.setId(rs.getInt(FieldsConstans.ID));
+				type.setName(rs.getString(FieldsConstans.NAME));
 				types.add(type);
 			}
 			return types;
@@ -35,17 +37,19 @@ public class TypeDAO {
 		}
 	}
 
-	public Type getById(Connection connection, long id) throws SQLException {
+	public Type getById(Connection connection, long id) 
+				throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = connection.prepareStatement("select name from types where id=?");
+			ps = connection.prepareStatement(QueriesConstants.
+						TYPE_SELECT_BY_ID);
 			ps.setLong(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				Type type = new Type();
 				type.setId(id);
-				type.setName(rs.getString("name"));
+				type.setName(rs.getString(FieldsConstans.NAME));
 				return type;
 			}
 		} finally {
@@ -58,7 +62,7 @@ public class TypeDAO {
 	public void add(Connection connection, Type type) throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("insert into types(name) values(?)");
+			ps = connection.prepareStatement(QueriesConstants.TYPE_ADD);
 			ps.setString(1, type.getName());
 			ps.executeUpdate();
 		} finally {
@@ -70,7 +74,7 @@ public class TypeDAO {
 			throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("update types set name=? where id=?");
+			ps = connection.prepareStatement(QueriesConstants.TYPE_UPDATE);
 			ps.setString(1, type.getName());
 			ps.setLong(2, type.getId());
 			ps.executeUpdate();

@@ -6,6 +6,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
+
 public class Logout extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -13,14 +16,16 @@ public class Logout extends HttpServlet {
         super();
     }
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getSession().removeAttribute("user");
-		response.sendRedirect("dashboard");
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+					throws ServletException, IOException {
+		request.getSession().removeAttribute(ParameterConstants.USER);
+				response.sendRedirect(URLConstants.DASHBOARD);
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getSession().removeAttribute("user");
-		response.sendRedirect("dashboard");
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+					throws ServletException, IOException {
+		request.getSession().removeAttribute(ParameterConstants.USER);
+				response.sendRedirect(URLConstants.DASHBOARD);
 	}
 
 }

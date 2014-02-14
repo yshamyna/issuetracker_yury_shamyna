@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.Manager;
+import org.training.issuetracker.db.dao.service.constants.FieldsConstans;
+import org.training.issuetracker.db.dao.service.constants.QueriesConstants;
 import org.training.issuetracker.db.util.DBManager;
 
 public class ManagerDAO {
@@ -18,15 +20,15 @@ public class ManagerDAO {
 		ResultSet rs = null;
 		try {
 			st = connection.createStatement();
-			st.execute("select id, firstName, lastName from managers");
+			st.execute(QueriesConstants.MANAGER_SELECT_ALL);
 			rs = st.getResultSet();
 			List<Manager> managers = new ArrayList<Manager>();
 			Manager manager = null;
 			while (rs.next()) {
 				manager = new Manager();
-				manager.setId(rs.getInt("id"));
-				manager.setFirstName(rs.getString("firstName"));
-				manager.setLastName(rs.getString("lastName"));
+				manager.setId(rs.getInt(FieldsConstans.ID));
+				manager.setFirstName(rs.getString(FieldsConstans.FIRST_NAME));
+				manager.setLastName(rs.getString(FieldsConstans.LAST_NAME));
 				managers.add(manager);
 			}
 			return managers;
@@ -40,14 +42,15 @@ public class ManagerDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-	        ps = connection.prepareStatement("select firstName, lastName from managers where id=?");
+	        ps = connection.prepareStatement(QueriesConstants.
+	        				MANAGER_SELECT_BY_ID);
 	        ps.setLong(1, id);
 	        rs = ps.executeQuery();
 	        if (rs.next()) {
 	        	Manager manager = new Manager();
 	        	manager.setId(id);
-	        	manager.setFirstName(rs.getString("firstName"));
-	        	manager.setLastName(rs.getString("lastName"));
+	        	manager.setFirstName(rs.getString(FieldsConstans.FIRST_NAME));
+	        	manager.setLastName(rs.getString(FieldsConstans.LAST_NAME));
 	        	return manager;
 	        }
 		} finally {

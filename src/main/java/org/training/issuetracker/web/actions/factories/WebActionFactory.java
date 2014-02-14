@@ -46,7 +46,6 @@ public class WebActionFactory {
 				case CHANGE_PASSWORD: webAction = new ChangePasswordWebAction(); break;
 				case EDIT_PROFILE: webAction = new EditProfileWebAction(); break;
 			}
-			
 		} catch (Exception e) {
 			webAction = new DefaultWebAction();
 		} 

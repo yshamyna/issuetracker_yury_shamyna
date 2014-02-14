@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.UserRole;
+import org.training.issuetracker.db.dao.service.constants.FieldsConstans;
+import org.training.issuetracker.db.dao.service.constants.QueriesConstants;
 import org.training.issuetracker.db.util.DBManager;
 
 public class RoleDAO {
@@ -18,14 +20,14 @@ public class RoleDAO {
 		ResultSet rs = null;
 		try {
 			st = connection.createStatement();
-			st.execute("select id, name from roles");
+			st.execute(QueriesConstants.ROLE_SELECT_ALL);
 			rs = st.getResultSet();
 			List<UserRole> roles = new ArrayList<UserRole>();
 			UserRole role = null;
 			while (rs.next()) {
 				role = new UserRole();
-				role.setId(rs.getInt("id"));
-				role.setName(rs.getString("name"));
+				role.setId(rs.getInt(FieldsConstans.ID));
+				role.setName(rs.getString(FieldsConstans.NAME));
 				roles.add(role);
 			}
 			return roles;
@@ -35,17 +37,19 @@ public class RoleDAO {
 		}
 	}
 
-	public UserRole getById(Connection connection, long id) throws SQLException {
+	public UserRole getById(Connection connection, long id) 
+				throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = connection.prepareStatement("select name from roles where id=?");
+			ps = connection.prepareStatement(QueriesConstants.
+					ROLE_SELECT_BY_ID);
 			ps.setLong(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				UserRole role = new UserRole();
 				role.setId(id);
-				role.setName(rs.getString("name"));
+				role.setName(rs.getString(FieldsConstans.NAME));
 				return role;
 			}
 		} finally {

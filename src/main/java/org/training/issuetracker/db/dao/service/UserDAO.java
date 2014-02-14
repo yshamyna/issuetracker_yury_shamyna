@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.beans.UserRole;
+import org.training.issuetracker.db.dao.service.constants.FieldsConstans;
+import org.training.issuetracker.db.dao.service.constants.QueriesConstants;
 import org.training.issuetracker.db.util.DBManager;
 
 public class UserDAO {
@@ -19,7 +21,7 @@ public class UserDAO {
 		ResultSet rs = null;
 		try {
 			st = connection.createStatement();
-			st.execute("select id, firstName, lastName, email, password, roleId from users");
+			st.execute(QueriesConstants.USER_SELECT_ALL);
 			rs = st.getResultSet();
 			List<User> users = new ArrayList<User>();
 			User user = null;
@@ -27,12 +29,13 @@ public class UserDAO {
 			while (rs.next()) {
 				user = new User();
 				
-	        	user.setId(rs.getLong("id"));
-	        	user.setEmailAddress(rs.getString("email"));
-	        	user.setPassword(rs.getString("password"));
-	        	user.setFirstName(rs.getString("firstName"));
-	        	user.setLastName(rs.getString("lastName"));
-	        	user.setRole(roleDAO.getById(connection, rs.getInt("roleId")));
+	        	user.setId(rs.getLong(FieldsConstans.ID));
+	        	user.setEmailAddress(rs.getString(FieldsConstans.EMAIL));
+	        	user.setPassword(rs.getString(FieldsConstans.PASSWORD));
+	        	user.setFirstName(rs.getString(FieldsConstans.FIRST_NAME));
+	        	user.setLastName(rs.getString(FieldsConstans.LAST_NAME));
+	        	user.setRole(roleDAO.getById(connection, 
+	        			rs.getInt(FieldsConstans.ROLE_ID)));
 	        	
 				users.add(user);
 			}
@@ -43,23 +46,26 @@ public class UserDAO {
 		}
 	}
 
-	public User getById(Connection connection, long id) throws SQLException {
+	public User getById(Connection connection, long id) 
+							throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		User user = null;
 		try {
-	        ps = connection.prepareStatement("select id, firstName, lastName, roleId, email, password from users where id=?");
+	        ps = connection.prepareStatement(QueriesConstants.
+	        			USER_SELECT_BY_ID);
 	        ps.setLong(1, id);
 	        rs = ps.executeQuery();
 	        if (rs.next()) {
 	        	user = new User();
 	        	user.setId(id);
-	        	user.setEmailAddress(rs.getString("email"));
-	        	user.setPassword(rs.getString("password"));
-	        	user.setFirstName(rs.getString("firstName"));
-	        	user.setLastName(rs.getString("lastName"));
+	        	user.setEmailAddress(rs.getString(FieldsConstans.EMAIL));
+	        	user.setPassword(rs.getString(FieldsConstans.PASSWORD));
+	        	user.setFirstName(rs.getString(FieldsConstans.FIRST_NAME));
+	        	user.setLastName(rs.getString(FieldsConstans.LAST_NAME));
 	        	RoleDAO roleDAO = new RoleDAO();
-	        	UserRole role = roleDAO.getById(connection, rs.getInt("roleId"));
+	        	UserRole role = roleDAO.getById(connection, 
+	        				rs.getInt(FieldsConstans.ROLE_ID));
 	        	user.setRole(role);
 	        }
 		} finally {
@@ -72,7 +78,7 @@ public class UserDAO {
 	public void add(Connection connection, User user) throws Exception {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("insert into users(firstName, lastName, email, roleId, password) values(?, ?, ?, ?, ?)");
+			ps = connection.prepareStatement(QueriesConstants.USER_ADD);
 			ps.setString(1, user.getFirstName());
 			ps.setString(2, user.getLastName());
 			ps.setString(3, user.getEmailAddress());
@@ -90,21 +96,22 @@ public class UserDAO {
 		ResultSet rs = null;
 		User user = null;
 		try {
-	        ps = connection.prepareStatement("select users.id as uid, firstName, lastName, name as role, roleId from users, roles where email=? and password=? and roleId=roles.id");
+	        ps = connection.prepareStatement(QueriesConstants.
+	        				USER_SELECT_BY_EMAIL_AND_PASSWORD);
 	        ps.setString(1, email);
 	        ps.setString(2, password);
 	        rs = ps.executeQuery();
 	        if (rs.next()) {
 	        	user = new User();
-	        	user.setId(rs.getLong("uid"));
+	        	user.setId(rs.getLong(FieldsConstans.USER_ID_ALIAS));
 	        	user.setEmailAddress(email);
 	        	user.setPassword(password);
-	        	user.setFirstName(rs.getString("firstName"));
-	        	user.setLastName(rs.getString("lastName"));
+	        	user.setFirstName(rs.getString(FieldsConstans.FIRST_NAME));
+	        	user.setLastName(rs.getString(FieldsConstans.LAST_NAME));
 	        	
 	        	UserRole role = new UserRole();
-	        	role.setId(rs.getLong("roleId"));
-	        	role.setName(rs.getString("role"));
+	        	role.setId(rs.getLong(FieldsConstans.ROLE_ID));
+	        	role.setName(rs.getString(FieldsConstans.ROLE));
 	        	user.setRole(role);
 	        }
 		} finally {
@@ -118,7 +125,8 @@ public class UserDAO {
 			String password) throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("update users set password=? where id=?");
+			ps = connection.prepareStatement(QueriesConstants.
+						USER_UPDATE_PASSWORD);
 			ps.setString(1, password);
 			ps.setLong(2, user.getId());
 			ps.executeUpdate();
@@ -130,7 +138,7 @@ public class UserDAO {
 	public void update(Connection connection, User user) throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("update users set firstName=?, lastName=?, email=?, roleId=? where id=?");
+			ps = connection.prepareStatement(QueriesConstants.USER_UPDATE);
 			ps.setString(1, user.getFirstName());
 			ps.setString(2, user.getLastName());
 			ps.setString(3, user.getEmailAddress());

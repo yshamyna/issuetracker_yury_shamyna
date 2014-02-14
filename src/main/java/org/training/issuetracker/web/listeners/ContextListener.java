@@ -11,21 +11,11 @@ import javax.servlet.ServletContextListener;
 
 import org.h2.tools.RunScript;
 
-/**
- * Application Lifecycle Listener implementation class ContextListener
- *
- */
 public class ContextListener implements ServletContextListener {
 
-    /**
-     * Default constructor. 
-     */
     public ContextListener() {
     }
 
-	/**
-     * @see ServletContextListener#contextInitialized(ServletContextEvent)
-     */
     public void contextInitialized(ServletContextEvent sce) {
         Connection connection = null;
         try {
@@ -76,9 +66,6 @@ public class ContextListener implements ServletContextListener {
     	}
     }
 
-	/**
-     * @see ServletContextListener#contextDestroyed(ServletContextEvent)
-     */
     public void contextDestroyed(ServletContextEvent sce) {
     }
 	

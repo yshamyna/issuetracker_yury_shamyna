@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.training.issuetracker.db.beans.Attachment;
 import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.dao.service.constants.FieldsConstans;
+import org.training.issuetracker.db.dao.service.constants.QueriesConstants;
 import org.training.issuetracker.db.util.DBManager;
 
 public class AttachmentDAO  {
@@ -18,7 +20,8 @@ public class AttachmentDAO  {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = connection.prepareStatement("select attachments.id as aid, addedBy, firstName, lastName, addDate, filename from attachments, users where addedBy=users.id and issueId=?");
+			ps = connection.prepareStatement(QueriesConstants.
+										ATTACHMENT_SELECT_BY_ISSUE_ID);
 			ps.setLong(1, issueId);
 			rs = ps.executeQuery();
 			List<Attachment> attachments = new ArrayList<Attachment>();
@@ -26,16 +29,16 @@ public class AttachmentDAO  {
 			User addedBy = null;
 			while (rs.next()) {
 				addedBy = new User();
-				addedBy.setFirstName(rs.getString("firstName"));
-				addedBy.setLastName(rs.getString("lastName"));
-				addedBy.setId(rs.getLong("addedBy"));
+				addedBy.setFirstName(rs.getString(FieldsConstans.FIRST_NAME));
+				addedBy.setLastName(rs.getString(FieldsConstans.LAST_NAME));
+				addedBy.setId(rs.getLong(FieldsConstans.ADDED_BY));
 				
 				attachment = new Attachment();
-				attachment.setId(rs.getLong("aid"));
-				attachment.setFilename(rs.getString("filename"));
+				attachment.setId(rs.getLong(FieldsConstans.ATTACHMENT_ID_ALIAS));
+				attachment.setFilename(rs.getString(FieldsConstans.FILENAME));
 				attachment.setIssueId(issueId);
 				attachment.setAddedBy(addedBy);
-				attachment.setAddDate(rs.getTimestamp("addDate"));
+				attachment.setAddDate(rs.getTimestamp(FieldsConstans.ADD_DATE));
 				
 				attachments.add(attachment);
 			}
@@ -50,7 +53,7 @@ public class AttachmentDAO  {
 				throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("insert into attachments(addedBy, addDate, filename, issueId) values(?,?,?,?)");
+			ps = connection.prepareStatement(QueriesConstants.ATTACHMENT_ADD);
 			ps.setLong(1, attachment.getAddedBy().getId());
 			ps.setTimestamp(2, attachment.getAddDate());
 			ps.setString(3, attachment.getFilename());

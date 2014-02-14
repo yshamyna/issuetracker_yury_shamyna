@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.Resolution;
+import org.training.issuetracker.db.dao.service.constants.FieldsConstans;
+import org.training.issuetracker.db.dao.service.constants.QueriesConstants;
 import org.training.issuetracker.db.util.DBManager;
 
 public class ResolutionDAO {
@@ -18,14 +20,14 @@ public class ResolutionDAO {
 		ResultSet rs = null;
 		try {
 			st = connection.createStatement();
-			st.execute("select id, name from resolutions");
+			st.execute(QueriesConstants.RESOLUTION_SELECT_ALL);
 			rs = st.getResultSet();
 			List<Resolution> resolutions = new ArrayList<Resolution>();
 			Resolution resolution = null;
 			while (rs.next()) {
 				resolution = new Resolution();
-				resolution.setId(rs.getInt("id"));
-				resolution.setName(rs.getString("name"));
+				resolution.setId(rs.getInt(FieldsConstans.ID));
+				resolution.setName(rs.getString(FieldsConstans.NAME));
 				resolutions.add(resolution);
 			}
 			return resolutions;
@@ -35,17 +37,19 @@ public class ResolutionDAO {
 		}
 	}
 
-	public Resolution getById(Connection connection, long id) throws SQLException {
+	public Resolution getById(Connection connection, long id) 
+					throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = connection.prepareStatement("select name from resolutions where id=?");
+			ps = connection.prepareStatement(QueriesConstants.
+								RESOLUTION_SELECT_BY_ID);
 			ps.setLong(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				Resolution resolution = new Resolution();
 				resolution.setId(id);
-				resolution.setName(rs.getString("name"));
+				resolution.setName(rs.getString(FieldsConstans.NAME));
 				return resolution;
 			}
 		} finally {
@@ -59,7 +63,7 @@ public class ResolutionDAO {
 			throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("insert into resolutions(name) values(?)");
+			ps = connection.prepareStatement(QueriesConstants.RESOLUTION_ADD);
 			ps.setString(1, resolution.getName());
 			ps.executeUpdate();
 		} finally {
@@ -71,7 +75,7 @@ public class ResolutionDAO {
 			throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("update resolutions set name=? where id=?");
+			ps = connection.prepareStatement(QueriesConstants.RESOLUTION_UPDATE);
 			ps.setString(1, resolution.getName());
 			ps.setLong(2, resolution.getId());
 			ps.executeUpdate();

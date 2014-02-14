@@ -10,52 +10,57 @@ import java.util.List;
 
 import org.training.issuetracker.db.beans.Issue;
 import org.training.issuetracker.db.beans.User;
+import org.training.issuetracker.db.dao.service.constants.FieldsConstans;
+import org.training.issuetracker.db.dao.service.constants.QueriesConstants;
 import org.training.issuetracker.db.util.DBManager;
 
 public class IssueDAO {
-	
-	private static final String GET_ALL_ISSUES_SQL = 
-			"SELECT id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId from issues";
-	private static final String GET_ALL_ISSUES_BY_ASSIGNEE_SQL = 
-			"SELECT id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, resolutionId from issues where assignee=?";
-
 	public Issue getById(Connection connection, long id) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-	        ps = connection.prepareStatement("select createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId from issues where id=?");
+	        ps = connection.prepareStatement(QueriesConstants.ISSUE_SELECT_BY_ID);
 	        ps.setLong(1, id);
 	        rs = ps.executeQuery();
 	        if (rs.next()) {
 	        	Issue issue = new Issue();
 	        	issue.setId(id);
-	        	issue.setCreateDate(rs.getTimestamp("createDate"));
-				issue.setModifyDate(rs.getTimestamp("modifyDate"));
-				issue.setSummary(rs.getString("summary"));
-				issue.setDescription(rs.getString("description"));
+	        	issue.setCreateDate(rs.getTimestamp(FieldsConstans.CREATE_DATE));
+				issue.setModifyDate(rs.getTimestamp(FieldsConstans.MODIFY_DATE));
+				issue.setSummary(rs.getString(FieldsConstans.SUMMARY));
+				issue.setDescription(rs.getString(FieldsConstans.DESCRIPTION));
 				
 				UserDAO userDAO = new UserDAO();
-				issue.setAssignee(userDAO.getById(connection, rs.getInt("assignee")));
-				issue.setCreateBy(userDAO.getById(connection, rs.getInt("createBy")));
-				issue.setModifyBy(userDAO.getById(connection, rs.getInt("modifyBy")));
+				issue.setAssignee(userDAO.getById(connection, 
+						rs.getInt(FieldsConstans.ASSIGNEE)));
+				issue.setCreateBy(userDAO.getById(connection,
+						rs.getInt(FieldsConstans.CREATE_BY)));
+				issue.setModifyBy(userDAO.getById(connection,
+						rs.getInt(FieldsConstans.MODIFY_BY)));
 				
 				StatusDAO statusDAO = new StatusDAO();
-				issue.setStatus(statusDAO.getById(connection, rs.getInt("statusId")));
+				issue.setStatus(statusDAO.getById(connection, 
+						rs.getInt(FieldsConstans.STATUS_ID)));
 				
 				TypeDAO typeDAO = new TypeDAO();
-				issue.setType(typeDAO.getById(connection, rs.getInt("typeId")));
+				issue.setType(typeDAO.getById(connection, 
+						rs.getInt(FieldsConstans.TYPE_ID)));
 				
 				PriorityDAO priorityDAO = new PriorityDAO();
-				issue.setPriority(priorityDAO.getById(connection, rs.getInt("priorityId")));
+				issue.setPriority(priorityDAO.getById(connection, 
+						rs.getInt(FieldsConstans.PRIORITY_ID)));
 				
 				ProjectDAO projectDAO = new ProjectDAO();
-				issue.setProject(projectDAO.getById(connection, rs.getInt("projectId")));
+				issue.setProject(projectDAO.getById(connection, 
+						rs.getInt(FieldsConstans.PROJECT_ID)));
 				
 				BuildDAO buildDAO = new BuildDAO();
-				issue.setBuildFound(buildDAO.getById(connection, rs.getInt("buildId")));
+				issue.setBuildFound(buildDAO.getById(connection, 
+						rs.getInt(FieldsConstans.BUILD_ID)));
 				
 				ResolutionDAO resolutionDAO = new ResolutionDAO();
-				issue.setResolution(resolutionDAO.getById(connection, rs.getInt("resolutionId")));
+				issue.setResolution(resolutionDAO.getById(connection, 
+						rs.getInt(FieldsConstans.RESOLUTION_ID)));
 				
 	        	return issue;
 	        }
@@ -69,7 +74,7 @@ public class IssueDAO {
 	public void add(Connection connection, Issue issue) throws Exception {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			ps = connection.prepareStatement(QueriesConstants.ISSUE_ADD);
 			ps.setTimestamp(1, issue.getCreateDate());
 			ps.setLong(2, issue.getCreateBy().getId());
 			ps.setTimestamp(3, issue.getModifyDate());
@@ -98,7 +103,8 @@ public class IssueDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = connection.prepareStatement(GET_ALL_ISSUES_BY_ASSIGNEE_SQL);
+			ps = connection.prepareStatement(QueriesConstants.
+								ISSUE_SELECT_BY_USER_ID);
 			ps.setLong(1, userId);
 			rs = ps.executeQuery();
 			
@@ -115,20 +121,29 @@ public class IssueDAO {
 			while (rs.next()) {
 				issue = new Issue();
 				
-				issue.setId(rs.getLong("id"));
-				issue.setCreateDate(rs.getTimestamp("createDate"));
-				issue.setModifyDate(rs.getTimestamp("modifyDate"));
-				issue.setSummary(rs.getString("summary"));
-				issue.setDescription(rs.getString("description"));
-				issue.setAssignee(uDAO.getById(connection, rs.getInt("assignee")));
-				issue.setCreateBy(uDAO.getById(connection, rs.getInt("createBy")));
-				issue.setModifyBy(uDAO.getById(connection, rs.getInt("modifyBy")));
-				issue.setStatus(sDAO.getById(connection, rs.getInt("statusId")));
-				issue.setType(tDAO.getById(connection, rs.getInt("typeId")));
-				issue.setPriority(pDAO.getById(connection, rs.getInt("priorityId")));
-				issue.setProject(prDAO.getById(connection, rs.getInt("projectId")));
-				issue.setBuildFound(bDAO.getById(connection, rs.getInt("buildId")));
-				issue.setResolution(rDAO.getById(connection, rs.getInt("resolutionId")));
+				issue.setId(rs.getLong(FieldsConstans.ID));
+				issue.setCreateDate(rs.getTimestamp(FieldsConstans.CREATE_DATE));
+				issue.setModifyDate(rs.getTimestamp(FieldsConstans.MODIFY_DATE));
+				issue.setSummary(rs.getString(FieldsConstans.SUMMARY));
+				issue.setDescription(rs.getString(FieldsConstans.DESCRIPTION));
+				issue.setAssignee(uDAO.getById(connection, 
+						rs.getInt(FieldsConstans.ASSIGNEE)));
+				issue.setCreateBy(uDAO.getById(connection, 
+						rs.getInt(FieldsConstans.CREATE_BY)));
+				issue.setModifyBy(uDAO.getById(connection,
+						rs.getInt(FieldsConstans.MODIFY_BY)));
+				issue.setStatus(sDAO.getById(connection, 
+						rs.getInt(FieldsConstans.STATUS_ID)));
+				issue.setType(tDAO.getById(connection,
+						rs.getInt(FieldsConstans.TYPE_ID)));
+				issue.setPriority(pDAO.getById(connection, 
+						rs.getInt(FieldsConstans.PRIORITY_ID)));
+				issue.setProject(prDAO.getById(connection,
+						rs.getInt(FieldsConstans.PROJECT_ID)));
+				issue.setBuildFound(bDAO.getById(connection, 
+						rs.getInt(FieldsConstans.BUILD_ID)));
+				issue.setResolution(rDAO.getById(connection, 
+						rs.getInt(FieldsConstans.RESOLUTION_ID)));
 				
 				issues.add(issue);
 			}
@@ -142,7 +157,7 @@ public class IssueDAO {
 	public void update(Connection connection, Issue issue) throws Exception {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("update issues set modifyDate=?, modifyBy=?, summary=?, description=?, statusId=?, typeId=?, priorityId=?, projectId=?, buildId=?, assignee=?, resolutionId=? where id=?");
+			ps = connection.prepareStatement(QueriesConstants.ISSUE_UPDATE);
 			ps.setTimestamp(1, issue.getModifyDate());
 			ps.setLong(2, issue.getModifyBy().getId());
 			ps.setString(3, issue.getSummary());
@@ -175,12 +190,12 @@ public class IssueDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = connection.prepareStatement("select count(*) as cnt from issues where assignee=?");
+			ps = connection.prepareStatement(QueriesConstants.ISSUE_COUNT);
 			ps.setLong(1, user.getId());
 			rs = ps.executeQuery();
 			long recordsNumber = 0;
 			if (rs.next()) {
-				recordsNumber = rs.getLong("cnt");
+				recordsNumber = rs.getLong(FieldsConstans.COUNT_ALIAS);
 			}
 			
 			long offset = (pageNumber - 1) * recordsPerPage;
@@ -192,7 +207,8 @@ public class IssueDAO {
 								/ recordsPerPage) - 1) * recordsPerPage;
 			}
 			
-			ps = connection.prepareStatement("select id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, resolutionId from issues where assignee=? order by id desc limit ? offset ?");
+			ps = connection.prepareStatement(QueriesConstants.
+							ISSUE_N_RECORDS_FROM_PAGE_M);
 			ps.setLong(1, user.getId());
 			ps.setLong(2, recordsPerPage);
 			ps.setLong(3, offset);
@@ -211,20 +227,29 @@ public class IssueDAO {
 			while(rs.next()) {
 				issue = new Issue();
 				
-				issue.setId(rs.getLong("id"));
-				issue.setCreateDate(rs.getTimestamp("createDate"));
-				issue.setModifyDate(rs.getTimestamp("modifyDate"));
-				issue.setSummary(rs.getString("summary"));
-				issue.setDescription(rs.getString("description"));
-				issue.setAssignee(user);
-				issue.setCreateBy(uDAO.getById(connection, rs.getInt("createBy")));
-				issue.setModifyBy(uDAO.getById(connection, rs.getInt("modifyBy")));
-				issue.setStatus(sDAO.getById(connection, rs.getInt("statusId")));
-				issue.setType(tDAO.getById(connection, rs.getInt("typeId")));
-				issue.setPriority(pDAO.getById(connection, rs.getInt("priorityId")));
-				issue.setProject(prDAO.getById(connection, rs.getInt("projectId")));
-				issue.setBuildFound(bDAO.getById(connection, rs.getInt("buildId")));
-				issue.setResolution(rDAO.getById(connection, rs.getInt("resolutionId")));
+				issue.setId(rs.getLong(FieldsConstans.ID));
+				issue.setCreateDate(rs.getTimestamp(FieldsConstans.CREATE_DATE));
+				issue.setModifyDate(rs.getTimestamp(FieldsConstans.MODIFY_DATE));
+				issue.setSummary(rs.getString(FieldsConstans.SUMMARY));
+				issue.setDescription(rs.getString(FieldsConstans.DESCRIPTION));
+				issue.setAssignee(uDAO.getById(connection, 
+						rs.getInt(FieldsConstans.ASSIGNEE)));
+				issue.setCreateBy(uDAO.getById(connection, 
+						rs.getInt(FieldsConstans.CREATE_BY)));
+				issue.setModifyBy(uDAO.getById(connection,
+						rs.getInt(FieldsConstans.MODIFY_BY)));
+				issue.setStatus(sDAO.getById(connection, 
+						rs.getInt(FieldsConstans.STATUS_ID)));
+				issue.setType(tDAO.getById(connection,
+						rs.getInt(FieldsConstans.TYPE_ID)));
+				issue.setPriority(pDAO.getById(connection, 
+						rs.getInt(FieldsConstans.PRIORITY_ID)));
+				issue.setProject(prDAO.getById(connection,
+						rs.getInt(FieldsConstans.PROJECT_ID)));
+				issue.setBuildFound(bDAO.getById(connection, 
+						rs.getInt(FieldsConstans.BUILD_ID)));
+				issue.setResolution(rDAO.getById(connection, 
+						rs.getInt(FieldsConstans.RESOLUTION_ID)));
 				
 				issues.add(issue);
 			}
@@ -240,7 +265,8 @@ public class IssueDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = connection.prepareStatement("SELECT id, createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId from issues order by id desc limit ?");
+			ps = connection.prepareStatement(QueriesConstants.
+							ISSUE_LAST_N_RECORDS);
 			ps.setLong(1, n);
 			rs = ps.executeQuery();
 			
@@ -258,20 +284,29 @@ public class IssueDAO {
 			while (rs.next()) {
 				issue = new Issue();
 				
-				issue.setId(rs.getLong("id"));
-				issue.setCreateDate(rs.getTimestamp("createDate"));
-				issue.setModifyDate(rs.getTimestamp("modifyDate"));
-				issue.setSummary(rs.getString("summary"));
-				issue.setDescription(rs.getString("description"));
-				issue.setAssignee(uDAO.getById(connection, rs.getInt("assignee")));
-				issue.setCreateBy(uDAO.getById(connection, rs.getInt("createBy")));
-				issue.setModifyBy(uDAO.getById(connection, rs.getInt("modifyBy")));
-				issue.setStatus(sDAO.getById(connection, rs.getInt("statusId")));
-				issue.setType(tDAO.getById(connection, rs.getInt("typeId")));
-				issue.setPriority(pDAO.getById(connection, rs.getInt("priorityId")));
-				issue.setProject(prDAO.getById(connection, rs.getInt("projectId")));
-				issue.setBuildFound(bDAO.getById(connection, rs.getInt("buildId")));
-				issue.setResolution(rDAO.getById(connection, rs.getInt("resolutionId")));
+				issue.setId(rs.getLong(FieldsConstans.ID));
+				issue.setCreateDate(rs.getTimestamp(FieldsConstans.CREATE_DATE));
+				issue.setModifyDate(rs.getTimestamp(FieldsConstans.MODIFY_DATE));
+				issue.setSummary(rs.getString(FieldsConstans.SUMMARY));
+				issue.setDescription(rs.getString(FieldsConstans.DESCRIPTION));
+				issue.setAssignee(uDAO.getById(connection, 
+						rs.getInt(FieldsConstans.ASSIGNEE)));
+				issue.setCreateBy(uDAO.getById(connection, 
+						rs.getInt(FieldsConstans.CREATE_BY)));
+				issue.setModifyBy(uDAO.getById(connection,
+						rs.getInt(FieldsConstans.MODIFY_BY)));
+				issue.setStatus(sDAO.getById(connection, 
+						rs.getInt(FieldsConstans.STATUS_ID)));
+				issue.setType(tDAO.getById(connection,
+						rs.getInt(FieldsConstans.TYPE_ID)));
+				issue.setPriority(pDAO.getById(connection, 
+						rs.getInt(FieldsConstans.PRIORITY_ID)));
+				issue.setProject(prDAO.getById(connection,
+						rs.getInt(FieldsConstans.PROJECT_ID)));
+				issue.setBuildFound(bDAO.getById(connection, 
+						rs.getInt(FieldsConstans.BUILD_ID)));
+				issue.setResolution(rDAO.getById(connection, 
+						rs.getInt(FieldsConstans.RESOLUTION_ID)));
 				
 				issues.add(issue);
 			}
@@ -282,18 +317,19 @@ public class IssueDAO {
 		} 
 	}
 
-	public long getQuantityPages(Connection connection, long userId, long recordsPerPage) 
-			throws SQLException {
+	public long getQuantityPages(Connection connection, long userId, 
+			long recordsPerPage) throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = connection.prepareStatement("select count(*) as cnt from issues where assignee=?");
+			ps = connection.prepareStatement(QueriesConstants.
+							ISSUE_ALL_COUNT);
 			ps.setLong(1, userId);
 			rs = ps.executeQuery();
 			
 			long count = 0;
 			if (rs.next()) {
-				count = rs.getLong("cnt");
+				count = rs.getLong(FieldsConstans.COUNT_ALIAS);
 			}
 			
 			long div = count / recordsPerPage;

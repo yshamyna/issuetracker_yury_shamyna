@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.UserService;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
 public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -17,23 +19,25 @@ public class Login extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("/dashboard.jsp").forward(request, response);
+		request.getRequestDispatcher(URLConstants.DASHBOARD_JSP).
+					forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String email = request.getParameter("E-mail");
-		String password = request.getParameter("Password");
+		String email = request.getParameter(ParameterConstants.EMAIL);
+		String password = request.getParameter(ParameterConstants.PASSWORD);
 		try {
 			UserService service = new UserService(null);
 			User user = service.getUser(email, password);
 			if (user == null) {
-				request.setAttribute("msg", "Email or password is incorrect.");
-				request.getRequestDispatcher("/dashboard").
+				request.setAttribute(ParameterConstants.MSG, 
+								ParameterConstants.MSG_VALUE);
+				request.getRequestDispatcher(URLConstants.DASHBOARD_JSP).
 					forward(request, response);
 				return;
 			} 
-			request.getSession().setAttribute("user", user);
-			response.sendRedirect("dashboard");
+			request.getSession().setAttribute(ParameterConstants.USER, user);
+			response.sendRedirect(URLConstants.DASHBOARD);
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -18,6 +18,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.training.issuetracker.db.beans.Attachment;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.AttachmentService;
+import org.training.issuetracker.web.constants.ParameterConstants;
 
 public class FileUploadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -33,7 +34,8 @@ public class FileUploadServlet extends HttpServlet {
 		
 		String tempDirPath = path + "\\temp";
         tmpDir = new File(tempDirPath);
-        String destinationDirPath = path + "\\issues\\" + request.getParameter("issue");
+        String destinationDirPath = path + "\\issues\\" + request.
+        				getParameter(ParameterConstants.ISSUE);
         destinationDir = new File(destinationDirPath);
         if (!destinationDir.isDirectory()) {
         	destinationDir.mkdirs();
@@ -67,10 +69,12 @@ public class FileUploadServlet extends HttpServlet {
 
             Attachment attachment = new Attachment();
             attachment.setFilename(filename);
-            User addedBy = (User) request.getSession().getAttribute("user");
+            User addedBy = (User) request.getSession().
+            				getAttribute(ParameterConstants.USER);
             attachment.setAddedBy(addedBy);
             attachment.setAddDate(new Timestamp(System.currentTimeMillis()));
-            attachment.setIssueId(Long.parseLong(request.getParameter("issue")));
+            attachment.setIssueId(Long.parseLong(request.
+            				getParameter(ParameterConstants.ISSUE)));
             
             AttachmentService service = new AttachmentService(addedBy);
             service.add(attachment);

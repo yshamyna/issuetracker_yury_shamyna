@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.training.issuetracker.web.constants.ParameterConstants;
+
 public class FileDownloadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -27,8 +29,8 @@ public class FileDownloadServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ServletContext context = getServletContext();
         String filename = context.getRealPath("/issues") 
-        		+ "\\" + request.getParameter("issue") 
-        		+ "\\" + request.getParameter("filename");
+        		+ "\\" + request.getParameter(ParameterConstants.ISSUE) 
+        		+ "\\" + request.getParameter(ParameterConstants.FILENAME);
 
         String mimeType = context.getMimeType(filename);
         if (mimeType == null) {

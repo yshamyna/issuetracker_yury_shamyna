@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.Priority;
+import org.training.issuetracker.db.dao.service.constants.FieldsConstans;
+import org.training.issuetracker.db.dao.service.constants.QueriesConstants;
 import org.training.issuetracker.db.util.DBManager;
 
 public class PriorityDAO {
@@ -18,14 +20,14 @@ public class PriorityDAO {
 		ResultSet rs = null;
 		try {
 			st = connection.createStatement();
-			st.execute("select id, name from priorities");
+			st.execute(QueriesConstants.PRIORITY_SELECT_ALL);
 			rs = st.getResultSet();
 			List<Priority> priotities = new ArrayList<Priority>();
 			Priority priority = null;
 			while (rs.next()) {
 				priority = new Priority();
-				priority.setId(rs.getInt("id"));
-				priority.setName(rs.getString("name"));
+				priority.setId(rs.getInt(FieldsConstans.ID));
+				priority.setName(rs.getString(FieldsConstans.NAME));
 				priotities.add(priority);
 			}
 			return priotities;
@@ -35,17 +37,19 @@ public class PriorityDAO {
 		}
 	}
 
-	public Priority getById(Connection connection, long id) throws SQLException {
+	public Priority getById(Connection connection, long id) 
+					throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = connection.prepareStatement("select name from priorities where id=?");
+			ps = connection.prepareStatement(QueriesConstants.
+								PRIORITY_SELECT_BY_ID);
 			ps.setLong(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				Priority priority = new Priority();
 				priority.setId(id);
-				priority.setName(rs.getString("name"));
+				priority.setName(rs.getString(FieldsConstans.NAME));
 				return priority;
 			}
 		} finally {
@@ -55,10 +59,11 @@ public class PriorityDAO {
 		return null;
 	}
 
-	public void add(Connection connection, Priority priority) throws SQLException {
+	public void add(Connection connection, Priority priority) 
+								throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("insert into priorities(name) values(?)");
+			ps = connection.prepareStatement(QueriesConstants.PRIORITY_ADD);
 			ps.setString(1, priority.getName());
 			ps.executeUpdate();
 		} finally {
@@ -70,7 +75,7 @@ public class PriorityDAO {
 			throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("update priorities set name=? where id=?");
+			ps = connection.prepareStatement(QueriesConstants.PRIORITY_UPDATE);
 			ps.setString(1, priotity.getName());
 			ps.setLong(2, priotity.getId());
 			ps.executeUpdate();

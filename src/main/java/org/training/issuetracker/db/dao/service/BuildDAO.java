@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.training.issuetracker.db.beans.Build;
+import org.training.issuetracker.db.dao.service.constants.FieldsConstans;
+import org.training.issuetracker.db.dao.service.constants.QueriesConstants;
 import org.training.issuetracker.db.util.DBManager;
 
 public class BuildDAO {
@@ -17,15 +19,15 @@ public class BuildDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-	        ps = connection.prepareStatement("select projectId, version, isCurrent from builds where id=?");
+	        ps = connection.prepareStatement(QueriesConstants.BUID_SELECT_BY_ID);
 	        ps.setLong(1, id);
 	        rs = ps.executeQuery();
 	        if (rs.next()) {
 	        	Build build = new Build();
 	        	build.setId(id);
-	        	build.setVersion(rs.getString("version"));
-	        	build.setProjectId(rs.getLong("projectId"));
-	        	build.setCurrent(rs.getBoolean("isCurrent"));
+	        	build.setVersion(rs.getString(FieldsConstans.VERSION));
+	        	build.setProjectId(rs.getLong(FieldsConstans.PROJECT_ID));
+	        	build.setCurrent(rs.getBoolean(FieldsConstans.IS_CURRENT));
 	        	return build;
 	        }
 		} finally {
@@ -38,7 +40,7 @@ public class BuildDAO {
 	public void add(Connection connection, Build build) throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("insert into builds(projectId, version, isCurrent) values(?, ?, ?)");
+			ps = connection.prepareStatement(QueriesConstants.BUID_ADD);
 			ps.setLong(1, build.getProjectId());
 			ps.setString(2, build.getVersion());
 			ps.setBoolean(3, build.getIsCurrent());
@@ -49,21 +51,23 @@ public class BuildDAO {
 
 	}
 
-	public List<Build> allByProjectId(Connection connection, long id) throws SQLException {
+	public List<Build> allByProjectId(Connection connection, long id) 
+					throws SQLException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-	        ps = connection.prepareStatement("select id, version, isCurrent from builds where projectId=?");
+	        ps = connection.prepareStatement(QueriesConstants.
+	        			BUID_SELECT_BY_PROJECT_ID);
 	        ps.setLong(1, id);
 	        rs = ps.executeQuery();
 	        List<Build> builds = new ArrayList<Build>();
 	        Build build = null;
 	        while (rs.next()) {
 	        	build = new Build();
-	        	build.setId(rs.getLong("id"));
-	        	build.setVersion(rs.getString("version"));
+	        	build.setId(rs.getLong(FieldsConstans.ID));
+	        	build.setVersion(rs.getString(FieldsConstans.VERSION));
 	        	build.setProjectId(id);
-	        	build.setCurrent(rs.getBoolean("isCurrent"));
+	        	build.setCurrent(rs.getBoolean(FieldsConstans.IS_CURRENT));
 	        	builds.add(build);
 	        }
 	        return builds;
@@ -77,8 +81,8 @@ public class BuildDAO {
 			long newBuildId) throws SQLException {
 		PreparedStatement ps = null;
 		try {
-			ps = connection.prepareStatement("update builds set isCurrent=false where id=?");
-			ps.addBatch("update builds set isCurrent=true where id=?");
+			ps = connection.prepareStatement(QueriesConstants.BUILD_CHANGE_VERSION_PART_ONE);
+			ps.addBatch(QueriesConstants.BUILD_CHANGE_VERSION_PART_TWO);
 			ps.setLong(1, oldBuildId);
 			ps.setLong(2, newBuildId);
 			ps.executeBatch();
@@ -92,13 +96,13 @@ public class BuildDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			ps = connection.prepareStatement("select id, version from builds where projectId=? and isCurrent=true");
+			ps = connection.prepareStatement(QueriesConstants.BUILD_CURRENT);
 			ps.setLong(1, projectId);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				Build build = new Build();
-				build.setId(rs.getLong("id"));
-				build.setVersion(rs.getString("version"));
+				build.setId(rs.getLong(FieldsConstans.ID));
+				build.setVersion(rs.getString(FieldsConstans.VERSION));
 				build.setProjectId(projectId);
 				build.setCurrent(true);
 				return build;

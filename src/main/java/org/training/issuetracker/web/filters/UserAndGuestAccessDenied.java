@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.enums.Role;
+import org.training.issuetracker.web.constants.URLConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
 
 public class UserAndGuestAccessDenied implements Filter {
 
@@ -22,14 +24,16 @@ public class UserAndGuestAccessDenied implements Filter {
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
-		User user = (User) req.getSession().getAttribute("user");
+		User user = (User) req.getSession().getAttribute(ParameterConstants.USER);
 		if (user == null) {
-			request.getRequestDispatcher("/dashboard").forward(request, response);
+			request.getRequestDispatcher(URLConstants.DASHBOARD_JSP).
+						forward(request, response);
 			return;
 		}
 		Role role = Role.valueOf(user.getRole().getName().toUpperCase());
 		if (Role.USER == role) {
-			request.getRequestDispatcher("/dashboard").forward(request, response);
+			request.getRequestDispatcher(URLConstants.DASHBOARD_JSP).
+						forward(request, response);
 			return;
 		}
 		chain.doFilter(request, response);

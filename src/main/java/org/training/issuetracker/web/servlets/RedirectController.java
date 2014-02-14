@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.web.actions.factories.WebActionFactory;
 import org.training.issuetracker.web.actions.interfaces.WebAction;
+import org.training.issuetracker.web.constants.ParameterConstants;
 
 public class RedirectController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -26,7 +27,7 @@ public class RedirectController extends HttpServlet {
 	}
 
 	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String action = request.getParameter("action");
+		String action = request.getParameter(ParameterConstants.ACTION);
 		WebAction webAction = WebActionFactory.getWebActionFromFactory(action);
 		webAction.execute(request, response);
 	}
