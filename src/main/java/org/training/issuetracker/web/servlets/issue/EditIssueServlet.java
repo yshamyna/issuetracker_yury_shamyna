@@ -15,6 +15,7 @@ import org.training.issuetracker.db.beans.Comment;
 import org.training.issuetracker.db.beans.Issue;
 import org.training.issuetracker.db.beans.Priority;
 import org.training.issuetracker.db.beans.Project;
+import org.training.issuetracker.db.beans.Resolution;
 import org.training.issuetracker.db.beans.Status;
 import org.training.issuetracker.db.beans.Type;
 import org.training.issuetracker.db.beans.User;
@@ -24,26 +25,18 @@ import org.training.issuetracker.db.service.CommentService;
 import org.training.issuetracker.db.service.IssueService;
 import org.training.issuetracker.db.service.PriorityService;
 import org.training.issuetracker.db.service.ProjectService;
+import org.training.issuetracker.db.service.ResolutionService;
 import org.training.issuetracker.db.service.StatusService;
 import org.training.issuetracker.db.service.TypeService;
 import org.training.issuetracker.db.service.UserService;
 
-/**
- * Servlet implementation class EditIssueServlet
- */
 public class EditIssueServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public EditIssueServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String id = request.getParameter("id");
 		if (id == null) {
@@ -96,6 +89,10 @@ public class EditIssueServlet extends HttpServlet {
 					List<Attachment> attachments = aService.getAttachmentsByIssueId(issueId);
 					request.setAttribute("attachments", attachments);
 					
+					ResolutionService rService = new ResolutionService(user);
+					List<Resolution> resolutions = rService.getResolutions();
+					request.setAttribute("resolutions", resolutions);
+					
 					getServletContext().getRequestDispatcher("/editIssue.jsp").
 							forward(request, response);	
 				}
@@ -103,15 +100,11 @@ public class EditIssueServlet extends HttpServlet {
 				getServletContext().getRequestDispatcher("/dashboard").
 					forward(request, response);
 			} catch(Exception e) {
-				e.printStackTrace();
 				response.getWriter().println("Sorry, but current service is not available... Please try later.");
 			}
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			User user = (User) request.getSession().getAttribute("user");
@@ -160,6 +153,15 @@ public class EditIssueServlet extends HttpServlet {
 			
 			IssueService service = new IssueService(user);
 			service.update(issue);
+			
+			long resolutionId = Integer.parseInt(request.getParameter("resolutionId"));
+			if (resolutionId == -1) {
+				issue.setResolution(null);
+			} else {
+				Resolution resolution = new Resolution();
+				resolution.setId(resolutionId);
+				issue.setResolution(resolution);
+			}
 			
 			response.getWriter().println("Issue was updated successfully.");
 		} catch (Exception e) {

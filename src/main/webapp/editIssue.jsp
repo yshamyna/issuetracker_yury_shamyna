@@ -9,30 +9,79 @@
 	<title>Edit issue</title>
 	<link rel=stylesheet href="/issuetracker/css/menu.css" type="text/css">
 	<link rel=stylesheet href="/issuetracker/css/editIssue.css" type="text/css">
-	<script>
-		function getXmlHttp(){
-	  		var xmlhttp;
-	  		try {
-	    		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-	  		} catch (e) {
-	    		try {
-	      			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-	    		} catch (E) {
-	      			xmlhttp = false;
-	    		}
-	  		}
-	  		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-	    		xmlhttp = new XMLHttpRequest();
-	  		}
-	  		return xmlhttp;
-		}
-	
-		function removeChilds(node) {
-			while(node.childNodes[0]){
-				node.removeChild(node.childNodes[0]);
+	<script src="/issuetracker/js/util.js"></script>
+	<script type="text/javascript">
+		function statusIsClosed() {
+			if ("${issue.status.name}" === "closed")  {
+				document.getElementById("project").disabled = true;
+				document.getElementById("type").disabled = true;
+				document.getElementById("priority").disabled = true;
+				document.getElementById("assignee").disabled = true;
+				document.getElementById("build").disabled = true;
+				document.getElementById("summary").disabled = true;
+				document.getElementById("description").disabled = true;
+				document.getElementById("resolution").disabled = true;
+				document.getElementById("moEdit").disabled = true;
+				document.getElementById("moClose").disabled = true;
+				
+				var status = document.getElementById("status");
+				for (var i = 0; i < status.options.length; i++) {
+					var text = status.options[i].innerHTML;
+					if (text === "closed" || text === "reopened") {
+						status.options[i].disabled = false;
+					} else {
+						status.options[i].disabled = true;
+					}
+				}
+			} else {
+				document.getElementById("project").disabled = false;
+				document.getElementById("type").disabled = false;
+				document.getElementById("priority").disabled = false;
+				document.getElementById("assignee").disabled = false;
+				document.getElementById("build").disabled = false;
+				document.getElementById("summary").disabled = false;
+				document.getElementById("description").disabled = false;
+				document.getElementById("resolution").disabled = false;
+				document.getElementById("moEdit").disabled = false;
+				document.getElementById("moClose").disabled = false;
+				changeMode();
 			}
 		}
 		
+		function changeMode() {
+			var editMode = document.getElementById("moEdit");
+			var status = document.getElementById("status");
+			if (editMode.checked) {
+				for (var i = 0; i < status.options.length; i++) {
+					var text = status.options[i].innerHTML;
+					if (text === "in progress" || text === "assigned" || text === "new") {
+						status.options[i].disabled = false;
+					} else {
+						status.options[i].disabled = true;
+					}
+				}
+				text = status.options[status.selectedIndex].innerHTML;
+				if (text !== "in progress" && text !== "assigned" && text !== "new") {
+					status.selectedIndex = 0;
+				}
+				document.getElementById("resolution").disabled = true;
+			} else {
+				for (var i = 0; i < status.options.length; i++) {
+					var text = status.options[i].innerHTML;
+					if (text === "in progress" || text === "resolved" || text === "closed") {
+						status.options[i].disabled = false;
+					} else {
+						status.options[i].disabled = true;
+					}
+				}
+				if (text !== "in progress" && text !== "resolved" && text !== "closed") {
+					status.selectedIndex = 2;
+				}
+				document.getElementById("resolution").disabled = false;
+			}
+			changeStatus();
+		}
+	
 		function changeProject() {
 			var req = getXmlHttp();
 			req.onreadystatechange = function() { 
@@ -40,116 +89,115 @@
 	        		var jsonText = req.responseText;
 	        		var jsonData = JSON.parse(jsonText);
 	        		var builds = jsonData.builds;
-	        		var buildList = document.getElementById('select-builds');
+	        		var buildList = document.getElementById("build");
 	        		removeChilds(buildList);
 	        		for (var i = 0; i < builds.length; i++) {
 	        			var id = builds[i].id;
 	        			var version = builds[i].version;
-	        			var option = document.createElement('option');
-	        			option.setAttribute('value', id);
+	        			var option = document.createElement("option");
+	        			option.setAttribute("value", id);
 	        			option.innerHTML = version;
 	        			buildList.appendChild(option);
 	        		}
 	            }
 	     	};
-			var projectList = document.getElementById('select-projects');
+			var projectList = document.getElementById('project');
 			
 			var value = projectList.options[projectList.selectedIndex].value;
-			req.open('GET', '/issuetracker/get_builds?id=' + value, true);
-			req.send(null);
-		}
-			
-		function printMessage(errMsg) {
-			var span = document.getElementById("msg");
-			span.innerHTML = errMsg;
+			req.open('post', '/issuetracker/builds', true);
+			req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			req.send("id=" + value);
 		}
 		
-		function isCorrectData() {
-			var msg = checkTextFields();
+		function update() {
+			var summary = document.getElementById("summary").value.trim();
+			var description = document.getElementById("description").value.trim();
+			var msg = "";
+			if (!summary) {
+				msg = "Summary is empty. ";
+			}
+			if (!description) {
+				msg += "Description is empty.";
+			}
 			if (msg) {
 				printMessage(msg);
-				return false;
+				return;
+			} else {
+				var req = getXmlHttp();
+				
+				req.onreadystatechange = function() { 
+		        	if (req.readyState == 4 && req.status == 200) {
+		        		var msg = req.responseText;
+		        		printMessage(msg);
+		            }
+		     	};
+		     	
+		     	var sel = document.getElementById("status");
+		     	var status = sel.options[sel.selectedIndex].value;
+		     	var statusName = sel.options[sel.selectedIndex].innerHTML;
+		     	sel = document.getElementById("assignee");
+		     	var assignee = sel.options[sel.selectedIndex].value;
+		     	var summary = document.getElementById("summary").value;
+		     	var description = document.getElementById("description").value;
+		     	sel = document.getElementById("type");
+		     	var type = sel.options[sel.selectedIndex].value;
+		     	sel = document.getElementById("priority");
+		     	var priority = sel.options[sel.selectedIndex].value;
+		     	sel = document.getElementById("project");
+		     	var project = sel.options[sel.selectedIndex].value;
+		     	sel = document.getElementById("build");
+		     	var build = sel.options[sel.selectedIndex].value;
+		     	sel = document.getElementById("resolution");
+		     	var resolution = sel.options[sel.selectedIndex].value;
+		     	
+		     	req.open("post", "/issuetracker/issues/edit", true);
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				
+				var body="";
+				if ("${issue.status.name}" === "closed") {
+					body = "id=${issue.id}&summary=" + summary + "&description=" + description
+					+ "&statusId=" + status + "&typeId=" + type 
+					+ "&priorityId=" + priority + "&projectId=" + project
+					+ "&buildId=" + build + "&assigneeId=-1&resolutionId=-1";
+		     	} else{
+		     		var editMode = document.getElementById("moEdit");
+					if (editMode.checked) {
+						if (assignee == -1 && statusName != 'new') {
+				     		printMessage("Status must be 'assigned' or 'in progress' (or you need select assignee).");
+				     		return;
+				     	}
+				     	if (assignee != -1 && statusName == 'new') {
+				     		printMessage("Status must be 'assigned' or 'in progress'.");
+				     		return;
+				     	} 
+				     	body = "id=${issue.id}&summary=" + summary + "&description=" + description
+						+ "&statusId=" + status + "&typeId=" + type 
+						+ "&priorityId=" + priority + "&projectId=" + project
+						+ "&buildId=" + build + "&assigneeId=" + assignee + "&resolutionId=-1";
+					} else {
+						if (assignee == -1) {
+							printMessage("You need select assignee.");
+							return;
+						}
+						body = "id=${issue.id}&summary=" + summary + "&description=" + description
+						+ "&statusId=" + status + "&typeId=" + type 
+						+ "&priorityId=" + priority + "&projectId=" + project
+						+ "&buildId=" + build + "&assigneeId=" + assignee;
+						if (statusName === "in progress") {
+							body += "&resolutionId=-1";
+						} else {
+							body += "&resolutionId=" + resolution;
+						}
+					}
+		     	}
+				req.send(body);
 			}
-			return true;
 		}
 		
-		function checkTextFields() {
-			var inputs = document.getElementsByTagName("input");
-			var msg = "";
-			for (var i = 0; i < inputs.length; i++) {
-				if (!inputs[i].value.trim()) {
-					msg += inputs[i].name + " is empty. ";
-				}
-			}
-			var txtAreas = document.getElementsByTagName("textarea");
-			for (var i = 0; i < txtAreas.length; i++) {
-				if (!txtAreas[i].value.trim()) {
-					msg += txtAreas[i].name + " is empty. ";
-				}
-			}
-			return msg;
-		}
-		
-		function Element(parameter, element) {
-			this.parameter = parameter;
-			this.element = element;
+		function send() {
+			var comment = document.getElementById("enter-comment-area").value.trim();
+			if (!comment) return;
 			
-			this.getParameter = function() {
-				return this.parameter;
-			};
-			this.getElement = function() {
-				return this.element;
-			};
-		}
-		
-		function onClick() {
-			var summary = new Element("summary", document.getElementById("summary"));
-			var description = new Element("description", document.getElementById("description"));
-			var status = new Element("statusId", document.getElementById("status"));
-			var type = new Element("typeId", document.getElementById("type"));
-			var priority = new Element("priorityId", document.getElementById("priority"));
-			var project = new Element("projectId", document.getElementById("select-projects"));
-			var buildFound = new Element("buildId", document.getElementById("select-builds"));
-			var assignee = new Element("assigneeId", document.getElementById("assignee"));
-			var data = [summary, description, status, type, priority, project, buildFound, assignee];
-			update("${issue.id}", "/issuetracker/issues/edit", data);
-		}
-		
-		function update(id, url, data) {
-			if (!isCorrectData()) return;
-			var req = getXmlHttp();
-			req.onreadystatechange = function() { 
-	        	if (req.readyState == 4 && req.status == 200) {
-	        		var msg = req.responseText;
-	        		printMessage(msg);
-	            }
-	     	};
-			req.open("post", url, true);
-			req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-			var body = "";
-			for (var i = 0; i < data.length; i++) {
-				var parameterName = data[i].getParameter();
-				var parameterValue = data[i].getElement().value;
-				body += parameterName + "=" + parameterValue + "&";
-			}
-			body += "id=" + id;
-			req.send(body);
-		}
-		
-		function check() {
-			var textarea = document.getElementById("comment");
-			if (!textarea.trim()) {
-				return false;
-			} 
-			return true;
-		}
-		
-		function add() {
-			addComment("${issue.id}", "/issuetracker/add-comment");
-		}
-		
-		function addComment(id, url) {
-			if (!check) return;
 			var req = getXmlHttp();
 			req.onreadystatechange = function() { 
 	        	if (req.readyState == 4 && req.status == 200) {
@@ -170,16 +218,32 @@
 	        		newComment.appendChild(addDateSpan);
 	        		newComment.appendChild(document.createElement("br"));
 	        		newComment.appendChild(textSpan);
-	        		newComment.setAttribute("style", "background-color:rgb(206, 227, 253);width:100%;margin-top:2px;padding-left:2px;");
+	        		newComment.setAttribute("class", "comment-block");
 	        		
 	        		var commentsStorage = document.getElementById("commentsStorage");
 	        		commentsStorage.appendChild(newComment);
+	        		
+	        		document.getElementById("enter-comment-area").value = "";
+	        		
+	        		var msgDiv = document.getElementById("comment-message-container");
+	        		if (msgDiv != null) {
+	        			commentsStorage.removeChild(msgDiv);
+	        		}
 	            }
 	     	};
-			req.open("post", url, true);
+			req.open("post", "/issuetracker/comments/add", true);
 			req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-			var value = document.getElementById("comment").value;
-			req.send("issueId=" + id + "&comment=" + value);
+			req.send("issueId=${issue.id}&comment=" + comment);
+		}
+		
+		function changeStatus() {
+			var status = document.getElementById("status");
+			var statusValue = status.options[status.selectedIndex].innerHTML;
+			if (statusValue === 'closed' || statusValue === 'resolved') {
+				document.getElementById("resolution").disabled = false;
+			} else {
+				document.getElementById("resolution").disabled = true;
+			}
 		}
 	</script>
 </head>
@@ -195,9 +259,9 @@
 			<%@ include file="/includes/guestMenu.html" %>
 		</c:otherwise>
 	</c:choose>
-	<div class="section-delimiter">Edit section</div>
 	<c:choose>
 		<c:when test="${empty user}">
+			<div class="section-delimiter">Edit section</div>
 			<div class="container">
 				<div class="row">
 					<div class="col">
@@ -255,6 +319,16 @@
 						<textarea class="ceil" readonly>${issue.description}</textarea>
 					</div>
 				</div>
+				<div class="row">
+					<div class="col">
+						<span>ID:</span><br/> 
+						<input class="ceil" type="text" value="${issue.id}" readonly/>
+					</div>
+					<div class="col">
+						<span>Resolution:</span><br/> 
+						<input class="ceil" type="text" value="${issue.resolution.name}" readonly/>
+					</div>
+				</div>
 			</div>
 			<div class="section-delimiter">Comment section</div>
 				<c:choose>
@@ -294,6 +368,11 @@
 				</c:choose>
 			</c:when>
 		<c:otherwise>
+			<div style="font-family:arial;font-size:10pt;padding-top:10px;padding-left:10px;padding-bottom:10px;">
+				Mode: <input id="moEdit" type="radio" name="mode" value="edit" checked/> Edit
+					<input id="moClose" type="radio" name="mode" value="Close" /> Close
+			</div>
+			<div class="section-delimiter">Edit section</div>
 			<div class="container">
 				<div class="row">
 					<div class="col">
@@ -301,8 +380,8 @@
 						<input type="text" name="Create by" value="${issue.createBy.firstName} ${issue.createBy.lastName}" readonly/>
 					</div>
 					<div class="col">
-						<span>Status: </span><br/>
-						<select id="status" style="width:200px;" name="status">
+						<span>Status:</span><br/>
+						<select id="status" class="down-list" name="status">
 							<c:forEach var="status" items="${statuses}">
 								<c:choose>
 									<c:when test="${status.id eq issue.status.id}">
@@ -317,7 +396,7 @@
 					</div>
 					<div class="col">
 						<span>Project:</span><br/>
-						<select id="select-projects" name="project" onchange="changeProject();" style="width:200px;">
+						<select id="project" name="project" class="down-list">
 							<c:forEach var="project" items="${projects}">
 								<c:choose>
 									<c:when test="${project.id eq issue.project.id}">
@@ -334,11 +413,11 @@
 				<div class="row">
 					<div class="col">
 						<span>Create date:</span><br/>
-						<input type="text" style="width:200px;" name="Create date" value="${issue.createDate}" readonly/>
+						<input type="text" name="Create date" value="${issue.createDate}" readonly/>
 					</div>
 					<div class="col">
 						<span>Type:</span><br/>
-						<select id="type" name="type" style="width:200px;">
+						<select id="type" name="type" class="down-list">
 							<c:forEach var="type" items="${types}">
 								<c:choose>
 									<c:when test="${type.id eq issue.type.id}">
@@ -353,7 +432,7 @@
 					</div>
 					<div class="col">
 						<span>Build found: </span><br/>
-						<select id="select-builds" name="build" style="width:200px;">
+						<select id="build" name="build" class="down-list">
 							<c:forEach var="build" items="${builds}">
 								<c:choose>
 									<c:when test="${build.id eq issue.buildFound.id}">
@@ -370,7 +449,7 @@
 				<div class="row">
 					<div class="col">
 						<span>Modify by: </span><br/>
-						<input type="text" style="width:200px;" name="Modify by" 
+						<input type="text" name="Modify by" 
 										value="${issue.modifyBy.firstName} ${issue.modifyBy.lastName}" readonly/>
 					</div>
 					<div class="col">
@@ -389,19 +468,9 @@
 						</select>
 					</div>
 					<div class="col">
-						<span>Summary:</span><br/>
-						<textarea style="width:200px;" name="Summary">${issue.summary}</textarea>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col">
-						<span>Modify date:</span><br/>
-						<input type="text" style="width:200px;" name="Modify date" value="${issue.modifyDate}" readonly/>
-					</div>
-					<div class="col">
 						<span>Assignee:</span><br/>
-						<select id="assignee" name="assignee" style="width:200px;">
-							<option value="-1" selected></option>
+						<select id="assignee" name="assignee" class="down-list">
+							<option value="-1"></option>
 							<c:forEach var="assignee" items="${assignees}">
 								<c:choose>
 									<c:when test="${assignee.id eq issue.assignee.id}">
@@ -414,46 +483,85 @@
 							</c:forEach>
 						</select>
 					</div>
+				</div>
+				<div class="row">
 					<div class="col">
-						<span>Description:</span><br/>
-						<textarea style="width:200px;" name="Description">${issue.description}</textarea>
+						<span>Modify date:</span><br/>
+						<input type="text" name="Modify date" value="${issue.modifyDate}" readonly/>
+					</div>
+					<div class="col">
+						<span>ID:</span><br/> 
+						<input class="ceil" type="text" value="${issue.id}" readonly/>
+					</div>
+					<div class="col">
+						<span>Resolution:</span><br/> 
+						<select id="resolution" name="resolution" class="down-list">
+							<c:forEach var="resolution" items="${resolutions}">
+								<c:choose>
+									<c:when test="${resolution.id eq issue.resolution.id}">
+										<option value="${resolution.id}" selected>${resolution.name}</option>
+									</c:when>
+									<c:otherwise>
+										<option value="${resolution.id}">${resolution.name}</option>	
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+						</select>
 					</div>
 				</div>
-				<span id="msg" style="font-size:10pt;color:red;"></span><br/><br/>
-				<input id="sbtBtn" class="submitBtn" type="button" value="Edit">
+				<div class="row">
+					<div class="col">
+						<span>Summary:</span><br/>
+						<textarea id="summary" class="summary" name="Summary">${issue.summary}</textarea>
+					</div>
+					<div class="col">
+						<span>Description:</span><br/>
+						<textarea id="description" class="description" name="Description">${issue.description}</textarea>
+					</div>
+				</div>
+			</div>
+			<div class="update-error-msg">
+				<div id="msg" class="update-message"></div>
+			</div>
+			<div class="update-btn-container">
+				<input id="sbtBtn" class="submitBtn" type="button" value="Update" />
 			</div>
 			<div class="section-delimiter">Comment section</div>
-			<c:choose>
-				<c:when test="${fn:length(comments) == 0}">
-					<div class="message-container">
-						<span id="msg" class="message">Comments not found</span>
+			<div id="commentsStorage" class="comment-storage">
+				<c:if test="${fn:length(comments) == 0}">
+					<div id="comment-message-container" class="comment-message-container">
+						<span class="comment-message">Comments not found</span>
 					</div>
-				</c:when>
-				<c:otherwise>
-					<div class="comment-storage">
-						<c:forEach var="comment" items="${comments}">
-							<div class="comment-block">
-								<span>Added by: ${comment.sender.firstName} ${comment.sender.lastName}</span><br/>
-								<span>Add date: ${comment.createDate}</span><br/>
-								<span>Comment: ${comment.comment}</span>
-							</div>	
-						</c:forEach>
-					</div><br/>
-				</c:otherwise>
-			</c:choose>
-			<textarea id="comment" name="comment"></textarea><br/>
-			<input id="addCommentBtn" type="button" value="Add comment"><br/>
+				</c:if>
+				<c:forEach var="comment" items="${comments}">
+					<div class="comment-block">
+						<span>Added by: ${comment.sender.firstName} ${comment.sender.lastName}</span><br/>
+						<span>Add date: ${comment.createDate}</span><br/>
+						<span>Comment: ${comment.comment}</span>
+					</div>	
+				</c:forEach>
+			</div><br/>
+			<textarea id="enter-comment-area" name="comment"></textarea><br/>
+			<input id="addCommentBtn" type="button" value="Send"><br/>
 			<script type="text/javascript">
 				var submit = document.getElementById("sbtBtn");
-				submit.onclick = onClick;
+				submit.onclick = update;
 				var addCommentBtn = document.getElementById("addCommentBtn");
-				addCommentBtn.onclick = add;
+				addCommentBtn.onclick = send;
+				var project = document.getElementById("project");
+				project.onchange = changeProject;
+				document.getElementById("status").onchange = changeStatus;
+				
+				document.getElementById("moEdit").onchange = changeMode;
+				document.getElementById("moClose").onchange = changeMode;
+				
+				statusIsClosed();
 			</script>
 			<div class="section-delimiter">Attachment section</div>
 			<c:choose>
 				<c:when test="${fn:length(attachments) == 0}">
 					<div class="message-container">
-						<span id="msg" class="message">Attachments not found</span>
+						<span class="message">Attachments not found</span>
 					</div>
 				</c:when>
 				<c:otherwise>

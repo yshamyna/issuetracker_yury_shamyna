@@ -157,7 +157,11 @@ public class IssueDAO {
 			} else {
 				ps.setLong(10, issue.getAssignee().getId());
 			}
-			ps.setNull(11, Types.INTEGER);
+			if (issue.getResolution() == null) {
+				ps.setNull(11, Types.INTEGER);
+			} else {
+				ps.setLong(11, issue.getResolution().getId());
+			}
 			ps.setLong(12, issue.getId());
 			ps.executeUpdate();
 		} finally {

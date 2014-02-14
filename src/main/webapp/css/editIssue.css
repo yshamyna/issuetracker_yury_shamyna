@@ -6,7 +6,7 @@ html, body {
 
 .container {
 	width:690px; 
-	height:250px;
+	height:300px;
 	font-family:arial;
 	font-size:10pt; 
 	padding-left:5px;
@@ -23,7 +23,7 @@ html, body {
 }
 
 .section-delimiter {
-	margin-top:20px;
+	
 	font-family:arial; 
 	font-size:16pt;
 	color:gray;
@@ -62,10 +62,30 @@ html, body {
 	width: 100%;
 }
 
+.comment-message-container {
+	text-align: center;
+	width: 100%;
+	color: white;
+	margin-top:89px;
+}
+
 .message {
 	font-size: 12pt;
 	font-family: arial;
 	margin:auto;
+}
+
+.comment-message {
+	font-size: 14pt;
+	font-family: arial;
+	margin:auto;
+}
+
+.update-message {
+	font-size: 10pt;
+	font-family: arial;
+	margin:auto;
+	padding-bottom:10px;
 }
 
 .submitBtn {
@@ -76,4 +96,24 @@ html, body {
 	height:30px;
 	font-size:12pt;
 	font-weight:bold;
+}
+
+.update-btn-container {
+	width: 200px;
+}
+
+.update-error-msg {
+	width:300px;
+}
+
+.down-list {
+	width:200px;
+}
+
+.summary {
+	max-width:200px;
+}
+
+.description {
+	width:414px;
 }
