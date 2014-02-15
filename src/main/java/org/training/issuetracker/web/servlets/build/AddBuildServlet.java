@@ -46,7 +46,7 @@ public class AddBuildServlet extends HttpServlet {
 					+ request.getParameter(ParameterConstants.VERSION) 
 					+ GeneralConsants.SINGLE_QUOTE);
 		} catch (Exception e) {
-			e.printStackTrace();
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		} 
 	}
 

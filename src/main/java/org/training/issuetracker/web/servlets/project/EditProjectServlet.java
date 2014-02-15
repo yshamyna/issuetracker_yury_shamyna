@@ -99,9 +99,7 @@ public class EditProjectServlet extends HttpServlet {
 					+ request.getParameter(ParameterConstants.NAME) 
 					+ GeneralConsants.SINGLE_QUOTE);
 		} catch (Exception e) {
-			e.printStackTrace();
-			response.getWriter().
-				println(MessageConstants.SORRY_MESSAGE);
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

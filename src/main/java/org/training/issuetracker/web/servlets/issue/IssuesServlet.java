@@ -64,8 +64,7 @@ public class IssuesServlet extends HttpServlet {
 			getServletContext().getRequestDispatcher(URLConstants.DASHBOARD_JSP).
 					forward(request, response);	
 		} catch (Exception e) {
-			response.getWriter().
-				println(MessageConstants.SORRY_MESSAGE);
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 	

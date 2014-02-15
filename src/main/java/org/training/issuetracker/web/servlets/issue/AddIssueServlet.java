@@ -129,7 +129,6 @@ public class AddIssueServlet extends HttpServlet {
 			
 			response.getWriter().println(MessageConstants.ISSUE_ADDED);
 		} catch (Exception e) {
-			e.printStackTrace();
 			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}

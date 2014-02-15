@@ -57,8 +57,7 @@ public class ProjectsServlet extends HttpServlet {
 			getServletContext().getRequestDispatcher(URLConstants.PROJECTS_JSP).
 				forward(request, response);
 		}  catch (Exception e) {
-			response.getWriter().
-				println(MessageConstants.SORRY_MESSAGE);
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		} 
 	}
 

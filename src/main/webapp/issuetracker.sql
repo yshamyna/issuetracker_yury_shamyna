@@ -131,8 +131,8 @@ insert into projects(name, description, managerId)
 insert into projects(name, description, managerId)
     values('ICQ', 'ICQ is an instant messaging computer program.', 5);
     
-/*To delete*/    
-	insert into projects(name, description, managerId)
+/* For test pagination*/    
+	/*insert into projects(name, description, managerId)
 	    values('asdasda sdad ddf s', 'Outlook Web App (OWA)is a webmail service. Outlook Web App is used to access e-mail (including support for S/MIME), calendars, contacts, tasks, documents.', 1);
 	insert into projects(name, description, managerId)
 	    values('sdsdf  sd fsdfd', 'Digital counters that either increment or decrement at a fixed frequency.', 2);
@@ -152,7 +152,7 @@ insert into projects(name, description, managerId)
 	    values('saa32 3 ', 'Google Talk is an instant messaging service that provides both text and voice communication.', 4);
 	insert into projects(name, description, managerId)
 	    values('gd sdfg 4 adsf sdf wr', 'ICQ is an instant messaging computer program.', 5);
-/*-------------------------------------------------------*/     
+*/	    
 
 insert into builds(projectId, version, isCurrent) values(1, '0.1', false);
 insert into builds(projectId, version, isCurrent) values(1, '0.2', false);
@@ -191,6 +191,7 @@ insert into builds(projectId, version, isCurrent) values(5, '0.6', false);
 insert into builds(projectId, version, isCurrent) values(5, '0.7', true);
 insert into builds(projectId, version, isCurrent) values(5, '0.8', false);
 
+
 insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
 values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, 'Web browsing Error has occurred', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
 insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
@@ -217,8 +218,8 @@ insert into issues(createDate, createBy, modifyDate, modifyBy, summary, descript
 values('2014-1-4 10:36:36', 4, '2014-1-4 10:41:41', 4, 'Do not work increment and decrement at a fixed frequency', 'Do not work increment and decrement at a fixed frequency', 1, 4, 1, 2, 14, null, null);
 
 
-/*To delete*/ 
-	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
+/* For test pagination*/ 
+/*	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
 	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '1', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
 	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
 	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '2', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
@@ -266,7 +267,7 @@ values('2014-1-4 10:36:36', 4, '2014-1-4 10:41:41', 4, 'Do not work increment an
 	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '23', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
 	insert into issues(createDate, createBy, modifyDate, modifyBy, summary, description, statusId, typeId, priorityId, projectId, buildId, assignee, resolutionId) 
 	values('2014-1-1 10:15:15', 1, '2014-1-1 10:16:42', 1, '24', 'Web browsing Error has occurred', 3, 1, 4, 1, 10, 1, null);
-/*----------------------------------------------------------*/ 
+*/
 
 insert into comments(sender, issueId, comment, createDate) values(1, 5, 'First comment', '2014-1-1 10:16:42');
 insert into comments(sender, issueId, comment, createDate) values(1, 5, 'Second comment', '2014-1-2 8:56:14');
@@ -282,8 +283,9 @@ create user administrator password 'Issue_tracker_administrator';
 create user User password 'Issue_tracker_user';
 create user guest password 'Issue_tracker_guest';
 
-grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers, comments, attachments to User;
-grant update on issues, users to User;
-grant insert on comments, attachments, issues to User;
+grant select, update, insert on issues to User;
+grant select, update on users to User;
+grant select, insert on comments, attachments to User;
+grant select on builds, projects, roles, statuses, types, resolutions, priorities, managers to User;
 grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers, comments, attachments to guest;
 grant all on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers, comments, attachments to administrator;
