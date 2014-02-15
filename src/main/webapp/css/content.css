@@ -10,3 +10,14 @@ html, body {
 	padding: 0;
 	background-color: rgb(243, 245, 245);
 }
+
+.sorrow-face {
+	margin: auto;
+}
+
+.issue-not-found {
+	text-align: center;
+	margin-top:40px; 
+	font-size: 30pt; 
+	font-family: verdana;
+}

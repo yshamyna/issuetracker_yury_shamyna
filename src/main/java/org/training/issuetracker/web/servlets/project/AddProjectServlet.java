@@ -40,7 +40,7 @@ public class AddProjectServlet extends HttpServlet {
 			getServletContext().getRequestDispatcher(URLConstants.ADD_PROJECT_JSP).
 				forward(request, response);	
 		} catch (Exception e) {
-			e.printStackTrace();
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 
@@ -72,8 +72,7 @@ public class AddProjectServlet extends HttpServlet {
 					+ request.getParameter(ParameterConstants.NAME) 
 					+ GeneralConsants.SINGLE_QUOTE);
 		} catch (Exception e) {
-			response.getWriter().
-				println(MessageConstants.SORRY_MESSAGE);
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

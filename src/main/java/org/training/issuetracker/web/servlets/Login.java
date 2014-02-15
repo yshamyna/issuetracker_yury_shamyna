@@ -33,7 +33,7 @@ public class Login extends HttpServlet {
 			if (user == null) {
 				request.setAttribute(ParameterConstants.MSG, 
 								ParameterConstants.MSG_VALUE);
-				request.getRequestDispatcher(URLConstants.DASHBOARD_JSP).
+				request.getRequestDispatcher(URLConstants.DASHBOARD_URL).
 					forward(request, response);
 				return;
 			} 
@@ -41,9 +41,7 @@ public class Login extends HttpServlet {
 			response.sendRedirect(URLConstants.DASHBOARD);
 			return;
 		} catch (Exception e) {
-			e.printStackTrace();
-			response.getWriter().
-				println(MessageConstants.SORRY_MESSAGE);
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

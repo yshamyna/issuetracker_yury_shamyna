@@ -169,8 +169,7 @@ public class EditIssueServlet extends HttpServlet {
 			
 			response.getWriter().println(MessageConstants.ISSUE_UPDATED);
 		} catch (Exception e) {
-			response.getWriter().
-				println(MessageConstants.SORRY_MESSAGE);
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

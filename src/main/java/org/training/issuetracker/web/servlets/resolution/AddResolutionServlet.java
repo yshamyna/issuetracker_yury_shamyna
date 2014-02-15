@@ -45,8 +45,7 @@ public class AddResolutionServlet extends HttpServlet {
 					+ request.getParameter(ParameterConstants.NAME) 
 					+ GeneralConsants.SINGLE_QUOTE);
 		} catch (Exception e) {
-			response.getWriter().
-				println(MessageConstants.SORRY_MESSAGE);
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

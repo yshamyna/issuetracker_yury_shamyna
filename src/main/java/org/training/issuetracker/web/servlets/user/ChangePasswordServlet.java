@@ -39,7 +39,6 @@ public class ChangePasswordServlet extends HttpServlet {
 			
 			response.getWriter().println(MessageConstants.PASSWORD_UPDATED);
 		} catch(Exception e) {
-			e.printStackTrace();
 			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
