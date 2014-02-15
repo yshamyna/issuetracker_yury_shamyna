@@ -36,9 +36,12 @@ public final class MessageConstants {
 	public final static String TYPE_UPDATED = "Issue type was updated successfully.";
 	
 	public final static String USER_ADDED = "User was added successfully.";
-	public final static String USER_EXIST = "Already user with e-mail '" ;
+	public final static String USER_EXIST = "Already user exists with e-mail '" ;
 	public final static String USER_UPDATED = "User data was updated successfully.";
 	
 	public final static String PASSWORD_UPDATED = "Password was changed successfully.";
 	public final static String PROFILE_UPDATED = "Profile was changed successfully.";
+	
+	public final static String CHOOSE_FILE = "Please choose the file";
+	public final static String FILE_UPLOAD = "File upload successfully.";
 }

@@ -33,6 +33,7 @@
 				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				var body = "firstName=" + firstName + "&lastName=" + lastName
 					+ "&E-mail=" + email;
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}

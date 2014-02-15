@@ -82,10 +82,11 @@ public class BuildDAO {
 		PreparedStatement ps = null;
 		try {
 			ps = connection.prepareStatement(QueriesConstants.BUILD_CHANGE_VERSION_PART_ONE);
-			ps.addBatch(QueriesConstants.BUILD_CHANGE_VERSION_PART_TWO);
 			ps.setLong(1, oldBuildId);
-			ps.setLong(2, newBuildId);
-			ps.executeBatch();
+			ps.executeUpdate();
+			ps = connection.prepareStatement(QueriesConstants.BUILD_CHANGE_VERSION_PART_TWO);
+			ps.setLong(1, newBuildId);
+			ps.executeUpdate();
 		} finally {
 			DBManager.closeStatements(ps);
 		}

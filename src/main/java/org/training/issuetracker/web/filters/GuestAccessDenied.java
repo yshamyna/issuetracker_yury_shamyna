@@ -25,7 +25,8 @@ public class GuestAccessDenied implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		User user = (User) req.getSession().getAttribute(ParameterConstants.USER);
 		if (user == null) {
-			request.getRequestDispatcher(URLConstants.DASHBOARD_JSP).forward(request, response);
+			request.getRequestDispatcher(URLConstants.DASHBOARD_URL).
+				forward(request, response);
 			return;
 		}
 		chain.doFilter(request, response);

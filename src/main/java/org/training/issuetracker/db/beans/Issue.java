@@ -3,6 +3,8 @@ package org.training.issuetracker.db.beans;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
+import org.training.issuetracker.web.constants.GeneralConsants;
+
 public class Issue {
 	private long id;
 	private Timestamp createDate;
@@ -136,12 +138,13 @@ public class Issue {
 	}
 	
 	public String getFormatModifyDate() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, YYYY h:mm a");
-	    return dateFormat.format(modifyDate);
+	    return new SimpleDateFormat(GeneralConsants.FORMAT_DATE).
+	    		format(modifyDate);
 	}
 	
-	public String getFormatCreatedDate() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, YYYY h:mm a");
-	    return dateFormat.format(createDate);
+	public String getFormatCreateDate() {
+	    return new SimpleDateFormat(GeneralConsants.FORMAT_DATE).
+	    		format(createDate);
 	}
+	
 }

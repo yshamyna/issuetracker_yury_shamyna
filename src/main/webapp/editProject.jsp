@@ -41,6 +41,7 @@
 				var body = "id=${project.id}&name=" + name
 					+ "&description=" + description + "&managerId=" + manager
 					+ "&buildId=" + build;
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}

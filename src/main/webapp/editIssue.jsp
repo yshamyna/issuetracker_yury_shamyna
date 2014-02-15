@@ -190,6 +190,7 @@
 						}
 					}
 		     	}
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}
@@ -280,7 +281,7 @@
 				<div class="row">
 					<div class="col">
 						<span>Create date:</span><br/> 
-						<input class="ceil" type="text" value="${issue.createDate}" readonly/>
+						<input class="ceil" type="text" value="${issue.formatCreateDate}" readonly/>
 					</div>
 					<div class="col">
 						<span>Type:</span><br/> 
@@ -308,7 +309,7 @@
 				<div class="row">
 					<div class="col">
 						<span>Modify date:</span><br/>
-						<input class="ceil" type="text" value="${issue.modifyDate}" readonly/>
+						<input class="ceil" type="text" value="${issue.formatModifyDate}" readonly/>
 					</div>
 					<div class="col">
 						<span>Assignee:</span><br/> 
@@ -377,7 +378,7 @@
 				<div class="row">
 					<div class="col">
 						<span>Create by:</span><br/>
-						<input type="text" name="Create by" value="${issue.createBy.firstName} ${issue.createBy.lastName}" readonly/>
+						<input class="ceil" type="text" name="Create by" value="${issue.createBy.firstName} ${issue.createBy.lastName}" readonly/>
 					</div>
 					<div class="col">
 						<span>Status:</span><br/>
@@ -413,7 +414,7 @@
 				<div class="row">
 					<div class="col">
 						<span>Create date:</span><br/>
-						<input type="text" name="Create date" value="${issue.createDate}" readonly/>
+						<input class="ceil" type="text" name="Create date" value="${issue.formatCreateDate}" readonly/>
 					</div>
 					<div class="col">
 						<span>Type:</span><br/>
@@ -449,7 +450,7 @@
 				<div class="row">
 					<div class="col">
 						<span>Modify by: </span><br/>
-						<input type="text" name="Modify by" 
+						<input class="ceil" type="text" name="Modify by" 
 										value="${issue.modifyBy.firstName} ${issue.modifyBy.lastName}" readonly/>
 					</div>
 					<div class="col">
@@ -487,7 +488,7 @@
 				<div class="row">
 					<div class="col">
 						<span>Modify date:</span><br/>
-						<input type="text" name="Modify date" value="${issue.modifyDate}" readonly/>
+						<input class="ceil" type="text" name="Modify date" value="${issue.formatModifyDate}" readonly/>
 					</div>
 					<div class="col">
 						<span>ID:</span><br/> 

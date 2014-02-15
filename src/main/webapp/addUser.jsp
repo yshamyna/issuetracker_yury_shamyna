@@ -51,6 +51,7 @@
 				var body = "firstName=" + firstName + "&lastName=" + lastName  
 				+ "&E-mail=" + email + "&roleId=" + role + "&password=" + password;
 				
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}

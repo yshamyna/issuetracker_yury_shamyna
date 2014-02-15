@@ -28,6 +28,7 @@
 		     	req.open("post", "/issuetracker/types/edit", true);
 				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				var body = "id=${type.id}&name=" + document.getElementById("type").value;
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}

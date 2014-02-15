@@ -22,7 +22,7 @@ public class ChangePasswordServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		getServletContext().getRequestDispatcher(URLConstants.DASHBOARD_URL).
+		getServletContext().getRequestDispatcher(URLConstants.CHANGE_PASSWORD_JSP).
 			forward(request, response);
 	}
 
@@ -33,12 +33,13 @@ public class ChangePasswordServlet extends HttpServlet {
 						getAttribute(ParameterConstants.USER);
 			
 			String password = request.getParameter(ParameterConstants.PASSWORD);
-
+			
 			UserService service = new UserService(user);
 			service.changePassword(user, password);
 			
 			response.getWriter().println(MessageConstants.PASSWORD_UPDATED);
 		} catch(Exception e) {
+			e.printStackTrace();
 			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}

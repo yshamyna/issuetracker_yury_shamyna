@@ -66,7 +66,7 @@ public class AddProjectServlet extends HttpServlet {
 			
 			service.add(project, build);
 			
-			response.getWriter().println();
+			response.getWriter().println(MessageConstants.PROJECT_ADDED);
 		} catch (JdbcSQLException e) {
 			response.getWriter().println(MessageConstants.PROJECT_EXIST
 					+ request.getParameter(ParameterConstants.NAME) 

@@ -43,7 +43,8 @@
 		     	};
 				req.open("post", "/issuetracker/profile/change-password", true);
 				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-				req.send("password=" + pass);
+				printMessage("Please wait...");
+				req.send("Password=" + pass);
 			}
 	</script>
 	</head>

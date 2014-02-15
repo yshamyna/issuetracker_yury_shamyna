@@ -28,6 +28,7 @@
 		     	req.open("post", "/issuetracker/statuses/edit", true);
 				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				var body = "id=${status.id}&name=" + document.getElementById("status").value;
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}

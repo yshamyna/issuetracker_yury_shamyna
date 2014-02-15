@@ -36,6 +36,7 @@
 				var body = "id=${usr.id}&firstName=" + firstName
 					+ "&lastName=" + lastName + "&roleId=" + role
 					+ "&E-mail=" + email;
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}

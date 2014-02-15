@@ -8,7 +8,7 @@ public final class GeneralConsants {
 	
 	public final static String SINGLE_QUOTE = "'";
 	public final static String EMPTY_STRING = "";
-	public final static String FORMAT_DATE = "MMMM M, yyyy h:mm:ss a";
+	public final static String FORMAT_DATE = "MMMM d, yyyy h:mm:ss a";
 	public final static long RECORDS_PER_PAGE = 10;
 	public final static String DOUBLE_BACKLASH = "\\";
 	public final static int ONE_KB = 1024;

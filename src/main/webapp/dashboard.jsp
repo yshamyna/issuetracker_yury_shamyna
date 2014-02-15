@@ -81,12 +81,13 @@
 		<c:choose>
 			<c:when test="${not empty user}">
 				<form id="pagination-form" method="post" action="">
-					<div class="pagination">
-						<div>
+					<div style="padding-top:10px">
+						<div style="width:100%;background-color:rgb(210, 210, 210);">
 							Page: ${page}/${maxPage}
 						</div>
-						<div>
+						<div style="width:100%; height:26px;background-color:rgb(210, 210, 210);text-align:center;">
 							<c:choose>
+								<c:when test="${page eq maxPage}"></c:when>
 								<c:when test="${page eq 1}">
 									<input id="nextPageBtn" type="submit" value="Next">		
 								</c:when>

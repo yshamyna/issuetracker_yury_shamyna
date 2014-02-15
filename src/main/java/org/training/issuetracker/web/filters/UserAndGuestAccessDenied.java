@@ -26,13 +26,13 @@ public class UserAndGuestAccessDenied implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		User user = (User) req.getSession().getAttribute(ParameterConstants.USER);
 		if (user == null) {
-			request.getRequestDispatcher(URLConstants.DASHBOARD_JSP).
+			request.getRequestDispatcher(URLConstants.DASHBOARD_URL).
 						forward(request, response);
 			return;
 		}
 		Role role = Role.valueOf(user.getRole().getName().toUpperCase());
 		if (Role.USER == role) {
-			request.getRequestDispatcher(URLConstants.DASHBOARD_JSP).
+			request.getRequestDispatcher(URLConstants.DASHBOARD_URL).
 						forward(request, response);
 			return;
 		}

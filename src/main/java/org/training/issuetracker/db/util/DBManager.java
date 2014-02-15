@@ -21,7 +21,7 @@ public class DBManager {
         		break;
         	case USER: 
         		connection = DriverManager.
-        		getConnection("jdbc:h2:issuetracker", "user", 
+        		getConnection("jdbc:h2:issuetracker", "User", 
         				"Issue_tracker_user");
         		break;
         	case ADMINISTRATOR:
@@ -30,15 +30,6 @@ public class DBManager {
         				"Issue_tracker_administrator");
         		break;
         }
-		return connection;
-	}
-	
-	public static Connection getConnection() 
-			throws ClassNotFoundException, SQLException {
-		Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.
-        		getConnection("jdbc:h2:issuetracker", "administrator", 
-        				"Issue_tracker_administrator");
 		return connection;
 	}
 	

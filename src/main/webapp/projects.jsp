@@ -48,13 +48,13 @@
 				</div>
 				<div style="width:100%; height:26px;background-color:rgb(210, 210, 210);text-align:center;">
 					<c:choose>
+						<c:when test="${page eq maxPage}"></c:when>
 						<c:when test="${page eq 1}">
 							<input type="submit" value="Next" onclick="next(${page})">		
 						</c:when>
 						<c:when test="${page eq maxPage}">
 							<input type="submit" value="Previous" onclick="back(${page})">
 						</c:when>
-						<c:when test="${page eq maxPage && page eq 1}"></c:when>
 						<c:otherwise>
 							<input type="submit" value="Previous" onclick="back(${page})">
 							<input type="submit" value="Next" onclick="next(${page})">

@@ -97,7 +97,7 @@ public final class QueriesConstants {
 	public final static String PROJECT_N_RECORDS_FROM_PAGE_M = 
 			"select projects.id as pid, name, description, " 
 			+ "managerId, firstName, lastName from projects, " 
-			+ "managers where managerId=managers.id limit ? offset ?";
+			+ "managers where managerId=managers.id order by pid desc limit ? offset ?";
 	public final static String PROJECT_ALL_COUNT =
 			"select count(*) as cnt from projects";
 	

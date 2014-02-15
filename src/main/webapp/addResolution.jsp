@@ -27,6 +27,7 @@
 		     	req.open("post", "/issuetracker/resolutions/add", true);
 				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				var body = "name=" + document.getElementById("name").value;
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}

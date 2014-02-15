@@ -66,8 +66,7 @@ public class AddIssueServlet extends HttpServlet {
 			getServletContext().getRequestDispatcher(URLConstants.ADD_ISSUE_JSP).
 				forward(request, response);	
 		} catch (Exception e) {
-			response.getWriter().
-					println(MessageConstants.SORRY_MESSAGE);
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 
@@ -130,8 +129,8 @@ public class AddIssueServlet extends HttpServlet {
 			
 			response.getWriter().println(MessageConstants.ISSUE_ADDED);
 		} catch (Exception e) {
-			response.getWriter().
-				println(MessageConstants.SORRY_MESSAGE);
+			e.printStackTrace();
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

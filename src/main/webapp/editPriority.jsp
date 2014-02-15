@@ -28,6 +28,7 @@
 		     	req.open("post", "/issuetracker/priorities/edit", true);
 				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				var body = "id=${priority.id}&name=" + document.getElementById("priority").value;
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}

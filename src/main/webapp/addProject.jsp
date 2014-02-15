@@ -36,7 +36,7 @@
 				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				var body = "name=" + name + "&description=" + description
 				 + "&version=" + version + "&managerId=" + manager;
-				
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}

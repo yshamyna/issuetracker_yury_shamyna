@@ -1,6 +1,7 @@
 package org.training.issuetracker.web.servlets.attachment;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
@@ -85,13 +86,18 @@ public class FileUploadServlet extends HttpServlet {
             service.add(attachment);
             
             PrintWriter out = response.getWriter();
-            out.println("File upload successfully.");
+            out.println(MessageConstants.FILE_UPLOAD);
             out.println("<a href=\"/issuetracker/issues/edit?id=" 
             				+ request.getParameter("issue") 
             				+ "\">Back</a>");
             out.close();
+        } catch (FileNotFoundException e) {
+        	PrintWriter out = response.getWriter();
+        	out.println(MessageConstants.CHOOSE_FILE);
+            out.println("<a href=\"/issuetracker/issues/edit?id=" 
+             				+ request.getParameter("issue") 
+             				+ "\">Back</a>");
         } catch (Exception e) {
-        	e.printStackTrace();
             response.getWriter().println(MessageConstants.SORRY_MESSAGE);
         }
 	}

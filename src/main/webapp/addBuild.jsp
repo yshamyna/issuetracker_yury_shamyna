@@ -28,6 +28,7 @@
 		     	req.open("post", "/issuetracker/builds/add", true);
 				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				var body = "id=${projectId}&version=" + document.getElementById("version").value;
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}

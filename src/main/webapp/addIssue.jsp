@@ -86,14 +86,21 @@
 					+ "&statusId=" + status + "&typeId=" + type 
 					+ "&priorityId=" + priority + "&projectId=" + project
 					+ "&buildId=" + build + "&assigneeId=" + assignee;
-				
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}
 	</script>
 </head>
 <body>
-	<%@ include file="/includes/administratorMenu.html" %>
+	<c:choose>
+			<c:when test="${user.role.name eq 'administrator'}">
+				<%@ include file="/includes/administratorMenu.html" %>
+			</c:when>
+			<c:when test="${user.role.name eq 'user'}">
+				<%@ include file="/includes/userMenu.html" %>
+			</c:when>
+		</c:choose>
 	<div class="container">
 		<span class="summary-label">Summary:</span> 
 		<input id="summary" class="issue-summary" type="text" name="Summary"/>

@@ -28,6 +28,7 @@
 		     	req.open("post", "/issuetracker/resolutions/edit", true);
 				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				var body = "id=${resolution.id}&name=" + document.getElementById("resolution").value;
+				printMessage("Please wait...");
 				req.send(body);
 			}
 		}

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.h2.jdbc.JdbcSQLException;
 import org.training.issuetracker.db.beans.Build;
 import org.training.issuetracker.db.beans.Manager;
 import org.training.issuetracker.db.beans.Project;
@@ -15,6 +16,7 @@ import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.BuildService;
 import org.training.issuetracker.db.service.ManagerService;
 import org.training.issuetracker.db.service.ProjectService;
+import org.training.issuetracker.web.constants.GeneralConsants;
 import org.training.issuetracker.web.constants.MessageConstants;
 import org.training.issuetracker.web.constants.ParameterConstants;
 import org.training.issuetracker.web.constants.URLConstants;
@@ -92,7 +94,12 @@ public class EditProjectServlet extends HttpServlet {
 			service.update(project, build);
 			
 			response.getWriter().println(MessageConstants.PROJECT_UPDATED);
+		} catch (JdbcSQLException e) {
+			response.getWriter().println(MessageConstants.PROJECT_EXIST
+					+ request.getParameter(ParameterConstants.NAME) 
+					+ GeneralConsants.SINGLE_QUOTE);
 		} catch (Exception e) {
+			e.printStackTrace();
 			response.getWriter().
 				println(MessageConstants.SORRY_MESSAGE);
 		}

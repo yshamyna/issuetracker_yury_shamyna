@@ -29,7 +29,7 @@ create table users(
     id int primary key auto_increment, 
     firstName varchar(30) not null, 
     lastName varchar(30) not null, 
-    email varchar(50) not null, 
+    email varchar(50) not null unique, 
     roleId int not null references roles(id), 
     password varchar(32)
 );
@@ -275,15 +275,15 @@ insert into comments(sender, issueId, comment, createDate) values(1, 5, 'Fourth 
 insert into comments(sender, issueId, comment, createDate) values(1, 5, 'Fifth comment', '2014-1-5 14:48:59');
 
 drop user if exists administrator;
-drop user if exists user;
+drop user if exists User;
 drop user if exists guest;
 
 create user administrator password 'Issue_tracker_administrator';
-create user user password 'Issue_tracker_user';
+create user User password 'Issue_tracker_user';
 create user guest password 'Issue_tracker_guest';
 
-grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers, comments, attachments to user;
-grant update on issues, users to user;
-grant insert on comments,attachments to user;
+grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers, comments, attachments to User;
+grant update on issues, users to User;
+grant insert on comments, attachments, issues to User;
 grant select on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers, comments, attachments to guest;
 grant all on issues, builds, projects, users, roles, statuses, types, resolutions, priorities, managers, comments, attachments to administrator;
