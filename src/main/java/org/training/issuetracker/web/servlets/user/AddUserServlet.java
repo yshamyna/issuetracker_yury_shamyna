@@ -13,6 +13,10 @@ import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.beans.UserRole;
 import org.training.issuetracker.db.service.RoleService;
 import org.training.issuetracker.db.service.UserService;
+import org.training.issuetracker.web.constants.GeneralConsants;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
 public class AddUserServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -23,13 +27,14 @@ public class AddUserServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+						getAttribute(ParameterConstants.USER);
 			
 			RoleService service = new RoleService(user);
 			List<UserRole> roles = service.getRoles();
-			request.setAttribute("roles", roles);
+			request.setAttribute(ParameterConstants.ROLES, roles);
 			
-			getServletContext().getRequestDispatcher("/addUser.jsp").
+			getServletContext().getRequestDispatcher(URLConstants.ADD_USER_JSP).
 					forward(request, response);	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -38,28 +43,30 @@ public class AddUserServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+					getAttribute(ParameterConstants.USER);
 			
 			User u = new User();
-			u.setFirstName(request.getParameter("firstName"));
-			u.setLastName(request.getParameter("lastName"));
-			u.setEmailAddress(request.getParameter("email"));
+			u.setFirstName(request.getParameter(ParameterConstants.FIRST_NAME));
+			u.setLastName(request.getParameter(ParameterConstants.LAST_NAME));
+			u.setEmailAddress(request.getParameter(ParameterConstants.EMAIL));
+			u.setPassword(request.getParameter(ParameterConstants.PASSWORD));
 			
 			UserRole role = new UserRole();
-			role.setId(Integer.parseInt(request.getParameter("roleId")));
+			role.setId(Integer.parseInt(request.
+									getParameter(ParameterConstants.ROLE_ID)));
 			u.setRole(role);
 			
 			UserService service = new UserService(user);
 			service.add(u);
 			
-			response.getWriter().println("User was added successfully.");
+			response.getWriter().println(MessageConstants.USER_ADDED);
 		} catch (JdbcSQLException e) {
-			response.getWriter().println("Already exists user with e-mail '" 
-					+ request.getParameter("email") + "'");
+			response.getWriter().println(MessageConstants.USER_EXIST 
+					+ request.getParameter(ParameterConstants.EMAIL) 
+					+ GeneralConsants.SINGLE_QUOTE);
 		} catch (Exception e) {
-			e.printStackTrace();
-			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

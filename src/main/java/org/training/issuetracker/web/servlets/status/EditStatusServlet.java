@@ -10,31 +10,27 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.Status;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.StatusService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
-/**
- * Servlet implementation class EditStatusServlet
- */
 public class EditStatusServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public EditStatusServlet() {
         super();
     }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id = request.getParameter("id");
+    
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+				throws ServletException, IOException {
+		String id = request.getParameter(ParameterConstants.ID);
 		if (id == null) {
-			getServletContext().getRequestDispatcher("/statuses").
+			getServletContext().getRequestDispatcher(URLConstants.STATUSES_URL).
 					forward(request, response);
 		} else {
 			try {
-				User user = (User) request.getSession().getAttribute("user");
+				User user = (User) request.getSession().
+									getAttribute(ParameterConstants.USER);
 				
 				long statusId = Integer.parseInt(id);
 				
@@ -42,40 +38,38 @@ public class EditStatusServlet extends HttpServlet {
 				Status status = service.getStatusById(statusId);
 				
 				if (status == null) {
-					getServletContext().getRequestDispatcher("/statuses").
+					getServletContext().getRequestDispatcher(URLConstants.STATUSES_URL).
 							forward(request, response);
 				} else {
-					request.setAttribute("status", status);
-					getServletContext().getRequestDispatcher("/editStatus.jsp").
+					request.setAttribute(ParameterConstants.STATUS, status);
+					getServletContext().getRequestDispatcher(URLConstants.EDIT_STATUS_JSP).
 							forward(request, response);	
 				}
 			} catch(NumberFormatException e) {
-				getServletContext().getRequestDispatcher("/statuses").
+				getServletContext().getRequestDispatcher(URLConstants.STATUSES_URL).
 					forward(request, response);
 			} catch(Exception e) {
-				response.getWriter().println("Sorry, but current service is not available... Please try later.");
+				response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 			}
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+					throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+							getAttribute(ParameterConstants.USER);
 			
 			Status status = new Status();
-			status.setId(Long.parseLong(request.getParameter("id")));
-			status.setName(request.getParameter("name"));	
+			status.setId(Long.parseLong(request.getParameter(ParameterConstants.ID)));
+			status.setName(request.getParameter(ParameterConstants.NAME));	
 			
 			StatusService service = new StatusService(user);
 			service.update(status);
 			
-			response.getWriter().println("Issue status was updated successfully.");
+			response.getWriter().println(MessageConstants.STATUS_UPDATED);
 		} catch (Exception e) {
-			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

@@ -10,32 +10,6 @@
 	<link rel=stylesheet href="/issuetracker/css/addUser.css" type="text/css">
 	<script src="/issuetracker/js/util.js"></script>
 	<script type="text/javascript">
-		function submitForm(form) {
-			
-			if (errMsg) {
-				var span = document.getElementById('errMsg');
-				span.innerHTML = errMsg;
-				return false;
-			} else {
-				var regExpPass = /[\da-zA-Z@%$,.:;!?]{5,32}/;
-				var isCorrectly = regExpPass.test(form.elements['password'].value);
-				if (!isCorrectly) {
-					printMessage("The password must be at least five characters long and can contain letters of the english alphabet in upper and lower case, numbers, punctuation marks and symbols @% $.")
-					return false;
-				} else {
-					var pass = form.elements['password'].value;
-					var passConfirm = form.elements['passwordConfirmation'].value;
-					if (pass !== passConfirm) {
-						var span = document.getElementById('errMsg');
-						span.innerHTML = 'The password does not equals password confirmation.';
-						return false;
-					}
-				}
-			}
-		}
-					
-		
-		
 		function add() {
 			var msg = checkInputs();
 			if (msg) {
@@ -75,7 +49,7 @@
 		     	
 				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				var body = "firstName=" + firstName + "&lastName=" + lastName  
-				+ "&email=" + email + "&roleId=" + role + "&password=" + password;
+				+ "&E-mail=" + email + "&roleId=" + role + "&password=" + password;
 				
 				req.send(body);
 			}
@@ -106,7 +80,7 @@
 		<div class="message-container">
 			<span class="container" id="msg"></span>
 		</div>
-		<input id="sbtBtn" class="submitBtn" type="submit" value="Add">
+		<input id="sbtBtn" class="submitBtn" type="button" value="Add">
 	</div>
 	<script type="text/javascript">
 		var submit = document.getElementById("sbtBtn");

@@ -11,48 +11,42 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.Type;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.TypeService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
-/**
- * Servlet implementation class TypeServlet
- */
 public class TypesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public TypesServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		execute(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		execute(request, response);
 	}
 
-	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void execute(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+							getAttribute(ParameterConstants.USER);
 			
 			TypeService service = new TypeService(user);
 			List<Type> types = service.getTypes();
 			
-			request.setAttribute("types", types);
+			request.setAttribute(ParameterConstants.TYPES, types);
 			
-			getServletContext().getRequestDispatcher("/types.jsp").
+			getServletContext().getRequestDispatcher(URLConstants.TYPES_JSP).
 				forward(request, response);
 		}  catch (Exception e) {
-			response.getWriter().
-				println("Sorry, but current page is not available... Please try later.");
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		} 
 	}
 }

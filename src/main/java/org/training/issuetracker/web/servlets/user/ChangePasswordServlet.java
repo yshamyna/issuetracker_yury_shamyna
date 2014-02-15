@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.UserService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
 public class ChangePasswordServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -17,23 +20,26 @@ public class ChangePasswordServlet extends HttpServlet {
         super();
     }
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		getServletContext().getRequestDispatcher("/changePassword.jsp").
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		getServletContext().getRequestDispatcher(URLConstants.DASHBOARD_URL).
 			forward(request, response);
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+						getAttribute(ParameterConstants.USER);
 			
-			String password = request.getParameter("password");
+			String password = request.getParameter(ParameterConstants.PASSWORD);
 
 			UserService service = new UserService(user);
 			service.changePassword(user, password);
 			
-			response.getWriter().println("Password was changed successfully.");
+			response.getWriter().println(MessageConstants.PASSWORD_UPDATED);
 		} catch(Exception e) {
-			response.getWriter().println("Sorry, but current service is not available... Please try later.");
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

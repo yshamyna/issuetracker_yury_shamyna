@@ -11,48 +11,39 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.Resolution;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.ResolutionService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
-/**
- * Servlet implementation class ResolutionReaderServlet
- */
 public class ResolutionsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public ResolutionsServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		execute(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		execute(request, response);
 	}
 
 	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+							getAttribute(ParameterConstants.USER);
 			
 			ResolutionService service = new ResolutionService(user);
 			List<Resolution> resolutions = service.getResolutions();
 			
-			request.setAttribute("resolutions", resolutions);
+			request.setAttribute(ParameterConstants.RESOLUTIONS, resolutions);
 			
-			getServletContext().getRequestDispatcher("/resolutions.jsp").
+			getServletContext().getRequestDispatcher(URLConstants.RESOLUTIONS_JSP).
 				forward(request, response);
 		}  catch (Exception e) {
-			response.getWriter().
-				println("Sorry, but current page is not available... Please try later.");
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		} 
 	}
 }

@@ -35,7 +35,7 @@
 				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				var body = "id=${usr.id}&firstName=" + firstName
 					+ "&lastName=" + lastName + "&roleId=" + role
-					+ "&email=" + email;
+					+ "&E-mail=" + email;
 				req.send(body);
 			}
 		}

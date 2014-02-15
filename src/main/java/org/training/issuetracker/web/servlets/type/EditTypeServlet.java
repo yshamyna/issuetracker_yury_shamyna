@@ -10,31 +10,26 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.Type;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.TypeService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
-/**
- * Servlet implementation class EditTypeServlet
- */
 public class EditTypeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public EditTypeServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id = request.getParameter("id");
+		String id = request.getParameter(ParameterConstants.ID);
 		if (id == null) {
-			getServletContext().getRequestDispatcher("/types").
+			getServletContext().getRequestDispatcher(URLConstants.TYPES_URL).
 					forward(request, response);
 		} else {
 			try {
-				User user = (User) request.getSession().getAttribute("user");
+				User user = (User) request.getSession().
+							getAttribute(ParameterConstants.USER);
 				
 				long typeId = Integer.parseInt(id);
 				
@@ -42,40 +37,37 @@ public class EditTypeServlet extends HttpServlet {
 				Type type = service.getTypeById(typeId);
 				
 				if (type == null) {
-					getServletContext().getRequestDispatcher("/types").
+					getServletContext().getRequestDispatcher(URLConstants.TYPES_URL).
 							forward(request, response);
 				} else {
-					request.setAttribute("type", type);
-					getServletContext().getRequestDispatcher("/editType.jsp").
+					request.setAttribute(ParameterConstants.TYPE, type);
+					getServletContext().getRequestDispatcher(URLConstants.EDIT_TYPE_JSP).
 							forward(request, response);	
 				}
 			} catch(NumberFormatException e) {
-				getServletContext().getRequestDispatcher("/types").
+				getServletContext().getRequestDispatcher(URLConstants.TYPES_URL).
 					forward(request, response);
 			} catch(Exception e) {
-				response.getWriter().println("Sorry, but current service is not available... Please try later.");
+				response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 			}
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+					getAttribute(ParameterConstants.USER);
 			
 			Type type = new Type();
-			type.setId(Long.parseLong(request.getParameter("id")));
-			type.setName(request.getParameter("name"));
+			type.setId(Long.parseLong(request.getParameter(ParameterConstants.ID)));
+			type.setName(request.getParameter(ParameterConstants.NAME));
 			
 			TypeService service = new TypeService(user);
 			service.update(type);
 			
-			response.getWriter().println("Issue type was updated successfully.");
+			response.getWriter().println(MessageConstants.TYPE_UPDATED);
 		} catch (Exception e) {
-			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

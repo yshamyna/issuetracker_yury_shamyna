@@ -11,48 +11,40 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.Priority;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.PriorityService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
-/**
- * Servlet implementation class PriorityReaderServlet
- */
 public class PrioritiesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public PrioritiesServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		execute(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		execute(request, response);
 	}
 	
 	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+								getAttribute(ParameterConstants.USER);
 			
 			PriorityService service = new PriorityService(user);
 			List<Priority> priorities = service.getPriorities();
 			
-			request.setAttribute("priorities", priorities);
+			request.setAttribute(ParameterConstants.PRIORITIES, priorities);
 			
-			getServletContext().getRequestDispatcher("/priorities.jsp").
+			getServletContext().getRequestDispatcher(URLConstants.PRIORITIES_JSP).
 				forward(request, response);
 		}  catch (Exception e) {
 			response.getWriter().
-				println("Sorry, but current page is not available... Please try later.");
+				println(MessageConstants.SORRY_MESSAGE);
 		} 
 	}
 

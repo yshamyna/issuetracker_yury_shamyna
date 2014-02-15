@@ -18,38 +18,43 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.training.issuetracker.db.beans.Attachment;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.AttachmentService;
+import org.training.issuetracker.web.constants.GeneralConsants;
+import org.training.issuetracker.web.constants.MessageConstants;
 import org.training.issuetracker.web.constants.ParameterConstants;
 
 public class FileUploadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	private static final String CONTENT_TYPE = "text/html";
        
     public FileUploadServlet() {
         super();
     }
     
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		File tmpDir;
 		File destinationDir;
-		String path = getServletContext().getRealPath("");
+		String path = getServletContext().getRealPath(GeneralConsants.EMPTY_STRING);
 		
-		String tempDirPath = path + "\\temp";
+		String tempDirPath = path + GeneralConsants.TEMP_DIR_PATH;
         tmpDir = new File(tempDirPath);
-        String destinationDirPath = path + "\\issues\\" + request.
-        				getParameter(ParameterConstants.ISSUE);
+        String destinationDirPath = path + GeneralConsants.DESTINATION_DIR_PATH 
+        		+ request.getParameter(ParameterConstants.ISSUE);
         destinationDir = new File(destinationDirPath);
         if (!destinationDir.isDirectory()) {
         	destinationDir.mkdirs();
         }
 
-        response.setContentType("text/html");
+        response.setContentType(CONTENT_TYPE);
 
         DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
-        fileItemFactory.setSizeThreshold(1 * 1024 * 1024);
+        fileItemFactory.setSizeThreshold(GeneralConsants.ONE_MB);
 
         fileItemFactory.setRepository(tmpDir);
 
         ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
-        uploadHandler.setSizeMax(1024 * 1024 * 100);
+        uploadHandler.setSizeMax(GeneralConsants.HUNDRED_MB);
 
         try {
 
@@ -86,7 +91,8 @@ public class FileUploadServlet extends HttpServlet {
             				+ "\">Back</a>");
             out.close();
         } catch (Exception e) {
-            response.getWriter().println("Sorry, but current service is not available... Please try later.");
+        	e.printStackTrace();
+            response.getWriter().println(MessageConstants.SORRY_MESSAGE);
         }
 	}
 

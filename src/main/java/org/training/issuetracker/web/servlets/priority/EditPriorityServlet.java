@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.Priority;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.PriorityService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
 public class EditPriorityServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -19,50 +22,51 @@ public class EditPriorityServlet extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id = request.getParameter("id");
+		String id = request.getParameter(ParameterConstants.ID);
 		if (id == null) {
-			getServletContext().getRequestDispatcher("/priorities").
+			getServletContext().getRequestDispatcher(URLConstants.PRIORITIES_URL).
 					forward(request, response);
 		} else {
 			try {
-				User user = (User) request.getSession().getAttribute("user");
+				User user = (User) request.getSession().
+									getAttribute(ParameterConstants.USER);
 				
 				long priorityId = Integer.parseInt(id);
 				
 				PriorityService service = new PriorityService(user);
 				Priority priority = service.getPriorityById(priorityId);
 				if (priority == null) {
-					getServletContext().getRequestDispatcher("/priorities").
+					getServletContext().getRequestDispatcher(URLConstants.PRIORITIES_URL).
 							forward(request, response);
 				} else {
-					request.setAttribute("priority", priority);
-					getServletContext().getRequestDispatcher("/editPriority.jsp").
+					request.setAttribute(ParameterConstants.PRIORITY, priority);
+					getServletContext().getRequestDispatcher(URLConstants.EDIT_PRIORITY_JSP).
 							forward(request, response);	
 				}
 			} catch(NumberFormatException e) {
-				getServletContext().getRequestDispatcher("/priorities").
+				getServletContext().getRequestDispatcher(URLConstants.PRIORITIES_URL).
 					forward(request, response);
 			} catch(Exception e) {
-				response.getWriter().println("Sorry, but current service is not available... Please try later.");
+				response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 			}
 		}
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().getAttribute(ParameterConstants.USER);
 			
 			Priority priority  = new Priority();
-			priority.setId(Long.parseLong(request.getParameter("id")));
-			priority.setName(request.getParameter("name"));
+			priority.setId(Long.parseLong(request.getParameter(ParameterConstants.ID)));
+			priority.setName(request.getParameter(ParameterConstants.NAME));
 			
 			PriorityService service = new PriorityService(user);
 			service.update(priority);
 			
-			response.getWriter().println("Issue priority was updated successfully.");
+			response.getWriter().println(MessageConstants.PRIORITY_UPDATED);
 		} catch (Exception e) {
 			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
+				println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

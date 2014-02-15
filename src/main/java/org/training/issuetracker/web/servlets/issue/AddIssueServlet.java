@@ -23,65 +23,58 @@ import org.training.issuetracker.db.service.ProjectService;
 import org.training.issuetracker.db.service.StatusService;
 import org.training.issuetracker.db.service.TypeService;
 import org.training.issuetracker.db.service.UserService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
-/**
- * Servlet implementation class AddIssueServlet
- */
 public class AddIssueServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public AddIssueServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+								getAttribute(ParameterConstants.USER);
 			
 			StatusService sService = new StatusService(user);
 			List<Status> statuses = sService.getStatuses();
-			request.setAttribute("statuses", statuses);
+			request.setAttribute(ParameterConstants.STATUSES, statuses);
 			
 			TypeService tService = new TypeService(user);
 			List<Type> types = tService.getTypes();
-			request.setAttribute("types", types);
+			request.setAttribute(ParameterConstants.TYPES, types);
 			
 			PriorityService pService = new PriorityService(user);
 			List<Priority> priorities = pService.getPriorities();
-			request.setAttribute("priorities", priorities);
+			request.setAttribute(ParameterConstants.PRIORITIES, priorities);
 
 			ProjectService prService = new ProjectService(user);
 			List<Project> projects = prService.getProjects();
-			request.setAttribute("projects", projects);
+			request.setAttribute(ParameterConstants.PROJECTS, projects);
 			
 			BuildService bService = new BuildService(user);
 			List<Build> builds = bService.getBuildsByProjectId(projects.get(0).getId());
-			request.setAttribute("builds", builds);
+			request.setAttribute(ParameterConstants.BUILDS, builds);
 			
 			UserService uService = new UserService(user);
 			List<User> users = uService.getUsers();
-			request.setAttribute("assignees", users);
+			request.setAttribute(ParameterConstants.ASSIGNEES, users);
 			
-			getServletContext().getRequestDispatcher("/addIssue.jsp").
+			getServletContext().getRequestDispatcher(URLConstants.ADD_ISSUE_JSP).
 				forward(request, response);	
 		} catch (Exception e) {
 			response.getWriter().
-					println("Sorry, but current service is not available... Please try later.");
+					println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+									getAttribute(ParameterConstants.USER);
 			
 			Issue issue = new Issue();
 			
@@ -92,30 +85,38 @@ public class AddIssueServlet extends HttpServlet {
 			issue.setCreateDate(createDate);
 			issue.setModifyDate(modifyDate);
 			issue.setModifyBy(user);
-			issue.setSummary(request.getParameter("summary"));
-			issue.setDescription(request.getParameter("description"));
+			issue.setSummary(request.
+					getParameter(ParameterConstants.SUMMARY));
+			issue.setDescription(request.
+					getParameter(ParameterConstants.DESCRIPTION));
 			
 			Status status = new Status();
-			status.setId(Integer.parseInt(request.getParameter("statusId")));
+			status.setId(Integer.parseInt(request.
+					getParameter(ParameterConstants.STATUS_ID)));
 			issue.setStatus(status);
 			
 			Type type = new Type();
-			type.setId(Integer.parseInt(request.getParameter("typeId")));
+			type.setId(Integer.parseInt(request.
+					getParameter(ParameterConstants.TYPE_ID)));
 			issue.setType(type);
 			
 			Priority priority = new Priority();
-			priority.setId(Integer.parseInt(request.getParameter("priorityId")));
+			priority.setId(Integer.parseInt(request.
+					getParameter(ParameterConstants.PRIORITY_ID)));
 			issue.setPriority(priority);
 			
 			Project project = new Project();
-			project.setId(Integer.parseInt(request.getParameter("projectId")));
+			project.setId(Integer.parseInt(request.
+					getParameter(ParameterConstants.PROJECT_ID)));
 			issue.setProject(project);
 			
 			Build build = new Build();
-			build.setId(Integer.parseInt(request.getParameter("buildId")));
+			build.setId(Integer.parseInt(request.
+					getParameter(ParameterConstants.BUILD_ID)));
 			issue.setBuildFound(build);
 			
-			long userId = Integer.parseInt(request.getParameter("assigneeId"));
+			long userId = Integer.parseInt(request.
+					getParameter(ParameterConstants.ASSIGNEE_ID));
 			if (userId == -1) {
 				issue.setAssignee(null);
 			} else {
@@ -127,10 +128,10 @@ public class AddIssueServlet extends HttpServlet {
 			IssueService service = new IssueService(user);
 			service.add(issue);
 			
-			response.getWriter().println("Issue was added successfully.");
+			response.getWriter().println(MessageConstants.ISSUE_ADDED);
 		} catch (Exception e) {
 			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
+				println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

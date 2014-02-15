@@ -10,32 +10,27 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.Resolution;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.ResolutionService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
-/**
- * Servlet implementation class EditResolutionServlet
- */
 public class EditResolutionServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public EditResolutionServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		String id = request.getParameter("id");
+		String id = request.getParameter(ParameterConstants.ID);
 		if (id == null) {
-			getServletContext().getRequestDispatcher("/resolutions").
+			getServletContext().getRequestDispatcher(URLConstants.RESOLUTIONS_URL).
 					forward(request, response);
 		} else {
 			try {
-				User user = (User) request.getSession().getAttribute("user");
+				User user = (User) request.getSession().
+									getAttribute(ParameterConstants.USER);
 				
 				long resolutionId = Integer.parseInt(id);
 				
@@ -43,41 +38,37 @@ public class EditResolutionServlet extends HttpServlet {
 				Resolution resolution = service.getResolutionById(resolutionId);
 				
 				if (resolution == null) {
-					getServletContext().getRequestDispatcher("/resolutions").
+					getServletContext().getRequestDispatcher(URLConstants.RESOLUTIONS_URL).
 							forward(request, response);
 				} else {
-					request.setAttribute("resolution", resolution);
-					getServletContext().getRequestDispatcher("/editResolution.jsp").
+					request.setAttribute(ParameterConstants.RESOLUTION, resolution);
+					getServletContext().getRequestDispatcher(URLConstants.EDIT_RESOLUTION_JSP).
 							forward(request, response);	
 				}
 			} catch(NumberFormatException e) {
-				getServletContext().getRequestDispatcher("/resolutions").
+				getServletContext().getRequestDispatcher(URLConstants.RESOLUTIONS_URL).
 					forward(request, response);
 			} catch(Exception e) {
-				response.getWriter().println("Sorry, but current service is not available... Please try later.");
+				response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 			}
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().getAttribute(ParameterConstants.USER);
 			
 			Resolution resolution = new Resolution();
-			resolution.setId(Long.parseLong(request.getParameter("id")));
-			resolution.setName(request.getParameter("name"));
+			resolution.setId(Long.parseLong(request.getParameter(ParameterConstants.ID)));
+			resolution.setName(request.getParameter(ParameterConstants.NAME));
 			
 			ResolutionService service = new ResolutionService(user);
 			service.update(resolution);
 			
-			response.getWriter().println("Issue resolution was updated successfully.");
+			response.getWriter().println(MessageConstants.RESOLUTION_UPDATED);
 		} catch (Exception e) {
-			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

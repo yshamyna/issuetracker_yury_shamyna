@@ -11,50 +11,43 @@ import org.h2.jdbc.JdbcSQLException;
 import org.training.issuetracker.db.beans.Type;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.TypeService;
+import org.training.issuetracker.web.constants.GeneralConsants;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
-/**
- * Servlet implementation class AddTypeServlet
- */
 public class AddTypeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public AddTypeServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		getServletContext().getRequestDispatcher("/addType.jsp").
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		getServletContext().getRequestDispatcher(URLConstants.ADD_TYPE_JSP).
 				forward(request, response);	
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+						getAttribute(ParameterConstants.USER);
 			
 			Type type = new Type();
-			type.setName(request.getParameter("name"));
+			type.setName(request.getParameter(ParameterConstants.NAME));
 			
 			TypeService service = new TypeService(user);
 			service.add(type);
 			
-			response.getWriter().println("Issue type was added successfully.");
+			response.getWriter().println(MessageConstants.TYPE_ADDED);
 		} catch (JdbcSQLException e) {
-			response.getWriter().println("Already exists value '" 
-					+ request.getParameter("name") + "'");
+			response.getWriter().println(MessageConstants.TYPE_EXIST
+					+ request.getParameter(ParameterConstants.NAME) 
+					+ GeneralConsants.SINGLE_QUOTE);
 		} catch (Exception e) {
-			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
-
-	
 }

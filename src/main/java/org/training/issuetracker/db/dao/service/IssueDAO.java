@@ -232,8 +232,7 @@ public class IssueDAO {
 				issue.setModifyDate(rs.getTimestamp(FieldsConstans.MODIFY_DATE));
 				issue.setSummary(rs.getString(FieldsConstans.SUMMARY));
 				issue.setDescription(rs.getString(FieldsConstans.DESCRIPTION));
-				issue.setAssignee(uDAO.getById(connection, 
-						rs.getInt(FieldsConstans.ASSIGNEE)));
+				issue.setAssignee(user);
 				issue.setCreateBy(uDAO.getById(connection, 
 						rs.getInt(FieldsConstans.CREATE_BY)));
 				issue.setModifyBy(uDAO.getById(connection,

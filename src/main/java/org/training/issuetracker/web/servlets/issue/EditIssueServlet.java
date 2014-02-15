@@ -29,6 +29,9 @@ import org.training.issuetracker.db.service.ResolutionService;
 import org.training.issuetracker.db.service.StatusService;
 import org.training.issuetracker.db.service.TypeService;
 import org.training.issuetracker.db.service.UserService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
 public class EditIssueServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -38,13 +41,14 @@ public class EditIssueServlet extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id = request.getParameter("id");
+		String id = request.getParameter(ParameterConstants.ID);
 		if (id == null) {
-			getServletContext().getRequestDispatcher("/dashboard").
+			getServletContext().getRequestDispatcher(URLConstants.DASHBOARD_URL).
 					forward(request, response);
 		} else {
 			try {
-				User user = (User) request.getSession().getAttribute("user");
+				User user = (User) request.getSession().
+									getAttribute(ParameterConstants.USER);
 				
 				long issueId = Integer.parseInt(id);
 				
@@ -52,64 +56,64 @@ public class EditIssueServlet extends HttpServlet {
 				Issue issue = iService.getIssueById(issueId);
 				
 				if (issue == null) {
-					getServletContext().getRequestDispatcher("/dashboard").
+					getServletContext().getRequestDispatcher(URLConstants.DASHBOARD_URL).
 							forward(request, response);
 				} else {
-					request.setAttribute("issue", issue);
+					request.setAttribute(ParameterConstants.ISSUE, issue);
 					
 					StatusService sService = new StatusService(user);
 					List<Status> statuses = sService.getStatuses();
-					request.setAttribute("statuses", statuses);
+					request.setAttribute(ParameterConstants.STATUSES, statuses);
 					
 					TypeService tService = new TypeService(user);
 					List<Type> types = tService.getTypes();
-					request.setAttribute("types", types);
+					request.setAttribute(ParameterConstants.TYPES, types);
 					
 					PriorityService pService = new PriorityService(user);
 					List<Priority> priorities = pService.getPriorities();
-					request.setAttribute("priorities", priorities);
+					request.setAttribute(ParameterConstants.PRIORITIES, priorities);
 
 					ProjectService prService = new ProjectService(user);
 					List<Project> projects = prService.getProjects();
-					request.setAttribute("projects", projects);
+					request.setAttribute(ParameterConstants.PROJECTS, projects);
 					
 					BuildService bService = new BuildService(user);
 					List<Build> builds = bService.getBuildsByProjectId(issue.getProject().getId());
-					request.setAttribute("builds", builds);
+					request.setAttribute(ParameterConstants.BUILDS, builds);
 					
 					UserService uService = new UserService(user);
 					List<User> users = uService.getUsers();
-					request.setAttribute("assignees", users);
+					request.setAttribute(ParameterConstants.ASSIGNEES, users);
 					
 					CommentService cService = new CommentService(user);
 					List<Comment> comments = cService.getCommentsByIssueId(issueId);
-					request.setAttribute("comments", comments);
+					request.setAttribute(ParameterConstants.COMMENTS, comments);
 					
 					AttachmentService aService = new AttachmentService(user);
 					List<Attachment> attachments = aService.getAttachmentsByIssueId(issueId);
-					request.setAttribute("attachments", attachments);
+					request.setAttribute(ParameterConstants.ATTACHMENTS, attachments);
 					
 					ResolutionService rService = new ResolutionService(user);
 					List<Resolution> resolutions = rService.getResolutions();
-					request.setAttribute("resolutions", resolutions);
+					request.setAttribute(ParameterConstants.RESOLUTIONS, resolutions);
 					
-					getServletContext().getRequestDispatcher("/editIssue.jsp").
+					getServletContext().getRequestDispatcher(URLConstants.EDIT_ISSUE_JSP).
 							forward(request, response);	
 				}
 			} catch(NumberFormatException e) {
-				getServletContext().getRequestDispatcher("/dashboard").
+				getServletContext().getRequestDispatcher(URLConstants.DASHBOARD_URL).
 					forward(request, response);
 			} catch(Exception e) {
-				response.getWriter().println("Sorry, but current service is not available... Please try later.");
+				response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 			}
 		}
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().getAttribute(ParameterConstants.USER);
 			
-			long id = Integer.parseInt(request.getParameter("id"));
+			long id = Integer.parseInt(request.getParameter(ParameterConstants.ID));
 			Issue issue = new Issue();
 			issue.setId(id);
 			
@@ -119,30 +123,30 @@ public class EditIssueServlet extends HttpServlet {
 			issue.setModifyDate(modifyDate);
 			issue.setModifyBy(modifyBy);
 			
-			issue.setSummary(request.getParameter("summary"));
-			issue.setDescription(request.getParameter("description"));
+			issue.setSummary(request.getParameter(ParameterConstants.SUMMARY));
+			issue.setDescription(request.getParameter(ParameterConstants.DESCRIPTION));
 			
 			Status status = new Status();
-			status.setId(Integer.parseInt(request.getParameter("statusId")));
+			status.setId(Integer.parseInt(request.getParameter(ParameterConstants.STATUS_ID)));
 			issue.setStatus(status);
 			
 			Type type = new Type();
-			type.setId(Integer.parseInt(request.getParameter("typeId")));
+			type.setId(Integer.parseInt(request.getParameter(ParameterConstants.TYPE_ID)));
 			issue.setType(type);
 			
 			Priority priority = new Priority();
-			priority.setId(Integer.parseInt(request.getParameter("priorityId")));
+			priority.setId(Integer.parseInt(request.getParameter(ParameterConstants.PRIORITY_ID)));
 			issue.setPriority(priority);
 			
 			Project project = new Project();
-			project.setId(Integer.parseInt(request.getParameter("projectId")));
+			project.setId(Integer.parseInt(request.getParameter(ParameterConstants.PROJECT_ID)));
 			issue.setProject(project);
 			
 			Build build = new Build();
-			build.setId(Integer.parseInt(request.getParameter("buildId")));
+			build.setId(Integer.parseInt(request.getParameter(ParameterConstants.BUILD_ID)));
 			issue.setBuildFound(build);
 			
-			long userId = Integer.parseInt(request.getParameter("assigneeId"));
+			long userId = Integer.parseInt(request.getParameter(ParameterConstants.ASSIGNEE_ID));
 			if (userId == -1) {
 				issue.setAssignee(null);
 			} else {
@@ -154,7 +158,7 @@ public class EditIssueServlet extends HttpServlet {
 			IssueService service = new IssueService(user);
 			service.update(issue);
 			
-			long resolutionId = Integer.parseInt(request.getParameter("resolutionId"));
+			long resolutionId = Integer.parseInt(request.getParameter(ParameterConstants.RESOLUTION_ID));
 			if (resolutionId == -1) {
 				issue.setResolution(null);
 			} else {
@@ -163,10 +167,10 @@ public class EditIssueServlet extends HttpServlet {
 				issue.setResolution(resolution);
 			}
 			
-			response.getWriter().println("Issue was updated successfully.");
+			response.getWriter().println(MessageConstants.ISSUE_UPDATED);
 		} catch (Exception e) {
 			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
+				println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

@@ -15,31 +15,26 @@ import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.BuildService;
 import org.training.issuetracker.db.service.ManagerService;
 import org.training.issuetracker.db.service.ProjectService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
-/**
- * Servlet implementation class EditProjectServlet
- */
 public class EditProjectServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public EditProjectServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id = request.getParameter("id");
+		String id = request.getParameter(ParameterConstants.ID);
 		if (id == null) {
-			getServletContext().getRequestDispatcher("/projects").
+			getServletContext().getRequestDispatcher(URLConstants.PROJECTS_URL).
 					forward(request, response);
 		} else {
 			try {
-				User user = (User) request.getSession().getAttribute("user");
+				User user = (User) request.getSession().
+									getAttribute(ParameterConstants.USER);
 				
 				long projectId = Integer.parseInt(id);
 				
@@ -47,59 +42,59 @@ public class EditProjectServlet extends HttpServlet {
 				Project project = pService.getProjectById(projectId);
 				
 				if (project == null) {
-					getServletContext().getRequestDispatcher("/projects").
+					getServletContext().getRequestDispatcher(URLConstants.PROJECTS_URL).
 							forward(request, response);
 				} else {
-					request.setAttribute("project", project);
+					request.setAttribute(ParameterConstants.PROJECT, project);
 					
 					BuildService bService = new BuildService(user);
 					List<Build> builds = bService.getBuildsByProjectId(projectId);
-					request.setAttribute("builds", builds);
+					request.setAttribute(ParameterConstants.BUILDS, builds);
 
 					ManagerService mService = new ManagerService(user);
 					List<Manager> managers = mService.getManagers();
-					request.setAttribute("managers", managers);
+					request.setAttribute(ParameterConstants.MANAGERS, managers);
 					
-					getServletContext().getRequestDispatcher("/editProject.jsp").
+					getServletContext().getRequestDispatcher(URLConstants.EDIT_PROJECT_JSP).
 							forward(request, response);	
 				}
 			} catch(NumberFormatException e) {
-				getServletContext().getRequestDispatcher("/projects").
+				getServletContext().getRequestDispatcher(URLConstants.PROJECTS_URL).
 					forward(request, response);
 			} catch(Exception e) {
-				response.getWriter().println("Sorry, but current service is not available... Please try later.");
+				response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 			}
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+						getAttribute(ParameterConstants.USER);
 			
 			ProjectService service = new ProjectService(user);
 
 			Project project = new Project();
-			project.setId(Integer.parseInt(request.getParameter("id")));
-			project.setName(request.getParameter("name"));
-			project.setDescription(request.getParameter("description"));
+			project.setId(Integer.parseInt(request.getParameter(ParameterConstants.ID)));
+			project.setName(request.getParameter(ParameterConstants.NAME));
+			project.setDescription(request.getParameter(ParameterConstants.DESCRIPTION));
 			
 			Manager manager = new Manager();
-			manager.setId(Integer.parseInt(request.getParameter("managerId")));
+			manager.setId(Integer.parseInt(request.
+							getParameter(ParameterConstants.MANAGER_ID)));
 			project.setManager(manager);
 			
 			Build build = new Build();
-			build.setId(Integer.parseInt(request.getParameter("buildId")));
+			build.setId(Integer.parseInt(request.
+							getParameter(ParameterConstants.BUILD_ID)));
 			build.setProjectId(project.getId());
 			
 			service.update(project, build);
 			
-			response.getWriter().println("Project was updated successfully.");
+			response.getWriter().println(MessageConstants.PROJECT_UPDATED);
 		} catch (Exception e) {
 			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
+				println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

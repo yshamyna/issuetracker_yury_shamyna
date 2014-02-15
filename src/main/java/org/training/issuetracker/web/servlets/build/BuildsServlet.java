@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.Build;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.BuildService;
+import org.training.issuetracker.web.constants.GeneralConsants;
+import org.training.issuetracker.web.constants.ParameterConstants;
 
 public class BuildsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -21,10 +23,11 @@ public class BuildsServlet extends HttpServlet {
 
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id = request.getParameter("id");
+		String id = request.getParameter(ParameterConstants.ID);
 		if (id != null) {
 			try {
-				User user = (User) request.getSession().getAttribute("user");
+				User user = (User) request.getSession().
+						getAttribute(ParameterConstants.USER);
 				
 				long projectId = Long.parseLong(id);
 				
@@ -43,10 +46,10 @@ public class BuildsServlet extends HttpServlet {
 				
 				response.getWriter().println(jsonText);
 			} catch (Exception e) {
-				response.getWriter().println("");
+				response.getWriter().println(GeneralConsants.EMPTY_STRING);
 			}
 		}
-		response.getWriter().println("");
+		response.getWriter().println(GeneralConsants.EMPTY_STRING);
 	}
 
 }

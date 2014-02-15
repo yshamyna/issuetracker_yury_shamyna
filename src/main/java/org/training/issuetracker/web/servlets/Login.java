@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.UserService;
+import org.training.issuetracker.web.constants.MessageConstants;
 import org.training.issuetracker.web.constants.ParameterConstants;
 import org.training.issuetracker.web.constants.URLConstants;
 
@@ -42,7 +43,7 @@ public class Login extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
+				println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 

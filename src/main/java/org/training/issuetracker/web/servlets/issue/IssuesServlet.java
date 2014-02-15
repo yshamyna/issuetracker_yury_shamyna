@@ -11,69 +11,61 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.Issue;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.IssueService;
+import org.training.issuetracker.web.constants.GeneralConsants;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
-/**
- * Servlet implementation class Dashboard
- */
 public class IssuesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public IssuesServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		performTask(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		performTask(request, response);
 	}
 
 	private void performTask(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().getAttribute(ParameterConstants.USER);
 			
 			IssueService service = new IssueService(user);
 			List<Issue> issues = null;
 			
 			if (user == null) {
-				issues = service.getLastNIssues(10);
+				issues = service.getLastNIssues(GeneralConsants.RECORDS_PER_PAGE);
 			} else {
-				String page = request.getParameter("page");
+				String page = request.getParameter(ParameterConstants.PAGE);
 				
 				long pageNumber = 1;
 				if (page != null) {
 					pageNumber = Integer.parseInt(page);
 				}
-				issues = service.getIssues(user, pageNumber, 10);
+				issues = service.getIssues(user, pageNumber, GeneralConsants.RECORDS_PER_PAGE);
 				
 				service = new IssueService(user);
-				long maxPage = service.getQuantityPages(user.getId(), 10);
+				long maxPage = service.getQuantityPages(user.getId(), 
+											GeneralConsants.RECORDS_PER_PAGE);
 				
 				pageNumber = pageNumber > maxPage ? maxPage : pageNumber;
 				pageNumber = pageNumber < 1 ? 1 : pageNumber;
 				
-				request.setAttribute("page", pageNumber);
-				request.setAttribute("maxPage", maxPage);
+				request.setAttribute(ParameterConstants.PAGE, pageNumber);
+				request.setAttribute(ParameterConstants.MAX_PAGE, maxPage);
 			}
 			
-			request.setAttribute("issues", issues);
-			getServletContext().getRequestDispatcher("/dashboard.jsp").
+			request.setAttribute(ParameterConstants.ISSUES, issues);
+			getServletContext().getRequestDispatcher(URLConstants.DASHBOARD_JSP).
 					forward(request, response);	
 		} catch (Exception e) {
-			e.printStackTrace();
 			response.getWriter().
-				println("Sorry, but current service is not available... Please try later.");
+				println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 	

@@ -11,49 +11,42 @@ import javax.servlet.http.HttpServletResponse;
 import org.training.issuetracker.db.beans.Status;
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.StatusService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
-/**
- * Servlet implementation class StatusServlet
- */
 public class StatusesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public StatusesServlet() {
         super();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		execute(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		execute(request, response);
 	}
 	
-	private void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void execute(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+							getAttribute(ParameterConstants.USER);
 			
 			StatusService service = new StatusService(user);
 			List<Status> statuses = service.getStatuses();
 			
-			request.setAttribute("statuses", statuses);
+			request.setAttribute(ParameterConstants.STATUSES, statuses);
 			
-			getServletContext().getRequestDispatcher("/statuses.jsp").
+			getServletContext().getRequestDispatcher(URLConstants.STATUSES_JSP).
 				forward(request, response);
 		}  catch (Exception e) {
-			response.getWriter().
-				println("Sorry, but current page is not available... Please try later.");
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		} 
 	}
-
 }

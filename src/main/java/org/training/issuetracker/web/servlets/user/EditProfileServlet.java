@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.training.issuetracker.db.beans.User;
 import org.training.issuetracker.db.service.UserService;
+import org.training.issuetracker.web.constants.MessageConstants;
+import org.training.issuetracker.web.constants.ParameterConstants;
+import org.training.issuetracker.web.constants.URLConstants;
 
 public class EditProfileServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -17,18 +20,21 @@ public class EditProfileServlet extends HttpServlet {
         super();
     }
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		getServletContext().getRequestDispatcher("/editProfile.jsp").
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		getServletContext().getRequestDispatcher(URLConstants.DASHBOARD_URL).
 			forward(request, response);
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().
+						getAttribute(ParameterConstants.USER);
 			
-			String firstName = request.getParameter("firstName");
-			String lastName = request.getParameter("lastName");
-			String email = request.getParameter("email");
+			String firstName = request.getParameter(ParameterConstants.FIRST_NAME);
+			String lastName = request.getParameter(ParameterConstants.LAST_NAME);
+			String email = request.getParameter(ParameterConstants.EMAIL);
 			
 			user.setFirstName(firstName);
 			user.setLastName(lastName);
@@ -37,9 +43,9 @@ public class EditProfileServlet extends HttpServlet {
 			UserService service = new UserService(user);
 			service.update(user);
 			
-			response.getWriter().println("Profile was changed successfully.");
+			response.getWriter().println(MessageConstants.PROFILE_UPDATED);
 		} catch(Exception e) {
-			response.getWriter().println("Sorry, but current service is not available... Please try later.");
+			response.getWriter().println(MessageConstants.SORRY_MESSAGE);
 		}
 	}
 
